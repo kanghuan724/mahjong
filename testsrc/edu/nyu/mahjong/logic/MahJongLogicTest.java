@@ -1,8 +1,7 @@
-package mahJong;
+package edu.nyu.mahjong.logic;
 
 import static org.junit.Assert.*;
 
-import mahJong.MahJongLogic;
 import org.cheat.client.GameApi.Delete;
 import org.cheat.client.GameApi.Operation;
 import org.cheat.client.GameApi.Set;
@@ -19,7 +18,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 @RunWith(JUnit4.class)
-public class MahJongTester {
+public class MahJongLogicTest {
 	MahJongLogic mahjong=new MahJongLogic();
 	
 	private void assertMoveOk(VerifyMove verifyMove){
@@ -28,7 +27,7 @@ public class MahJongTester {
 	
 	private void assertHacker(VerifyMove verifyMove){
 		VerifyMoveDone verifyDone=mahjong.verify(verifyMove);
-		assertEquals(verifyMove.getLastPlayerId(),verifyDone.getHackerPlayerId());
+		assertEquals(verifyMove.getLastMovePlayerId(),verifyDone.getHackerPlayerId());
 	}
 	private static final String TURN = "turn"; 
 	private static final String PLAYER_ID="playerId";

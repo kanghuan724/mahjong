@@ -1,4 +1,4 @@
-package mahJong;
+package edu.nyu.mahjong.logic;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
