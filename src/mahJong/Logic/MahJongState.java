@@ -1,15 +1,17 @@
+package mahJong;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 /**
  * Representation of the MahJong game state.
  * The game state uses these keys: 
- *** tilesAtWall, tilesUsed, move
+ *** turn, move, playerIds, tiles, tilesAtWall, tilesUsed
  *** tilesAtHandOfOne, tilesAtHandOfTwo, tilesAtHandOfThree, tilesAtHandOfFour,
  *** tilesAtDeclaredOfOne, tilesAtDeclaredOfTwo, tilesAtDeclaredOfThree, tilesAtDeclaredOfFour,
  *** T1...T136, which are mapped to the tiles
  */
 public class MahJongState {
+	  private final int turn;
 	  private final String move;
 	  private final ImmutableList<Integer> playerIds;
 
@@ -32,7 +34,7 @@ public class MahJongState {
 	  private final ImmutableList<Integer> tilesAtHandOfFour;
 	  private final ImmutableList<Integer> tilesAtDeclaredOfFour;
 
-	  public MahJongState(String move, ImmutableList<Integer> playerIds,
+	  public MahJongState(int turn, String move, ImmutableList<Integer> playerIds,
 	      ImmutableList<Optional<Tile>> tiles, ImmutableList<Integer> tilesAtWall,
 	      ImmutableList<Integer> tilesUsed, 
 	      ImmutableList<Integer> tilesAtHandOfOne, ImmutableList<Integer> tilesAtDeclaredOfOne,
@@ -40,6 +42,7 @@ public class MahJongState {
 	      ImmutableList<Integer> tilesAtHandOfThree, ImmutableList<Integer> tilesAtDeclaredOfThree,
 	      ImmutableList<Integer> tilesAtHandOfFour, ImmutableList<Integer> tilesAtDeclaredOfFour) {
 	    super();
+	    this.turn = turn;
 	    this.move = (move);
 	    this.playerIds = checkNotNull(playerIds);
 	    this.tiles = checkNotNull(tiles);
@@ -56,6 +59,10 @@ public class MahJongState {
 
 	  }
 
+	  public int getTurn() {
+	    return turn;
+	  }
+	  
 	  public String getMove() {
 	    return move;
 	  }

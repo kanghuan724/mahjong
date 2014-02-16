@@ -1,3 +1,4 @@
+package mahJong;
 import java.util.Objects;
 
 /**
