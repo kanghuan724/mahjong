@@ -33,7 +33,7 @@ public class MahJongState {
 	  private final ImmutableList<Integer> tilesAtDeclaredOfFour;
 
 	  public MahJongState(String move, ImmutableList<Integer> playerIds,
-	      ImmutableList<Optional<Tiles>> tiles, ImmutableList<Integer> tilesAtWall,
+	      ImmutableList<Optional<Tile>> tiles, ImmutableList<Integer> tilesAtWall,
 	      ImmutableList<Integer> tilesUsed, 
 	      ImmutableList<Integer> tilesAtHandOfOne, ImmutableList<Integer> tilesAtDeclaredOfOne,
 	      ImmutableList<Integer> tilesAtHandOfTwo, ImmutableList<Integer> tilesAtDeclaredOfTwo,
