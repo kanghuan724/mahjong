@@ -246,7 +246,7 @@ public class MahJongTester {
         assertEquals(ImmutableList.of(3, 4,5,6), cheatLogic.getIndicesInRange(3, 6));
       }
    
-    private static final mahjong.tile threeWan=new mahjong.tile(Suit.Characters,3);
+    private static final mahjong.tile threeWan=new mahjong.tile(Suit.Wcharacters,3);
     private static final mahjong.tile FiveCircle=new mahjong.tile(Suit.Circles,5);
     private static final mahjong.tile South=new mahjong.tile (Suit.East,2);
     @Test	
