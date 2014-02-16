@@ -32,8 +32,11 @@ public class MahJongLogic {
    * When we send operations on these keys, it will always be in the above order.
    */
 
-  private static final String M = "move"; //
-  private static final String PU = "PickUp"; //
+  private static final String M = "move"; 
+  private static final String PU = "PickUp"; 
+  private static final String D = "Discard";
+  private static final String P = "Peng";
+  private static final String C = "Chi";
   private static final String T = "T"; // Tile key (T0...T135)
   private static final String TAW = "tilesAtWall";
   private static final String TU = "tilesUsed";
@@ -62,7 +65,33 @@ public class MahJongLogic {
     }
   }
 
+  List<Operation> getInitialMove(List<Integer> playerIds) {
+	    List<Operation> operations = Lists.newArrayList();
 
+	    operations.add(new SetTurn(0));
+	    operations.add(new Set(M, null));
+	    operations.add(new Set(TAW, getIndicesInRange(0, 135)));
+	    operations.add(new Set(TU, null));
+	    // set hands
+	    for (int i = 0; i < 4; i++) {
+	    	operations.add(new Set(getAtHandKey(i), getIndicesInRange(13*i-13, 13*i-1)));
+	    }
+	    operations.add(new Set(TAW, getIndicesInRange(52, 135)));
+	    // sets all 136 tiles
+	    for (int i = 0; i < 136; i++) {
+	      operations.add(new Set(T + i, tileIdToString(i)));
+	    }
+	    // shuffle(T0,...,T135)
+	    operations.add(new Shuffle(getTilesInRange(0, 135)));
+	    // sets visibility
+	    for (int i = 0; i < 4; i++) {
+	    	for (int j = 0; j < 13; j++) {
+	    		operations.add(new SetVisibility(T + (i*13+j), ImmutableList.of(i)));
+	    	}
+	    }
+	    return operations;
+	  }
+  
   /** Returns the operations for picking up a tile. */
   List<Operation> pickUp(MahJongState state, List<Integer> playerIds) {
     // picking up a tile
@@ -81,15 +110,122 @@ public class MahJongLogic {
     // 3) new Set("tilesAtHandOf1/2/3/4, [...]),
     // 4) new SetVisibility(T*, [1]/[2]/[3]/[4])
     List<Operation> expectedOperations = ImmutableList.<Operation>of(
-    	new SetTurn(playerIds.indexOf(playerId) % 4 + 1),
+    	new SetTurn(playerIds.indexOf(playerId)),
     	new Set(M, PU),
     	new Set(TAW, newAtWall),
         new Set(getAtHandKey(playerId), newAtHand),
         new SetVisibility(T + tileIndex, ImmutableList.of(playerId)));
     return expectedOperations;
   }
+
+  /** Returns the operations for discarding a tile. */
+  List<Operation> discard(MahJongState state, List<Integer> tilesToDiscard, 
+		  List<Integer> playerIds) {
+    // discarding up a tile
+	int playerId = state.getTurn();
+    check(state. getTilesAtHand(playerId).size() >= 1);
+
+    List<Integer> lastUsed = state.getTilesUsed();
+    List<Integer> newUsed = concat(lastUsed, tilesToDiscard);
+    List<Integer> lastAtHand = state.getTilesAtHand(playerId);
+    List<Integer> newAtHand = subtract(lastAtHand, tilesToDiscard);
+    Integer tileIndex = tilesToDiscard.get(0);
+    
+    // 0) new SetTurn(0/1/2/3),
+    // 1) new Set("move", "Discard"),
+    // 2) new Set("tilesUsed", [...]),
+    // 3) new Set("tilesAtHandOf1/2/3/4, [...]),
+    // 4) new SetVisibility(T*, null)
+    List<Operation> expectedOperations = ImmutableList.<Operation>of(
+    	new SetTurn(playerIds.indexOf(playerId) % 4 + 1), 
+    	//?HOW TO SetTurn WHEN A CHI/PENG MAY HAPPEN?
+    	new Set(M, D),
+    	new Set(TU, newUsed),
+        new Set(getAtHandKey(playerId), newAtHand),
+        new SetVisibility(T + tileIndex));
+    return expectedOperations;
+  }
   
-  @SuppressWarnings("unchecked")
+  List<Operation> chi(MahJongState state, List<Integer> tilesToChi, 
+		  List<Integer> playerIds) {
+    // chi a tile with two tiles at hand
+	int playerId = state.getTurn();
+    check(state. getTilesAtHand(playerId).size() >= 4);
+
+    List<Integer> lastUsed = state.getTilesUsed();
+	List<Integer> newUsed = null;
+    if (lastUsed.size() > 1) {
+    	newUsed = lastUsed.subList(0, lastUsed.size()-2);
+    }
+    List<Integer> lastAtHand = state.getTilesAtHand(playerId);
+    List<Integer> newAtHand = subtract(lastAtHand, tilesToChi);
+    List<Integer> lastAtDeclared = state.getTilesAtDeclared(playerId);
+    List<Integer> newAtDeclared = concat(lastAtDeclared, lastUsed.subList(lastUsed.size() -1, lastUsed.size()-1));
+    newAtDeclared = concat(newAtDeclared, tilesToChi);
+    Integer tileIndex[] = new Integer[3];
+    tileIndex[0] = lastUsed.get(lastUsed.size() -1);
+    tileIndex[1] = tilesToChi.get(0);
+    tileIndex[2] = tilesToChi.get(1);
+    
+    // 0) new SetTurn(0/1/2/3),
+    // 1) new Set("move", "Chi"),
+    // 2) new Set("tilesUsed", [...]),
+    // 3) new Set("tilesAtHandOf1/2/3/4, [...]),
+    // 4) new Set("tilesAtDeclaredOf1/2/3/4, [...]),
+    // 5) new SetVisibility(T*, null)
+    List<Operation> expectedOperations = ImmutableList.<Operation>of(
+    	new SetTurn(playerIds.indexOf(playerId)),
+    	new Set(M, C),
+    	new Set(TU, newUsed),
+        new Set(getAtHandKey(playerId), newAtHand),
+        new Set(getAtDeclaredKey(playerId), newAtDeclared),
+        new SetVisibility(T + tileIndex[0]),
+        new SetVisibility(T + tileIndex[1]),
+        new SetVisibility(T + tileIndex[2]));
+    return expectedOperations;
+  }
+  
+  List<Operation> peng(MahJongState state, List<Integer> tilesToPeng, 
+		  List<Integer> playerIds) {
+    // peng a tile with two tiles at hand
+	int playerId = state.getTurn();
+    check(state. getTilesAtHand(playerId).size() >= 4);
+
+    List<Integer> lastUsed = state.getTilesUsed();
+	List<Integer> newUsed = null;
+    if (lastUsed.size() > 1) {
+    	newUsed = lastUsed.subList(0, lastUsed.size()-2);
+    }
+    List<Integer> lastAtHand = state.getTilesAtHand(playerId);
+    List<Integer> newAtHand = subtract(lastAtHand, tilesToPeng);
+    List<Integer> lastAtDeclared = state.getTilesAtDeclared(playerId);
+    List<Integer> newAtDeclared = concat(lastAtDeclared, lastUsed.subList(lastUsed.size() -1, lastUsed.size()-1));
+    newAtDeclared = concat(newAtDeclared, tilesToPeng);
+    Integer tileIndex[] = new Integer[3];
+    tileIndex[0] = lastUsed.get(lastUsed.size() -1);
+    tileIndex[1] = tilesToPeng.get(0);
+    tileIndex[2] = tilesToPeng.get(1);
+    
+    // 0) new SetTurn(0/1/2/3),
+    // 1) new Set("move", "Peng"),
+    // 2) new Set("tilesUsed", [...]),
+    // 3) new Set("tilesAtHandOf1/2/3/4, [...]),
+    // 4) new Set("tilesAtDeclaredOf1/2/3/4, [...]),
+    // 5) new SetVisibility(T*, null)
+    List<Operation> expectedOperations = ImmutableList.<Operation>of(
+    	new SetTurn(playerIds.indexOf(playerId)),
+    	new Set(M, P),
+    	new Set(TU, newUsed),
+        new Set(getAtHandKey(playerId), newAtHand),
+        new Set(getAtDeclaredKey(playerId), newAtDeclared),
+        new SetVisibility(T + tileIndex[0]),
+        new SetVisibility(T + tileIndex[1]),
+        new SetVisibility(T + tileIndex[2]));
+    return expectedOperations;
+  }
+
+  
+  //getExpectedOperations need to be developed
   List<Operation> getExpectedOperations(
       Map<String, Object> lastApiState, List<Operation> lastMove, List<Integer> playerIds,
       int lastMovePlayerId) {
@@ -97,6 +233,28 @@ public class MahJongLogic {
     MahJongState lastState = gameApiStateToMahJongState(lastApiState, lastMovePlayerId, playerIds);
     return pickUp(lastState, playerIds);
 
+  }
+
+  String tileIdToString(int tileId) {
+	    checkArgument(tileId >= 0 && tileId < 136);
+	    int rank;
+	    int suit;
+	    if (tileId <108) {
+	    	rank = (tileId / 12 + 1);
+		    if (tileId % 3 < 4) {
+		    	suit = 0;
+		    } else if (tileId % 3 < 8) {
+		    	suit = 1;
+		    } else {
+		    	suit = 2;
+		    }
+	    } else {
+	    	rank = 0;
+		    suit = tileId / 4 -24;
+	    }
+	    String rankString = Rank.values()[rank].getRankString();
+	    String suitString = Suit.values()[suit].getFirstLetterLowerCase();
+	    return rankString + suitString;
   }
 
   <T> List<T> concat(List<T> a, List<T> b) {
@@ -109,6 +267,22 @@ public class MahJongLogic {
     result.removeAll(elementsToRemove);
     check(removeFrom.size() == result.size() + elementsToRemove.size());
     return result;
+  }
+  
+  List<Integer> getIndicesInRange(int fromInclusive, int toInclusive) {
+	    List<Integer> keys = Lists.newArrayList();
+	    for (int i = fromInclusive; i <= toInclusive; i++) {
+	    	keys.add(i);
+	    }
+	    return keys;
+  }
+  
+  List<String> getTilesInRange(int fromInclusive, int toInclusive) {
+	    List<String> keys = Lists.newArrayList();
+	    for (int i = fromInclusive; i <= toInclusive; i++) {
+	    	keys.add(T + i);
+	    }
+	    return keys;
   }
   
   String getAtHandKey (int playerId) {
