@@ -5,8 +5,8 @@ import com.google.common.collect.ImmutableList;
  * Representation of the MahJong game state.
  * The game state uses these keys: 
  *** tilesAtWall, tilesUsed, move
- *** tilesInHandOf1, tilesInHandOf2, tilesInHandOf3, tilesInHandOf4,
- *** tilesDeclaredOf1, tilesDeclaredof2, tilesDeclaredOf3, tilesDeclaredOf4,
+ *** tilesAtHandOfOne, tilesAtHandOfTwo, tilesAtHandOfThree, tilesAtHandOfFour,
+ *** tilesAtDeclaredOfOne, tilesAtDeclaredOfTwo, tilesAtDeclaredOfThree, tilesAtDeclaredOfFour,
  *** T1...T136, which are mapped to the tiles
  */
 public class MahJongState {
@@ -23,36 +23,36 @@ public class MahJongState {
 	   */
 	  private final ImmutableList<Integer> tilesAtWall;
 	  private final ImmutableList<Integer> tilesUsed;
-	  private final ImmutableList<Integer> tilesInHandOf1;
-	  private final ImmutableList<Integer> tilesDeclaredOf1;
-	  private final ImmutableList<Integer> tilesInHandOf2;
-	  private final ImmutableList<Integer> tilesDeclaredOf2;
-	  private final ImmutableList<Integer> tilesInHandOf3;
-	  private final ImmutableList<Integer> tilesDeclaredOf3;
-	  private final ImmutableList<Integer> tilesInHandOf4;
-	  private final ImmutableList<Integer> tilesDeclaredOf4;
+	  private final ImmutableList<Integer> tilesAtHandOfOne;
+	  private final ImmutableList<Integer> tilesAtDeclaredOfOne;
+	  private final ImmutableList<Integer> tilesAtHandOfTwo;
+	  private final ImmutableList<Integer> tilesAtDeclaredOfTwo;
+	  private final ImmutableList<Integer> tilesAtHandOfThree;
+	  private final ImmutableList<Integer> tilesAtDeclaredOfThree;
+	  private final ImmutableList<Integer> tilesAtHandOfFour;
+	  private final ImmutableList<Integer> tilesAtDeclaredOfFour;
 
 	  public MahJongState(String move, ImmutableList<Integer> playerIds,
 	      ImmutableList<Optional<Tiles>> tiles, ImmutableList<Integer> tilesAtWall,
 	      ImmutableList<Integer> tilesUsed, 
-	      ImmutableList<Integer> tilesInHandOf1, ImmutableList<Integer> tilesDeclaredOf1,
-	      ImmutableList<Integer> tilesInHandOf2, ImmutableList<Integer> tilesDeclaredOf2,
-	      ImmutableList<Integer> tilesInHandOf3, ImmutableList<Integer> tilesDeclaredOf3,
-	      ImmutableList<Integer> tilesInHandOf4, ImmutableList<Integer> tilesDeclaredOf4) {
+	      ImmutableList<Integer> tilesAtHandOfOne, ImmutableList<Integer> tilesAtDeclaredOfOne,
+	      ImmutableList<Integer> tilesAtHandOfTwo, ImmutableList<Integer> tilesAtDeclaredOfTwo,
+	      ImmutableList<Integer> tilesAtHandOfThree, ImmutableList<Integer> tilesAtDeclaredOfThree,
+	      ImmutableList<Integer> tilesAtHandOfFour, ImmutableList<Integer> tilesAtDeclaredOfFour) {
 	    super();
 	    this.move = (move);
 	    this.playerIds = checkNotNull(playerIds);
 	    this.tiles = checkNotNull(tiles);
 	    this.tilesAtWall = tilesAtWall;
 	    this.tilesUsed = tilesUsed;
-	    this.tilesInHandOf1 = checkNotNull(tilesInHandOf1);
-	    this.tilesDeclaredOf1 = tilesDeclaredOf1;
-	    this.tilesInHandOf2 = checkNotNull(tilesInHandOf2);
-	    this.tilesDeclaredOf2 = tilesDeclaredOf2;
-	    this.tilesInHandOf3 = checkNotNull(tilesInHandOf3);
-	    this.tilesDeclaredOf3 = tilesDeclaredOf3;
-	    this.tilesInHandOf4 = checkNotNull(tilesInHandOf4);
-	    this.tilesDeclaredOf4 = tilesDeclaredOf4;
+	    this.tilesAtHandOfOne = checkNotNull(tilesAtHandOfOne);
+	    this.tilesAtDeclaredOfOne = tilesAtDeclaredOfOne;
+	    this.tilesAtHandOfTwo = checkNotNull(tilesAtHandOfTwo);
+	    this.tilesAtDeclaredOfTwo = tilesAtDeclaredOfTwo;
+	    this.tilesAtHandOfThree = checkNotNull(tilesAtHandOfThree);
+	    this.tilesAtDeclaredOfThree = tilesAtDeclaredOfThree;
+	    this.tilesAtHandOfFour = checkNotNull(tilesAtHandOfFour);
+	    this.tilesAtDeclaredOfFour = tilesAtDeclaredOfFour;
 
 	  }
 
@@ -76,37 +76,33 @@ public class MahJongState {
 	    return tilesUsed;
 	  }
 
-	  public ImmutableList<Integer> getTilesInHad(int playerId) {
+	  public ImmutableList<Integer> getTilesAtHand(int playerId) {
 	    switch (playerId) {
 	    case 1: 
-	    	return tilesInHandOf1;
-	    	break;	    	
+	    	return tilesAtHandOfOne;	
 	    case 2: 
-	    	return tilesInHandOf2;
-	    	break;	    		    	
+	    	return tilesAtHandOfTwo;	
 	    case 3: 
-	    	return tilesInHandOf3;
-	    	break;	    	
+	    	return tilesAtHandOfThree;
 	    case 4: 
-	    	return tilesInHandOf4;
-	    	break;	    		
+	    	return tilesAtHandOfFour;
+	    default:
+	    	return null;
 	    }
 	  }
 
-	  public ImmutableList<Integer> getTilesDeclared(int playerId) {
+	  public ImmutableList<Integer> getTilesAtDeclared(int playerId) {
 		    switch (playerId) {
 		    case 1: 
-		    	return tilesDeclaredOf1;
-		    	break;	    	
+		    	return tilesAtDeclaredOfOne;    	
 		    case 2: 
-		    	return tilesDeclaredOf2;
-		    	break;	    		    	
+		    	return tilesAtDeclaredOfTwo;
 		    case 3: 
-		    	return tilesDeclaredOf3;
-		    	break;	    	
+		    	return tilesAtDeclaredOfThree;
 		    case 4: 
-		    	return tilesDeclaredOf4;
-		    	break;	    		
+		    	return tilesAtDeclaredOfFour;
+		    default: 
+		    	return null;
 		    }
 		  }
 }
