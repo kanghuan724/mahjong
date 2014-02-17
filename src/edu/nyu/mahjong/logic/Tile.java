@@ -2,6 +2,8 @@ package edu.nyu.mahjong.logic;
 
 import java.util.Arrays;
 
+import edu.nyu.mahjong.iface.Equality;
+
 public class Tile extends Equality {
 
   private Suit suitValue;
@@ -45,7 +47,7 @@ public class Tile extends Equality {
    */
   @Override
   public String toString() {
-    return rankValue.toString() + " of " + suitValue.toString();
+    return suitValue.getFirstLetterLowerCase()+rankValue.toString() ;
   }
 
   @Override

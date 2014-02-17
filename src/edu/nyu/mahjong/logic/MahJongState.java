@@ -2,6 +2,7 @@ package edu.nyu.mahjong.logic;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import edu.nyu.mahjong.iface.*;
 /**
  * Representation of the MahJong game state.
  * The game state uses these keys: 
@@ -12,7 +13,7 @@ import com.google.common.collect.ImmutableList;
  */
 public class MahJongState {
 	  private final int turn;
-	  private final String move;
+	  private final Equality move;
 	  private final ImmutableList<Integer> playerIds;
 
 	  /**
@@ -34,7 +35,7 @@ public class MahJongState {
 	  private final ImmutableList<Integer> tilesAtHandOfFour;
 	  private final ImmutableList<Integer> tilesAtDeclaredOfFour;
 
-	  public MahJongState(int turn, String move, ImmutableList<Integer> playerIds,
+	  public MahJongState(int turn, Equality move, ImmutableList<Integer> playerIds,
 	      ImmutableList<Optional<Tile>> tiles, ImmutableList<Integer> tilesAtWall,
 	      ImmutableList<Integer> tilesUsed, 
 	      ImmutableList<Integer> tilesAtHandOfOne, ImmutableList<Integer> tilesAtDeclaredOfOne,
@@ -63,7 +64,7 @@ public class MahJongState {
 	    return turn;
 	  }
 	  
-	  public String getMove() {
+	  public Equality getMove() {
 	    return move;
 	  }
 

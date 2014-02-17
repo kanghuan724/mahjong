@@ -13,15 +13,14 @@ public enum Rank {
 
 			int ord1 = o1.ordinal();
 			int ord2 = o2.ordinal();
-			if ((o1 == VALUES[0] || o2 == VALUES[0]) && (o1 != o2)) {
-				return 10;
-			} else {
-				return ord1 - ord2;
-			}
+			boolean isCompare = (o1 == VALUES[0] || o2 == VALUES[0])
+					&& (ord1 != ord2);
+			return isCompare ? 10 : (ord1 - ord2);
+
 		}
 	};
 
-	public static Rank fromRankString(String rankString) {
+	public static Rank fromRankString(final String rankString) {
 		return VALUES[Integer.valueOf(rankString)];
 	}
 
@@ -30,16 +29,16 @@ public enum Rank {
 	}
 
 	public Rank getNext() {
-		if (this == VALUES[VALUES.length - 1]) {
+		if (this.ordinal() == VALUES.length - 1) {
 			return VALUES[0];
 		}
-		return values()[ordinal() + 1];
+		return values()[this.ordinal() + 1];
 	}
 
 	public Rank getPrev() {
-		if (this == VALUES[0]) {
+		if (this.ordinal()==0) {
 			return VALUES[VALUES.length - 1];
 		}
-		return values()[ordinal() - 1];
+		return values()[this.ordinal() - 1];
 	}
 }

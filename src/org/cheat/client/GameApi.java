@@ -304,7 +304,7 @@ public final class GameApi {
       this(key, (Object) visibleToPlayerIds);
     }
 
-    private SetVisibility(String key, Object visibleToPlayerIds) {
+    public SetVisibility(String key, Object visibleToPlayerIds) {
       this.key = key;
       this.visibleToPlayerIds = checkHasJsonSupportedType(visibleToPlayerIds);
     }

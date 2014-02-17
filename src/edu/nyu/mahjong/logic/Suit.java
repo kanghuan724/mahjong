@@ -1,7 +1,8 @@
 package edu.nyu.mahjong.logic;
 
 public enum Suit {
-	WCHARACTERS, BAMBOOS, CIRCLES, EAST, WEST, SOUTH, NORTH, RED, GREEN, WHITE;
+	
+	ACHARACTERS, BAMBOOS, CIRCLES, EAST, WEST, SOUTH, NORTH, RED, GREEN, DWHITE;
 
 	private static final Suit[] VALUES = values();
 
@@ -20,14 +21,14 @@ public enum Suit {
 	}
 
 	public Suit getNext() {
-		if (this == VALUES[VALUES.length - 1]) {
+		if (this.ordinal()  == VALUES.length - 1) {
 			return VALUES[0];
 		}
 		return values()[ordinal() + 1];
 	}
 
 	public Suit getPrev() {
-		if (this == VALUES[0]) {
+		if (this.ordinal()  == 0) {
 			return VALUES[VALUES.length - 1];
 		}
 		return values()[ordinal() - 1];

@@ -1,4 +1,4 @@
-package edu.nyu.mahjong.logic;
+package edu.nyu.mahjong.iface;
 import java.util.Objects;
 
 /**
