@@ -331,11 +331,16 @@ public class MahJongLogic {
 	}
 	List<Operation> WaitForGang(MahJongState state,List<Operation> lastMove, List<Integer> playerIds)
 	{
-		 check(WaitForGang.lastStateValid(state));
+		check(WaitForGang.lastStateValid(state));
+		List<Operation> expectedOperations = Lists.newArrayList();
 		int playerId=state.getTurn();
-		List<Operation> expectedOperations=ImmutableList.<Operation>of(
-				new SetTurn(nextId(playerId,playerIds)),
-				new Set(M,ImmutableList.<String>of(WH,String.valueOf(playerId))));
+		expectedOperations.add(new SetTurn(nextId(playerId,playerIds)));
+		//End the game when no more tiles at wall
+	    if (state.getTilesAtWall().isEmpty()) {
+	        expectedOperations.add(new EndGame(null));
+	    } else {
+		    expectedOperations.add(new Set(M,ImmutableList.<String>of(WH,String.valueOf(playerId))));
+	    }
 		return expectedOperations;
 	}
 	List<Operation> WaitForPeng(MahJongState state,List<Operation> lastMove, List<Integer> playerIds)
