@@ -13,7 +13,7 @@ import edu.nyu.mahjong.iface.*;
  */
 public class MahJongState {
 	  private final int turn;
-	  private final Equality move;
+	  private final ACommand move;
 	  private final ImmutableList<Integer> playerIds;
 
 	  /**
@@ -35,7 +35,7 @@ public class MahJongState {
 	  private final ImmutableList<Integer> tilesAtHandOfFour;
 	  private final ImmutableList<Integer> tilesAtDeclaredOfFour;
 
-	  public MahJongState(int turn, Equality move, ImmutableList<Integer> playerIds,
+	  public MahJongState(int turn, ACommand move, ImmutableList<Integer> playerIds,
 	      ImmutableList<Optional<Tile>> tiles, ImmutableList<Integer> tilesAtWall,
 	      ImmutableList<Integer> tilesUsed, 
 	      ImmutableList<Integer> tilesAtHandOfOne, ImmutableList<Integer> tilesAtDeclaredOfOne,
@@ -64,7 +64,7 @@ public class MahJongState {
 	    return turn;
 	  }
 	  
-	  public Equality getMove() {
+	  public ACommand getMove() {
 	    return move;
 	  }
 

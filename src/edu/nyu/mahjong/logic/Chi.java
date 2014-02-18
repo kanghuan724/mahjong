@@ -28,7 +28,14 @@ public class Chi extends ACommand {
 	public static List<String> toChiEntryInGameState(@Nullable final Chi chi) {
 	    return chi == null ? null : ImmutableList.of("Chi",chi.getTarget().toString());
 	  }
-
+	public static boolean lastStateValid(MahJongState lastState)
+    {
+	   String lastOperation=lastState.getMove().getName();
+       if (lastOperation=="WaitForChi") 
+         return true;	
+       else
+    	  return false;
+    }
 	private final String name = "Chi";
 	private final Tile target;
 
@@ -42,7 +49,6 @@ public class Chi extends ACommand {
 		return name;
 	}
 
-	@Override
 	public Tile getTarget() {
 		return target;
 	}

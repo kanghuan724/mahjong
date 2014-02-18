@@ -28,8 +28,23 @@ public class Gang extends ACommand {
 	public static List<String> toGangEntryInGameState(@Nullable final Gang gang) {
 	    return gang == null ? null : ImmutableList.of("Gang",gang.getTarget().toString());
 	  }
-
-	private final String name = "Pick";
+	public static boolean lastStateValid(MahJongState lastState)
+    {
+	   String lastOperation=lastState.getMove().getName();
+       if (lastOperation=="waitForGang")
+         return true;	
+       if (lastOperation=="RefuseGang")
+       {
+    	   RefuseGang lastGang=(RefuseGang)(lastState.getMove());
+   	       if (lastGang.getSource()==lastState.getTurn())
+   	    	return false;
+   	       else
+   	    	return true;
+       }
+       else
+    	  return false;
+    }
+	private final String name = "Gang";
 	private final Tile target;
 
 	public Gang(Tile target) {
@@ -42,7 +57,6 @@ public class Gang extends ACommand {
 		return name;
 	}
 
-	@Override
 	public Tile getTarget() {
 		return target;
 	}

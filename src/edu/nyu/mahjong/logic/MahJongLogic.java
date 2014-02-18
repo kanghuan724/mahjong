@@ -34,9 +34,14 @@ public class MahJongLogic {
 	private static final String RP="RefusePeng";
 	private static final String RC="RefuseChi";
 	private static final String RG="RefuseGang";
+	private static final String RH="RefuseHu";
 	private static final String T = "T"; // Tile key (T0...T135)
 	private static final String TAW = "tilesAtWall";
 	private static final String TU = "tilesUsed";
+	private static final String WP= "WaitForPeng";
+	private static final String WC= "WaitForChi";
+	private static final String WG= "WaitForGang";
+	private static final String WH= "WaitForHu";
 
 	public VerifyMoveDone verify(VerifyMove verifyMove) {
 		try {
@@ -107,7 +112,7 @@ public class MahJongLogic {
 		// picking up a tile
 		check(state.getTilesAtWall().size() >= 1);
 		int playerId = state.getTurn();
-
+        check(Pick.lastStateValid(state));
 		List<Integer> lastAtWall = state.getTilesAtWall();
 		List<Integer> newAtWall = lastAtWall.subList(1, lastAtWall.size() - 1);
 		List<Integer> lastAtHand = state.getTilesAtHand(playerId);
@@ -136,6 +141,7 @@ public class MahJongLogic {
 		// discarding up a tile
 		int playerId = state.getTurn();
 		check(state.getTilesAtHand(playerId).size() >= 1);
+		check(Discard.lastStateValid(state));
 		List<Integer> lastAtHand = state.getTilesAtHand(playerId);
 		Set newAtHand=(Set)lastMove.get(3);
 		List<Integer> newAtHandTile=(List<Integer>)newAtHand.getValue();
@@ -156,7 +162,7 @@ public class MahJongLogic {
 		// 4) new SetVisibility(T*, null)
 		List<Operation> expectedOperations = ImmutableList.<Operation> of(
 				//new SetTurn(playerIds.indexOf(playerId) % 4 + 1),
-				new SetTurn(nextId(playerId,playerIds)),
+				new SetTurn(playerId),
 				// ?HOW TO SetTurn WHEN A CHI/PENG MAY HAPPEN?
 				new Set(M, ImmutableList.<String>of(D,discardTile.get().toString())), new Set(TU, newUsed), new Set(
 						getAtHandKey(playerId), newAtHand), new SetVisibility(T
@@ -170,6 +176,7 @@ public class MahJongLogic {
 		int playerId = state.getTurn();
 		check(state.getTilesAtHand(playerId).size() >= 4);
         check(state.getTilesUsed().size()>=1);
+        check(Chi.lastStateValid(state));
 		List<Integer> lastUsed = state.getTilesUsed();
 		List<Integer> newUsed = lastUsed.subList(0, lastUsed.size()-2);
 		List<Integer> tileToChi=lastUsed.subList(lastUsed.size()-1,lastUsed.size()-1);
@@ -200,8 +207,9 @@ public class MahJongLogic {
 		// 3) new Set("tilesAtHandOf1/2/3/4, [...]),
 		// 4) new Set("tilesAtDeclaredOf1/2/3/4, [...]),
 		// 5) new SetVisibility(T*, null)
+		
 		List<Operation> expectedOperations = ImmutableList.<Operation> of(
-				new SetTurn(playerIds.indexOf(playerId)), new Set(M, ImmutableList.<String>of(C,chiTile.get().toString())),
+				new SetTurn(playerId), new Set(M, ImmutableList.<String>of(C,chiTile.get().toString())),
 				new Set(TU, newUsed),
 				new Set(getAtHandKey(playerId), newAtHand), new Set(
 						getAtDeclaredKey(playerId), newAtDeclared),
@@ -211,10 +219,12 @@ public class MahJongLogic {
 	}
 	List<Operation> refusechi(MahJongState state,List<Operation> lastMove, List<Integer> playerIds)
 	{
+		check(RefuseChi.lastStateValid(state));
 		int playerId=state.getTurn();
+		int sourceId=((WaitForChi)state.getMove()).getSource();
 		List<Operation> expectedOperations=ImmutableList.<Operation>of(
-				new SetTurn(playerId),
-				new Set(M,ImmutableList.<String>of(RC)));
+				new SetTurn(nextId(playerId,state.getPlayerIds())),
+				new Set(M,ImmutableList.<String>of(RC,String.valueOf(sourceId))));
 		return expectedOperations;
 	}
 	List<Operation> peng(MahJongState state, List<Operation> lastMove,
@@ -223,6 +233,7 @@ public class MahJongLogic {
 		int playerId = state.getTurn();
 		check(state.getTilesAtHand(playerId).size() >= 4);
         check(state.getTilesUsed().size()>=1);
+        check(Peng.lastStateValid(state));
 		List<Integer> lastUsed = state.getTilesUsed();
 		List<Integer> newUsed = lastUsed.subList(0, lastUsed.size()-2);
 		List<Integer> tileToPeng=lastUsed.subList(lastUsed.size()-1,lastUsed.size()-1);
@@ -250,7 +261,7 @@ public class MahJongLogic {
 		// 4) new Set("tilesAtDeclaredOf1/2/3/4, [...]),
 		// 5) new SetVisibility(T*, null)
 		List<Operation> expectedOperations = ImmutableList.<Operation> of(
-				new SetTurn(playerIds.indexOf(playerId)), new Set(M, ImmutableList.<String>of(P,tilePeng.get().toString())),
+				new SetTurn(playerId), new Set(M, ImmutableList.<String>of(P,tilePeng.get().toString())),
 				new Set(TU, newUsed),
 				new Set(getAtHandKey(playerId), newAtHand), new Set(
 						getAtDeclaredKey(playerId), newAtDeclared),
@@ -260,29 +271,89 @@ public class MahJongLogic {
 	}
 	List<Operation> refusepeng(MahJongState state,List<Operation> lastMove, List<Integer> playerIds)
 	{
-		
+		check(RefusePeng.lastStateValid(state));
 		int playerId=state.getTurn();
+		int sourceId;
+		if (state.getMove().getName()=="WaitForPeng")
+			sourceId=((WaitForPeng)state.getMove()).getSource();
+		else
+			sourceId=((RefusePeng)state.getMove()).getSource();
 		List<Operation> expectedOperations=ImmutableList.<Operation>of(
 				new SetTurn(nextId(playerId,playerIds)),
-				new Set(M,ImmutableList.<String>of(RP)));
+				new Set(M,ImmutableList.<String>of(RP,String.valueOf(sourceId))));
 		return expectedOperations;
 	}
-		
+	List<Operation> refusehu(MahJongState state,List<Operation> lastMove, List<Integer> playerIds)
+	{
+		check(RefuseHu.lastStateValid(state));
+		int playerId=state.getTurn();
+		int sourceId;
+		if (state.getMove().getName()=="WaitForHu")
+			sourceId=((WaitForHu)state.getMove()).getSource();
+		else
+			sourceId=((RefuseHu)state.getMove()).getSource();
+		List<Operation> expectedOperations=ImmutableList.<Operation>of(
+				new SetTurn(nextId(playerId,playerIds)),
+				new Set(M,ImmutableList.<String>of(RH,String.valueOf(sourceId))));
+		return expectedOperations;
+	}
 	List<Operation> refusegang(MahJongState state,List<Operation> lastMove, List<Integer> playerIds)
 	{
+		check(RefuseGang.lastStateValid(state));
+		int playerId=state.getTurn();
+		int sourceId;
+		if (state.getMove().getName()=="WaitForGang")
+			sourceId=((WaitForGang)state.getMove()).getSource();
+		else
+			sourceId=((RefuseGang)state.getMove()).getSource();
+		List<Operation> expectedOperations=ImmutableList.<Operation>of(
+				new SetTurn(nextId(playerId,playerIds)),
+				new Set(M,ImmutableList.<String>of(RG,String.valueOf(sourceId))));
+		return expectedOperations;
+	}
+	List<Operation> WaitForChi(MahJongState state,List<Operation> lastMove, List<Integer> playerIds)
+	{
+		check(WaitForChi.lastStateValid(state));
 		int playerId=state.getTurn();
 		List<Operation> expectedOperations=ImmutableList.<Operation>of(
 				new SetTurn(nextId(playerId,playerIds)),
-				new Set(M,ImmutableList.<String>of(RG)));
+				new Set(M,ImmutableList.<String>of(WC,String.valueOf(playerId))));
 		return expectedOperations;
 	}
-	
+	List<Operation> WaitForHu(MahJongState state,List<Operation> lastMove, List<Integer> playerIds)
+	{
+		check(WaitForHu.lastStateValid(state));
+		int playerId=state.getTurn();
+		List<Operation> expectedOperations=ImmutableList.<Operation>of(
+				new SetTurn(nextId(playerId,playerIds)),
+				new Set(M,ImmutableList.<String>of(WH,String.valueOf(playerId))));
+		return expectedOperations;
+	}
+	List<Operation> WaitForGang(MahJongState state,List<Operation> lastMove, List<Integer> playerIds)
+	{
+		 check(WaitForGang.lastStateValid(state));
+		int playerId=state.getTurn();
+		List<Operation> expectedOperations=ImmutableList.<Operation>of(
+				new SetTurn(nextId(playerId,playerIds)),
+				new Set(M,ImmutableList.<String>of(WH,String.valueOf(playerId))));
+		return expectedOperations;
+	}
+	List<Operation> WaitForPeng(MahJongState state,List<Operation> lastMove, List<Integer> playerIds)
+	{
+		check(WaitForPeng.lastStateValid(state));
+		int playerId=state.getTurn();
+		List<Operation> expectedOperations=ImmutableList.<Operation>of(
+				new SetTurn(nextId(playerId,playerIds)),
+				new Set(M,ImmutableList.<String>of(WP,String.valueOf(playerId))));
+		return expectedOperations;
+	}
 	List<Operation> gang(MahJongState state, List<Operation> lastMove,
 			List<Integer> playerIds) {
 		// peng a tile with two tiles at hand
 		int playerId = state.getTurn();
 		check(state.getTilesAtHand(playerId).size() >= 4);
         check(state.getTilesUsed().size()>=1);
+        check(Gang.lastStateValid(state));
 		List<Integer> lastUsed = state.getTilesUsed();
 		List<Integer> newUsed = lastUsed.subList(0, lastUsed.size()-2);
 		List<Integer> tileToGang=lastUsed.subList(lastUsed.size()-1,lastUsed.size()-1);
@@ -313,7 +384,7 @@ public class MahJongLogic {
 		// 4) new Set("tilesAtDeclaredOf1/2/3/4, [...]),
 		// 5) new SetVisibility(T*, null)
 		List<Operation> expectedOperations = ImmutableList.<Operation> of(
-				new SetTurn(playerIds.indexOf(playerId)), new Set(M, ImmutableList.<String>of(G,gangTile.get().toString())),
+				new SetTurn(playerId), new Set(M, ImmutableList.<String>of(G,gangTile.get().toString())),
 				new Set(TU, newUsed),
 				new Set(getAtHandKey(playerId), newAtHand), new Set(
 						getAtDeclaredKey(playerId), newAtDeclared),
@@ -330,17 +401,35 @@ public class MahJongLogic {
 		    }
 		MahJongState lastState = gameApiStateToMahJongState(lastApiState,
 				lastMovePlayerId, playerIds);
-		
-		if (lastState.getMove().getName())
+		switch (lastState.getMove().getName())
+		{
+		case(PU):
 		  return pickUp(lastState, playerIds);
-		if (lastMove.contains(new Set(M,D)))
+		case(D):
 		  return discard(lastState,lastMove,playerIds);
-		if (lastMove.contains(new Set(M,C)))
+		case (C):
 		  return chi(lastState,lastMove,playerIds);
-		if (lastMove.contains(new Set(M,P)))
+		case (P):
 		  return peng(lastState,lastMove,playerIds);
-		if (lastMove.contains(new Set(M,G)))
+		case(G):
 		  return gang(lastState,lastMove,playerIds);
+		case(RG):
+			return refusegang(lastState,lastMove,playerIds);
+		case(RP):
+			return refusepeng(lastState,lastMove,playerIds);
+		case(RC):
+			return refusechi(lastState,lastMove,playerIds);
+		case(WC):
+			return WaitForChi(lastState,lastMove,playerIds);
+		case(WP):
+			return WaitForPeng(lastState,lastMove,playerIds);
+		case(WG):
+			return WaitForGang(lastState,lastMove,playerIds);
+		case(WH):
+			return WaitForHu(lastState,lastMove,playerIds);
+		case (RH):
+			return refusehu(lastState,lastMove,playerIds);
+		}
 		return null;
 
 	}
@@ -477,7 +566,7 @@ public class MahJongLogic {
 			atDeclared.add ((List<Integer>) gameApiState
 					.get(getAtDeclaredKey(i)));
 		}
-        Equality status=factory.makeCommand((ImmutableList<String>)gameApiState.get(M));
+        ACommand status=factory.makeCommand((ImmutableList<String>)gameApiState.get(M));
 		return new MahJongState(turn, status, ImmutableList.copyOf(playerIds),
 				ImmutableList.copyOf(tiles), ImmutableList.copyOf(tilesAtWall),
 				ImmutableList.copyOf(tilesUsed),
@@ -490,7 +579,7 @@ public class MahJongLogic {
 				ImmutableList.copyOf(atHand.get(3)),
 				ImmutableList.copyOf(atDeclared.get(3)));
 	}
-    private int nextId(int playerId,List<Integer> playerIds)
+    public static int nextId(int playerId,List<Integer> playerIds)
     {
     	int index=playerIds.indexOf(playerId);
     	int nextIndex=index+1;

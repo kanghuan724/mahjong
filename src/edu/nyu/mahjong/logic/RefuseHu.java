@@ -7,20 +7,20 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 
 import edu.nyu.mahjong.iface.*;
-public class RefuseGang extends ACommand{
+public class RefuseHu extends ACommand{
     private final String name;
     private final int source;
-    public static RefuseGang fromRefuseGangEntryInGameState(@Nullable final ImmutableList<String> RefuseGangEntry) {
-		if (RefuseGangEntry == null || RefuseGangEntry.isEmpty()) {
+    public static RefuseHu fromRefuseHuEntryInGameState(@Nullable final ImmutableList<String> RefuseHuEntry) {
+		if (RefuseHuEntry == null || RefuseHuEntry.isEmpty()) {
 			return null;
 		}
 		// "rankA"
-		int Id=Integer.valueOf(RefuseGangEntry.get(1));
-		return new RefuseGang(Id);
+		int Id=Integer.valueOf(RefuseHuEntry.get(1));
+		return new RefuseHu(Id);
 	}
-    public RefuseGang(int sourceId)
+    public RefuseHu(int sourceId)
     {
-    	name="RefuseGang";
+    	name="RefuseHu";
     	source=sourceId;
     }
 	@Override
@@ -31,12 +31,12 @@ public class RefuseGang extends ACommand{
 	public static boolean lastStateValid(MahJongState lastState)
     {
 	   String lastOperation=lastState.getMove().getName();
-       if (lastOperation=="WaitForGang") 
+       if (lastOperation=="WaitForHu") 
          return true;
-       if (lastOperation=="RefuseGang")
+       if (lastOperation=="RefuseHu")
          {
-    	    RefuseGang lastGang=(RefuseGang)(lastState.getMove());
-    	    if (lastGang.getSource()==lastState.getTurn())
+    	    RefuseHu lastHu=(RefuseHu)(lastState.getMove());
+    	    if (lastHu.getSource()==lastState.getTurn())
     	    	return false;
     	    else
     	    	return true;

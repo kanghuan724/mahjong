@@ -28,7 +28,22 @@ public class Peng extends ACommand {
 	public static List<String> toPengEntryInGameState(@Nullable final Peng peng) {
 	    return peng == null ? null : ImmutableList.of("Pick",peng.getTarget().toString());
 	  }
-
+	public static boolean lastStateValid(MahJongState lastState)
+    {
+		String lastOperation=lastState.getMove().getName();
+	    if (lastOperation=="waitForPeng")
+	         return true;	
+	    if (lastOperation=="RefusePeng")
+	       {
+	    	   RefusePeng lastPeng=(RefusePeng)(lastState.getMove());
+	   	       if (lastPeng.getSource()==lastState.getTurn())
+	   	    	return false;
+	   	       else
+	   	    	return true;
+	       }
+	       else
+	    	  return false;
+    }
 	private final String name = "Peng";
 	private final Tile target;
 
@@ -42,7 +57,6 @@ public class Peng extends ACommand {
 		return name;
 	}
 
-	@Override
 	public Tile getTarget() {
 		return target;
 	}

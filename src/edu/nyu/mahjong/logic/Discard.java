@@ -9,10 +9,10 @@ import com.google.common.collect.ImmutableList;
 
 import edu.nyu.mahjong.iface.ACommand;
 
-public class Throw extends ACommand {
+public class Discard extends ACommand {
 	//"Throw", "A7"
 	@Nullable
-	public static Throw fromThrowEntryInGameState(@Nullable final ImmutableList<String> ThrowEntry) {
+	public static Discard fromThrowEntryInGameState(@Nullable final ImmutableList<String> ThrowEntry) {
 		if (ThrowEntry == null || ThrowEntry.isEmpty()) {
 			return null;
 		}
@@ -20,18 +20,25 @@ public class Throw extends ACommand {
 				1));
 		Rank rank = Rank.fromRankString(ThrowEntry.get(1).substring(1));
 		Tile tile = new Tile(suit, rank);
-		return new Throw(tile);
+		return new Discard(tile);
 	}
 
 	@Nullable 
-	public static List<String> toThrowEntryInGameState(@Nullable final Throw t) {
-	    return t == null ? null : ImmutableList.of("Throw",t.getTarget().toString());
+	public static List<String> toThrowEntryInGameState(@Nullable final Discard t) {
+	    return t == null ? null : ImmutableList.of("Discard",t.getTarget().toString());
 	  }
-
-	private final String name = "Throw";
+	public static boolean lastStateValid(MahJongState lastState)
+    {
+	   String lastOperation=lastState.getMove().getName();
+       if (lastOperation=="PickUp"||lastOperation=="Peng"||lastOperation=="Chi") 
+         return true;	
+       else
+    	  return false;
+    }
+	private final String name = "Discard";
 	private final Tile target;
 
-	public Throw(Tile target) {
+	public Discard(Tile target) {
 
 		this.target = target;
 	}
@@ -41,7 +48,6 @@ public class Throw extends ACommand {
 		return name;
 	}
 
-	@Override
 	public Tile getTarget() {
 		return target;
 	}

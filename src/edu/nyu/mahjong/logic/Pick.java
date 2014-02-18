@@ -33,13 +33,19 @@ public class Pick extends ACommand {
 		this.name = "PickUp";
 		target=null;
 	}
-
+	public static boolean lastStateValid(MahJongState lastState)
+    {
+	   String lastOperation=lastState.getMove().getName();
+       if (lastOperation=="Gang"||lastOperation=="RefuseChi") 
+         return true;	
+       else
+    	  return false;
+    }
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	@Override
 	public Tile getTarget() {
 		return null;
 	}

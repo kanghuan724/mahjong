@@ -28,7 +28,24 @@ public class Hu extends ACommand {
 	public static List<String> toHuEntryInGameState(@Nullable final Hu hu) {
 	    return hu == null ? null : ImmutableList.of("Hu",hu.getTarget().toString());
 	  }
-
+	public static boolean lastStateValid(MahJongState lastState)
+    {
+		String lastOperation=lastState.getMove().getName();
+		if (lastOperation=="Pick")
+			return true;
+	    if (lastOperation=="waitForHu")
+	         return true;	
+	    if (lastOperation=="RefuseHu")
+	       {
+	    	   RefuseHu lastHu=(RefuseHu)(lastState.getMove());
+	   	       if (lastHu.getSource()==lastState.getTurn())
+	   	    	return false;
+	   	       else
+	   	    	return true;
+	       }
+	       else
+	    	  return false;
+    }
 	private final String name = "Hu";
 	private final Tile target;
 
@@ -42,7 +59,6 @@ public class Hu extends ACommand {
 		return name;
 	}
 
-	@Override
 	public Tile getTarget() {
 		return target;
 	}

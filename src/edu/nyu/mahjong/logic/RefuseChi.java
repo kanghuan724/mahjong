@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 
 import edu.nyu.mahjong.iface.*;
-public class RefuseChi extends BCommand{
+public class RefuseChi extends ACommand{
 	public static RefuseChi fromRefuseChiEntryInGameState(@Nullable final ImmutableList<String> RefuseChiEntry) {
 		if (RefuseChiEntry == null || RefuseChiEntry.isEmpty()) {
 			return null;
@@ -23,13 +23,21 @@ public class RefuseChi extends BCommand{
     	name="RefuseChi";
     	source=sourceId;
     }
+    public static boolean lastStateValid(MahJongState lastState)
+    {
+	   String lastOperation=lastState.getMove().getName();
+       if (lastOperation=="WaitForChi")
+    	   return true;
+       else
+    	  return false;
+    }
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
 		return name;
 	}
 
-	@Override
+
 	public int getSource() {
 		// TODO Auto-generated method stub
 		return source;

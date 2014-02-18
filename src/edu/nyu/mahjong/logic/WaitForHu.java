@@ -1,44 +1,35 @@
 package edu.nyu.mahjong.logic;
 
-
 import java.util.Arrays;
-
+import java.util.List;
+import edu.nyu.mahjong.logic.MahJongLogic.*;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
 import edu.nyu.mahjong.iface.*;
-public class RefusePeng extends ACommand{
-	public static RefusePeng fromRefusePengEntryInGameState(@Nullable final ImmutableList<String> RefusePengEntry) {
-		if (RefusePengEntry == null || RefusePengEntry.isEmpty()) {
+public class WaitForHu extends ACommand{
+	public static WaitForHu fromWaitForHuEntryInGameState(@Nullable final ImmutableList<String> WaitForHuEntry) {
+		if (WaitForHuEntry == null || WaitForHuEntry.isEmpty()) {
 			return null;
 		}
 		// "rankA"
-		int Id=Integer.valueOf(RefusePengEntry.get(1));
-		return new RefusePeng(Id);
+		int Id=Integer.valueOf(WaitForHuEntry.get(1));
+		return new WaitForHu(Id);
 	}
 	public static boolean lastStateValid(MahJongState lastState)
     {
 	   String lastOperation=lastState.getMove().getName();
-       if (lastOperation=="WaitForPeng")
-    	   return true;
-       if (lastOperation=="RefusePeng")
-         {
-    	    RefusePeng lastPeng=(RefusePeng)(lastState.getMove());
-    	    if (lastPeng.getSource()==lastState.getTurn())
-    	    	return false;
-    	    else
-    	    	return true;
-    	    
-         }
+	   if (lastOperation=="Discard")
+		   return true;
        else
     	  return false;
     }
     private final String name;
     private final int source;
-    public RefusePeng(int sourceId)
+    public WaitForHu(int sourceId)
     {
-    	name="RefusePeng";
+    	name="WaitForHu";
     	source=sourceId;
     }
 	@Override
@@ -46,6 +37,7 @@ public class RefusePeng extends ACommand{
 		// TODO Auto-generated method stub
 		return name;
 	}
+
 
 	public int getSource() {
 		// TODO Auto-generated method stub
