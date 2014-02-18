@@ -192,6 +192,7 @@ public class MahJongLogic {
 		List<Integer> lastAtDeclared = state.getTilesAtDeclared(playerId);
 		List<Integer> chiCombo=concat(tileToChi,tilesToChi);
 		check(chiCombo.size()==3);
+		check(Chi.chiCorrect(state, chiCombo));
 		//List<Integer> newAtDeclared = concat(lastAtDeclared,
 		//		lastUsed.subList(lastUsed.size() - 1, lastUsed.size() - 1));
 		List<Integer> newAtDeclared=concat(lastAtDeclared,chiCombo);
@@ -235,11 +236,11 @@ public class MahJongLogic {
         check(state.getTilesUsed().size()>=1);
         check(Peng.lastStateValid(state));
 		List<Integer> lastUsed = state.getTilesUsed();
-		List<Integer> newUsed = lastUsed.subList(0, lastUsed.size()-2);
+		List<Integer> newUsed = null;
 		List<Integer> tileToPeng=lastUsed.subList(lastUsed.size()-1,lastUsed.size()-1);
-		/*if (lastUsed.size() > 1) {
+		if (lastUsed.size() > 1) {
 			newUsed = lastUsed.subList(0, lastUsed.size() - 2);
-		}*/
+		}
 		Integer tileIndex=tileToPeng.get(0);
 		Optional<Tile> tilePeng=state.getTiles().get(tileIndex);
 		List<Integer> lastAtHand = state.getTilesAtHand(playerId);
@@ -249,11 +250,11 @@ public class MahJongLogic {
 		List<Integer> lastAtDeclared = state.getTilesAtDeclared(playerId);
 		List<Integer> PengCombo=concat(tileToPeng,tilesToPeng);
 		check(PengCombo.size()==3);
+		check(Peng.pengCorrect(state, PengCombo));
 		//List<Integer> newAtDeclared = concat(lastAtDeclared,
 		//		lastUsed.subList(lastUsed.size() - 1, lastUsed.size() - 1));
 		List<Integer> newAtDeclared=concat(lastAtDeclared,PengCombo);
 		
-
 		// 0) new SetTurn(0/1/2/3),
 		// 1) new Set("move", "Peng"),
 		// 2) new Set("tilesUsed", [...]),
@@ -374,6 +375,7 @@ public class MahJongLogic {
 		List<Integer> lastAtDeclared = state.getTilesAtDeclared(playerId);
 		List<Integer> GangCombo=concat(tileToGang,tilesToGang);
 		check (GangCombo.size()==4);
+		check(Gang.gangCorrect(state, GangCombo));
 		//List<Integer> newAtDeclared = concat(lastAtDeclared,
 		//		lastUsed.subList(lastUsed.size() - 1, lastUsed.size() - 1));
 		List<Integer> newAtDeclared=concat(lastAtDeclared,GangCombo);

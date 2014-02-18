@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
 import edu.nyu.mahjong.iface.ACommand;
@@ -44,6 +45,20 @@ public class Gang extends ACommand {
        else
     	  return false;
     }
+	
+	@SuppressWarnings("null")
+	public static boolean gangCorrect(MahJongState state, List<Integer> gangCombo){
+        Tile[] combo = null;
+		for (int i = 0; i<gangCombo.size(); i++) {
+			combo[i] = state.getTile(gangCombo.get(i)).get();
+		}
+		if (combo[0].equals(combo[1]) && combo[1].equals(combo[2]) && combo[2].equals(combo[3])) {
+			return true;
+		} else {	
+     		return false;
+		}	
+	}
+	
 	private final String name = "Gang";
 	private final Tile target;
 
