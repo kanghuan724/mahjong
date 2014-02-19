@@ -3,13 +3,15 @@ package edu.nyu.mahjong.logic;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
-
 import org.cheat.client.GameApi.*;
+
 import edu.nyu.mahjong.iface.*;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -25,7 +27,7 @@ public class MahJongLogic {
 	 * above order.
 	 */
 
-	private static final String M = "move";
+	private static final String M = "Move";
 	private static final String PU = "PickUp";
 	private static final String D = "Discard";
 	private static final String P = "Peng";
@@ -60,6 +62,8 @@ public class MahJongLogic {
 		List<Operation> expectedOperations = getExpectedOperations(lastState,
 				lastMove, verifyMove.getPlayerIds(),
 				verifyMove.getLastMovePlayerId());
+		System.out.println(expectedOperations);
+		System.out.println(lastMove);
 		check(expectedOperations.equals(lastMove), expectedOperations, lastMove);
 		// We use SetTurn, so we don't need to check that the correct player did
 		// the move.
@@ -178,8 +182,10 @@ public class MahJongLogic {
         check(state.getTilesUsed().size()>=1);
         check(Chi.lastStateValid(state));
 		List<Integer> lastUsed = state.getTilesUsed();
-		List<Integer> newUsed = lastUsed.subList(0, lastUsed.size()-2);
-		List<Integer> tileToChi=lastUsed.subList(lastUsed.size()-1,lastUsed.size()-1);
+		List<Integer> newUsed=ImmutableList.of();
+		if (lastUsed.size()>1)
+		   newUsed=  lastUsed.subList(0, lastUsed.size()-1);
+		List<Integer> tileToChi=lastUsed.subList(lastUsed.size()-1,lastUsed.size());
 		/*if (lastUsed.size() > 1) {
 			newUsed = lastUsed.subList(0, lastUsed.size() - 2);
 		}*/
@@ -207,7 +213,10 @@ public class MahJongLogic {
 		// 3) new Set("tilesAtHandOf1/2/3/4, [...]),
 		// 4) new Set("tilesAtDeclaredOf1/2/3/4, [...]),
 		// 5) new SetVisibility(T*, null)
-		
+		Collections.sort(newUsed);
+		Collections.sort(newAtHand);
+		Collections.sort(newAtDeclared);
+		Collections.sort(chiCombo);
 		List<Operation> expectedOperations = ImmutableList.<Operation> of(
 				new SetTurn(playerId), new Set(M, ImmutableList.<String>of(C,chiTile.get().toString())),
 				new Set(TU, newUsed),
@@ -235,8 +244,10 @@ public class MahJongLogic {
         check(state.getTilesUsed().size()>=1);
         check(Peng.lastStateValid(state));
 		List<Integer> lastUsed = state.getTilesUsed();
-		List<Integer> newUsed = lastUsed.subList(0, lastUsed.size()-2);
-		List<Integer> tileToPeng=lastUsed.subList(lastUsed.size()-1,lastUsed.size()-1);
+		List<Integer> newUsed=ImmutableList.of();
+		if (lastUsed.size()>1)
+		   newUsed=  lastUsed.subList(0, lastUsed.size()-1);
+		List<Integer> tileToPeng=lastUsed.subList(lastUsed.size()-1,lastUsed.size());
 		/*if (lastUsed.size() > 1) {
 			newUsed = lastUsed.subList(0, lastUsed.size() - 2);
 		}*/
@@ -252,7 +263,10 @@ public class MahJongLogic {
 		//List<Integer> newAtDeclared = concat(lastAtDeclared,
 		//		lastUsed.subList(lastUsed.size() - 1, lastUsed.size() - 1));
 		List<Integer> newAtDeclared=concat(lastAtDeclared,PengCombo);
-		
+		Collections.sort(newUsed);
+		Collections.sort(newAtHand);
+		Collections.sort(newAtDeclared);
+		Collections.sort(PengCombo);
 
 		// 0) new SetTurn(0/1/2/3),
 		// 1) new Set("move", "Peng"),
@@ -355,8 +369,12 @@ public class MahJongLogic {
         check(state.getTilesUsed().size()>=1);
         check(Gang.lastStateValid(state));
 		List<Integer> lastUsed = state.getTilesUsed();
-		List<Integer> newUsed = lastUsed.subList(0, lastUsed.size()-2);
-		List<Integer> tileToGang=lastUsed.subList(lastUsed.size()-1,lastUsed.size()-1);
+		List<Integer> newUsed = ImmutableList.of();
+		if (lastUsed.size()>1)
+		   newUsed=  lastUsed.subList(0, lastUsed.size()-1);
+		List<Integer> tileToPeng=lastUsed.subList(lastUsed.size()-1,lastUsed.size());
+	
+		List<Integer> tileToGang=lastUsed.subList(lastUsed.size()-1,lastUsed.size());
 		/*if (lastUsed.size() > 1) {
 			newUsed = lastUsed.subList(0, lastUsed.size() - 2);
 		}*/
@@ -383,6 +401,10 @@ public class MahJongLogic {
 		// 3) new Set("tilesAtHandOf1/2/3/4, [...]),
 		// 4) new Set("tilesAtDeclaredOf1/2/3/4, [...]),
 		// 5) new SetVisibility(T*, null)
+		Collections.sort(newUsed);
+		Collections.sort(newAtHand);
+		Collections.sort(newAtDeclared);
+		Collections.sort(GangCombo);
 		List<Operation> expectedOperations = ImmutableList.<Operation> of(
 				new SetTurn(playerId), new Set(M, ImmutableList.<String>of(G,gangTile.get().toString())),
 				new Set(TU, newUsed),
@@ -393,15 +415,32 @@ public class MahJongLogic {
 		return expectedOperations;
 	}
 	// getExpectedOperations need to be developed
+	private Operation getM(List<Operation> lastMove)
+	{
+		for (Operation operation:lastMove)
+		{
+			if (operation.getClassName()=="Set")
+			{
+				Set sOperation=(Set)operation;
+				if (sOperation.getKey()==M)
+					return operation;
+			}
+		}
+		throw new RuntimeException("Run Time Exception: No set operations");
+		
+	}
 	List<Operation> getExpectedOperations(Map<String, Object> lastApiState,
 			List<Operation> lastMove, List<Integer> playerIds,
 			int lastMovePlayerId) {
 		if (lastApiState.isEmpty()) {
 		      return getInitialMove(playerIds);
 		    }
+		
 		MahJongState lastState = gameApiStateToMahJongState(lastApiState,
 				lastMovePlayerId, playerIds);
-		switch (lastState.getMove().getName())
+		Set lastSet=(Set)getM(lastMove);
+		List<String> lastSetMove=(List<String>)lastSet.getValue();
+		switch (lastSetMove.get(0))
 		{
 		case(PU):
 		  return pickUp(lastState, playerIds);
@@ -434,7 +473,7 @@ public class MahJongLogic {
 
 	}
 
-	String tileIdToString(int tileId) {
+	public static String tileIdToString(int tileId) {
 		checkArgument(tileId >= 0 && tileId < 136);
 		/*
 		 * Tile 0-35 are ACHARACTERS
@@ -484,7 +523,7 @@ public class MahJongLogic {
 		return result;
 	}
 
-	List<Integer> getIndicesInRange(int fromInclusive, int toInclusive) {
+	public static List<Integer> getIndicesInRange(int fromInclusive, int toInclusive) {
 		List<Integer> keys = Lists.newArrayList();
 		for (int i = fromInclusive; i <= toInclusive; i++) {
 			keys.add(i);
@@ -568,7 +607,8 @@ public class MahJongLogic {
 		}
         ACommand status=factory.makeCommand((ImmutableList<String>)gameApiState.get(M));
 		return new MahJongState(turn, status, ImmutableList.copyOf(playerIds),
-				ImmutableList.copyOf(tiles), ImmutableList.copyOf(tilesAtWall),
+				ImmutableList.copyOf(tiles), 
+				ImmutableList.copyOf(tilesAtWall),
 				ImmutableList.copyOf(tilesUsed),
 				ImmutableList.copyOf(atHand.get(0)),
 				ImmutableList.copyOf(atDeclared.get(0)),
@@ -587,6 +627,7 @@ public class MahJongLogic {
     		nextIndex=0;
     	return playerIds.get(nextIndex);
     }
+    
 	private void check(boolean val, Object... debugArguments) {
 		if (!val) {
 			throw new RuntimeException("We have a hacker! debugArguments="

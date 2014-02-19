@@ -31,7 +31,7 @@ public class Peng extends ACommand {
 	public static boolean lastStateValid(MahJongState lastState)
     {
 		String lastOperation=lastState.getMove().getName();
-	    if (lastOperation=="waitForPeng")
+	    if (lastOperation=="WaitForPeng")
 	         return true;	
 	    if (lastOperation=="RefusePeng")
 	       {
