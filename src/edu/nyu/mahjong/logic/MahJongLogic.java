@@ -290,9 +290,9 @@ public class MahJongLogic {
 						.toString())), new Set(TU, newUsed), new Set(
 						getAtHandKey(playerId), newAtHand), new Set(
 						getAtDeclaredKey(playerId), newAtDeclared),
-				new SetVisibility(T + PengCombo.get(0)), new SetVisibility(T
-						+ PengCombo.get(1)),
-				new SetVisibility(T + PengCombo.get(2)));
+				new SetVisibility(T + String.valueOf(PengCombo.get(0))), new SetVisibility(T
+						+ String.valueOf(PengCombo.get(1))),
+				new SetVisibility(T + String.valueOf(PengCombo.get(2))));
 		return expectedOperations;
 	}
 
@@ -443,7 +443,19 @@ public class MahJongLogic {
 		Collections.sort(newAtHand);
 		Collections.sort(newAtDeclared);
 		Collections.sort(GangCombo);
-		List<Operation> expectedOperations = ImmutableList.<Operation> of(
+		List<Operation> tempOperation=new ArrayList<Operation> ();
+		tempOperation.add(new SetTurn(playerId));
+		tempOperation.add(new Set(M, ImmutableList.<String> of(G, gangTile.get()
+				.toString())));
+		tempOperation.add(new Set(TU, newUsed));
+		tempOperation.add(new Set(getAtHandKey(playerId), newAtHand));
+		tempOperation.add(new Set(getAtDeclaredKey(playerId), newAtDeclared));
+		tempOperation.add(new SetVisibility(T + GangCombo.get(0)));
+		tempOperation.add(new SetVisibility(T + GangCombo.get(1)));
+		tempOperation.add(new SetVisibility(T + GangCombo.get(2)));
+		tempOperation.add(new SetVisibility(T + GangCombo.get(3)));
+		List<Operation> expectedOperations=ImmutableList.<Operation>copyOf(tempOperation);
+		/*List<Operation> expectedOperations = ImmutableList.<Operation> (
 				new SetTurn(playerId),
 				new Set(M, ImmutableList.<String> of(G, gangTile.get()
 						.toString())), new Set(TU, newUsed), new Set(
@@ -451,8 +463,9 @@ public class MahJongLogic {
 						getAtDeclaredKey(playerId), newAtDeclared),
 				new SetVisibility(T + GangCombo.get(0)), new SetVisibility(T
 						+ GangCombo.get(1)),
-				new SetVisibility(T + GangCombo.get(2), new SetVisibility(T
-						+ GangCombo.get(3))));
+				new SetVisibility(T + GangCombo.get(2), 
+			    new SetVisibility(T+ GangCombo.get(3))
+						));*/
 		return expectedOperations;
 	}
 

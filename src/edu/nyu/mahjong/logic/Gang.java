@@ -33,7 +33,7 @@ public class Gang extends ACommand {
 
 	public static boolean lastStateValid(MahJongState lastState) {
 		String lastOperation = lastState.getMove().getName();
-		if (lastOperation == "waitForGang")
+		if (lastOperation == "WaitForGang")
 			return true;
 		if (lastOperation == "RefuseGang") {
 			RefuseGang lastGang = (RefuseGang) (lastState.getMove());
@@ -41,23 +41,25 @@ public class Gang extends ACommand {
 				return false;
 			else
 				return true;
-		} else
-			return false;
+		} 
+		else
+		  return false;
 	}
 
 	@SuppressWarnings("null")
 	public static boolean gangCorrect(MahJongState state,
 			List<Integer> gangCombo) {
-		Tile[] combo = null;
-		for (int i = 0; i < gangCombo.size(); i++) {
+		Tile[] combo = new Tile[4];
+		for (int i = 0; i<gangCombo.size(); i++) {
+			//getTile returns the certain tile with index of (pengCombo.get(i))
 			combo[i] = state.getTile(gangCombo.get(i)).get();
+			System.out.println(combo[i].toString());
 		}
-		if (combo[0].equals(combo[1]) && combo[1].equals(combo[2])
-				&& combo[2].equals(combo[3])) {
+		if (combo[0].equals(combo[1]) && combo[1].equals(combo[2])&&combo[2].equals(combo[3])) {
 			return true;
-		} else {
-			return false;
-		}
+		} else {	
+     		return false;
+		}	
 	}
 
 	private final String name = "Gang";

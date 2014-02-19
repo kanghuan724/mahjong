@@ -33,7 +33,7 @@ public class Hu extends ACommand {
 		String lastOperation=lastState.getMove().getName();
 		if (lastOperation=="Pick")
 			return true;
-	    if (lastOperation=="waitForHu")
+	    if (lastOperation=="WaitForHu")
 	         return true;	
 	    if (lastOperation=="RefuseHu")
 	       {

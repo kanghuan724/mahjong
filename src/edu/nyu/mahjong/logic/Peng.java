@@ -46,8 +46,9 @@ public class Peng extends ACommand {
     }
 	
 	public static boolean pengCorrect(MahJongState state, List<Integer> pengCombo){
-        Tile[] combo = null;
+        Tile[] combo = new Tile[3];
 		for (int i = 0; i<pengCombo.size(); i++) {
+			//getTile returns the certain tile with index of (pengCombo.get(i))
 			combo[i] = state.getTile(pengCombo.get(i)).get();
 		}
 		if (combo[0].equals(combo[1]) && combo[1].equals(combo[2])) {
@@ -76,7 +77,6 @@ public class Peng extends ACommand {
 
 	@Override
 	public Object getId() {
-		// TODO Auto-generated method stub
 		return Arrays.asList(name, target);
 	}
 
