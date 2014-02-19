@@ -44,6 +44,19 @@ public class Peng extends ACommand {
 	       else
 	    	  return false;
     }
+	
+	public static boolean pengCorrect(MahJongState state, List<Integer> pengCombo){
+        Tile[] combo = null;
+		for (int i = 0; i<pengCombo.size(); i++) {
+			combo[i] = state.getTile(pengCombo.get(i)).get();
+		}
+		if (combo[0].equals(combo[1]) && combo[1].equals(combo[2])) {
+			return true;
+		} else {	
+     		return false;
+		}	
+	}
+	
 	private final String name = "Peng";
 	private final Tile target;
 

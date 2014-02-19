@@ -57,7 +57,7 @@ public class MahJongState {
 	    this.tilesAtDeclaredOfThree = tilesAtDeclaredOfThree;
 	    this.tilesAtHandOfFour = checkNotNull(tilesAtHandOfFour);
 	    this.tilesAtDeclaredOfFour = tilesAtDeclaredOfFour;
-
+	  
 	  }
 
 	  public int getTurn() {
@@ -74,6 +74,10 @@ public class MahJongState {
 
 	  public ImmutableList<Optional<Tile>> getTiles() {
 	    return tiles;
+	  }
+	  
+	  public Optional<Tile> getTile(int index) {
+		  return tiles.get(index);
 	  }
 
 	  public ImmutableList<Integer> getTilesAtWall() {

@@ -36,6 +36,35 @@ public class Chi extends ACommand {
        else
     	  return false;
     }
+	
+	@SuppressWarnings("null")
+	public static boolean chiCorrect(MahJongState state, List<Integer> chiCombo){
+        Tile[] combo = null;
+		for (int i = 0; i<chiCombo.size(); i++) {
+			combo[i] = state.getTile(chiCombo.get(i)).get();
+		}
+		if ((!combo[0].getSuit().equals(combo[1].getSuit())) || (!combo[1].getSuit().equals(combo[2].getSuit()))) {
+			return false;
+		} else {	
+     		if ((Rank.COMPARATOR.compare(combo[0].getRank(), combo[1].getRank()) == 1 
+     				&& Rank.COMPARATOR.compare(combo[1].getRank(), combo[2].getRank()) == 1) ||
+     			(Rank.COMPARATOR.compare(combo[0].getRank(), combo[2].getRank()) == 1 
+     				&& Rank.COMPARATOR.compare(combo[2].getRank(), combo[1].getRank()) == 1) ||
+         		(Rank.COMPARATOR.compare(combo[1].getRank(), combo[0].getRank()) == 1 
+     				&& Rank.COMPARATOR.compare(combo[0].getRank(), combo[2].getRank()) == 1) ||
+         		(Rank.COMPARATOR.compare(combo[1].getRank(), combo[2].getRank()) == 1 
+     				&& Rank.COMPARATOR.compare(combo[2].getRank(), combo[0].getRank()) == 1) ||
+         		(Rank.COMPARATOR.compare(combo[2].getRank(), combo[0].getRank()) == 1 
+     				&& Rank.COMPARATOR.compare(combo[0].getRank(), combo[1].getRank()) == 1) ||
+         		(Rank.COMPARATOR.compare(combo[2].getRank(), combo[1].getRank()) == 1 
+     				&& Rank.COMPARATOR.compare(combo[1].getRank(), combo[0].getRank()) == 1)) {
+     			return true;
+     		} else {
+     			return false;
+     		}
+		}	
+	}
+	
 	private final String name = "Chi";
 	private final Tile target;
 

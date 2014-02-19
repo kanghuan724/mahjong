@@ -10,9 +10,10 @@ import com.google.common.collect.ImmutableList;
 import edu.nyu.mahjong.iface.ACommand;
 
 public class Gang extends ACommand {
-	//"Gang", "A7"
+	// "Gang", "A7"
 	@Nullable
-	public static Gang fromGangEntryInGameState(@Nullable final ImmutableList<String> GangEntry) {
+	public static Gang fromGangEntryInGameState(
+			@Nullable final ImmutableList<String> GangEntry) {
 		if (GangEntry == null || GangEntry.isEmpty()) {
 			return null;
 		}
@@ -24,26 +25,41 @@ public class Gang extends ACommand {
 		return new Gang(tile);
 	}
 
-	@Nullable 
+	@Nullable
 	public static List<String> toGangEntryInGameState(@Nullable final Gang gang) {
-	    return gang == null ? null : ImmutableList.of("Gang",gang.getTarget().toString());
-	  }
-	public static boolean lastStateValid(MahJongState lastState)
-    {
-	   String lastOperation=lastState.getMove().getName();
-       if (lastOperation=="waitForGang")
-         return true;	
-       if (lastOperation=="RefuseGang")
-       {
-    	   RefuseGang lastGang=(RefuseGang)(lastState.getMove());
-   	       if (lastGang.getSource()==lastState.getTurn())
-   	    	return false;
-   	       else
-   	    	return true;
-       }
-       else
-    	  return false;
-    }
+		return gang == null ? null : ImmutableList.of("Gang", gang.getTarget()
+				.toString());
+	}
+
+	public static boolean lastStateValid(MahJongState lastState) {
+		String lastOperation = lastState.getMove().getName();
+		if (lastOperation == "waitForGang")
+			return true;
+		if (lastOperation == "RefuseGang") {
+			RefuseGang lastGang = (RefuseGang) (lastState.getMove());
+			if (lastGang.getSource() == lastState.getTurn())
+				return false;
+			else
+				return true;
+		} else
+			return false;
+	}
+
+	@SuppressWarnings("null")
+	public static boolean gangCorrect(MahJongState state,
+			List<Integer> gangCombo) {
+		Tile[] combo = null;
+		for (int i = 0; i < gangCombo.size(); i++) {
+			combo[i] = state.getTile(gangCombo.get(i)).get();
+		}
+		if (combo[0].equals(combo[1]) && combo[1].equals(combo[2])
+				&& combo[2].equals(combo[3])) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	private final String name = "Gang";
 	private final Tile target;
 
