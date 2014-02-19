@@ -112,14 +112,21 @@ public class MahJongLogicTest {
 			.<Operation> of(
 					new SetTurn(cId),
 					new Set(M, ImmutableList.<String> of(RG,String.valueOf(aId))));
-	
+	private final ImmutableList<Operation> RefuseGangofThree = ImmutableList
+			.<Operation> of(
+					new SetTurn(dId),
+					new Set(M, ImmutableList.<String> of(RG,String.valueOf(aId))));
+	private final ImmutableList<Operation> RefuseGangofOne = ImmutableList
+			.<Operation> of(
+					new SetTurn(bId),
+					new Set(M, ImmutableList.<String> of(RG,String.valueOf(aId))));
 	private MahJongLogic mahjong;
 	private ImmutableMap<String, Object> validStateBeforePeng;
 	private ImmutableMap<String, Object> validStateBeforePengForThree;
 	private ImmutableMap<String, Object> validStateBeforeGang;
 	private ImmutableMap<String, Object> InvalidStateBeforeGang;
 	private ImmutableMap<String, Object> validStateBeforeRefuseGang;
-
+	private ImmutableMap<String, Object> validStateBeforeRefuseGang2;
 	@Before
 	public void setUp() throws Exception {
 		mahjong = new MahJongLogic();
@@ -160,8 +167,10 @@ public class MahJongLogicTest {
 		validMap5.put(M, ImmutableList.of(WG, String.valueOf(aId)));
 		validStateBeforeRefuseGang= ImmutableMap.copyOf(validMap5);
 		
-		
-		
+		Map<String,Object> validMap6=new HashMap<String,Object>(validMap5);	
+		validMap6.put(TURN, PlayerTwo);
+		validMap6.put(M, ImmutableList.of(RG, String.valueOf(aId)));
+		validStateBeforeRefuseGang2= ImmutableMap.copyOf(validMap6);
 	}
 
 	private void assertMoveOk(VerifyMove verifyMove) {
@@ -367,8 +376,11 @@ public class MahJongLogicTest {
 	public void testRefuseGang()
 	{
 		assertMoveOk(move(bId, validStateBeforeRefuseGang, RefuseGangofTwo));
-		
+		assertMoveOk(move(cId, validStateBeforeRefuseGang2, RefuseGangofThree));
+		assertHacker(move(cId, validStateBeforeRefuseGang, RefuseGangofTwo));
+		assertHacker(move(aId, validStateBeforeRefuseGang, RefuseGangofOne));
 	}
+	
 	}
 	
 	/*
