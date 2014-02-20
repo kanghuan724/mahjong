@@ -1,13 +1,16 @@
 package edu.nyu.mahjong.logic;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import edu.nyu.mahjong.iface.ACommand;
+import edu.nyu.mahjong.logic.MahJongLogic;
 
 public class Hu extends ACommand {
 	//"Hu", "A7"
@@ -46,6 +49,52 @@ public class Hu extends ACommand {
 	       else
 	    	  return false;
     }
+	@SuppressWarnings("null")
+	public static boolean huCorrect(MahJongState state, List<Integer> huCombo, List<Integer> atHand){
+        Tile[] combo = new Tile[3];
+		for (int i = 0; i<huCombo.size(); i++) {
+			combo[i] = state.getTile(huCombo.get(i)).get();
+		}
+		if (huCombo.size() == 2 && combo[0].equals(combo[1]) && Hu.allSet(state, atHand)) {
+			return true;
+		}
+		if (Peng.pengCorrect(state, huCombo) || Chi.chiCorrect(state, huCombo)) {
+			for (int i = 0; i<atHand.size(); i++) {
+				Tile left = state.getTile(atHand.get(i)).get();
+				for (int j = i+1; j<atHand.size(); j++) {
+					Tile right = state.getTile(atHand.get(j)).get();
+					if (left.equals(right)) {
+						List<Integer> pair = null;
+						pair.add(i);
+						pair.add(j);
+						List<Integer> atHandNoPair = atHand;
+						atHandNoPair.removeAll(pair);
+						if (atHandNoPair.size() == 0 || allSet(state, atHandNoPair)) {
+							return true;
+						}
+					}
+				}
+			}
+
+		}
+		return false;
+	}
+	@SuppressWarnings("null")
+	public static boolean allSet(MahJongState state, List<Integer> atHand) {
+		List<Integer> AtHand = atHand;
+		Collections.sort(AtHand);
+		int comboNum = AtHand.size() / 3;
+		for (int i = 0; i < comboNum; i++) {
+			List<Integer> combo = null;
+			combo.add(i*3);
+			combo.add(i*3+1);
+			combo.add(i*3+2);
+			if ((!Peng.pengCorrect(state, combo)) && (!Chi.chiCorrect(state, combo))) {
+				return false;
+			}
+		}
+	    return true;
+	}
 	private final String name = "Hu";
 	private final Tile target;
 
@@ -68,5 +117,5 @@ public class Hu extends ACommand {
 		// TODO Auto-generated method stub
 		return Arrays.asList(name, target);
 	}
-
+	
 }

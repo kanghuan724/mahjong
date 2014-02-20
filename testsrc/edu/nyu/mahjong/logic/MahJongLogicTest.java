@@ -10,6 +10,7 @@ import org.cheat.client.GameApi.SetVisibility;
 import org.cheat.client.GameApi.Shuffle;
 import org.cheat.client.GameApi.VerifyMove;
 import org.cheat.client.GameApi.VerifyMoveDone;
+import org.cheat.client.GameApi.EndGame;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +25,8 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
+import edu.nyu.mahjong.logic.MahJongLogic;
 
 @RunWith(JUnit4.class)
 public class MahJongLogicTest {
@@ -108,6 +111,15 @@ public class MahJongLogicTest {
 					new SetVisibility("T13"), new SetVisibility("T14"),
 					new SetVisibility("T15"),
 					new SetVisibility("T52"));
+	private final ImmutableList<Operation> ChiofTwo = ImmutableList
+			.<Operation> of(
+					new SetTurn(bId),
+					new Set(M, ImmutableList.<String> of(C, "a5")),
+					new Set(TU, ImmutableList.<Integer> of()),
+					new Set(AtHandTwo, getIndicesInRange(15, 25)),
+					new Set(DeclaredTwo, ImmutableList.<Integer> of(13, 14, 52)),
+					new SetVisibility("T13"), new SetVisibility("T14"),
+					new SetVisibility("T52"));
 	private final ImmutableList<Operation> PickUpofTwo = ImmutableList
 			.<Operation> of(
 					new SetTurn(bId),
@@ -129,7 +141,6 @@ public class MahJongLogicTest {
 					new Set(TAW, getIndicesInRange(54, 135)),
 					new Set(AtHandTwo, concat(getIndicesInRange(13,26),getIndicesInRange(53,53))),
 					new SetVisibility("T53",ImmutableList.of(bId)));
-	
 	
 	private final ImmutableList<Operation> RefuseGangofTwo = ImmutableList
 			.<Operation> of(
@@ -234,8 +245,10 @@ public class MahJongLogicTest {
 	private ImmutableMap<String, Object> validStateBeforePengForThree;
 	private ImmutableMap<String, Object> validStateBeforeGang;
 	private ImmutableMap<String, Object> InvalidStateBeforeGang;
+	private ImmutableMap<String, Object> validStateBeforeChi;
 	private ImmutableMap<String, Object> validStateBeforeRefuseGang;
 	private ImmutableMap<String, Object> validStateBeforeRefuseGang2;
+	private ImmutableMap<String, Object> validStateBeforeNoTile;
 	@Before
 	public void setUp() throws Exception {
 		mahjong = new MahJongLogic();
@@ -280,6 +293,13 @@ public class MahJongLogicTest {
 		validMap6.put(TURN, PlayerTwo);
 		validMap6.put(M, ImmutableList.of(RG, String.valueOf(aId)));
 		validStateBeforeRefuseGang2= ImmutableMap.copyOf(validMap6);
+		
+		Map<String, Object> validMap7 = new HashMap<String,Object>(mockMap);
+		addTileInfoToMap(validMap7, shuffleForLegalChiofTwo());
+		validMap7.put(M, ImmutableList.of(WC, String.valueOf(aId)));
+		validStateBeforeChi = ImmutableMap.copyOf(validMap7);
+
+
 	}
 
 	private void assertMoveOk(VerifyMove verifyMove) {
@@ -343,6 +363,21 @@ public class MahJongLogicTest {
 		putToGivenPosition(tileIndex, 9, 27);
 		putToGivenPosition(tileIndex, 18, 52);
 		List<String> tileString = new ArrayList<String>();
+		for (int i = 0; i < tileIndex.size(); i++) {
+			tileString.add(MahJongLogic.tileIdToString(tileIndex.get(i)));
+		}
+		return tileString;
+	}
+	private List<String> shuffleForLegalChiofTwo() {
+		List<Integer> tileIndex = new ArrayList<Integer>();
+		for (int i = 0; i < 136; i++) {
+			tileIndex.add(i);
+		}
+		Collections.shuffle(tileIndex);
+		putToGivenPosition(tileIndex, 2, 13);
+		putToGivenPosition(tileIndex, 3, 14);
+		putToGivenPosition(tileIndex, 4, 52);
+			List<String> tileString = new ArrayList<String>();
 		for (int i = 0; i < tileIndex.size(); i++) {
 			tileString.add(MahJongLogic.tileIdToString(tileIndex.get(i)));
 		}
@@ -522,6 +557,12 @@ public class MahJongLogicTest {
 	}
 	
 	@Test
+	public void testNormalChi()
+	{
+		assertMoveOk(move(bId, validStateBeforeChi, ChiofTwo));
+	}
+	
+	@Test
 	public void testRefuseGang()
 	{
 		assertMoveOk(move(bId, validStateBeforeRefuseGang, RefuseGangofTwo));
@@ -577,8 +618,19 @@ public class MahJongLogicTest {
 		assertMoveOk(move(bId,buildValidStateBeforeDiscard,DiscardOfTwo));
 		assertHacker(move(bId,buildValidStateBeforeDiscard,DiscardOfTwoWithWrongMiddle));
 	}
+	
+	@Test
+	public void testCardIdToString() {
+	  assertEquals("a1", MahJongLogic.tileIdToString(0));
+	  assertEquals("a2", MahJongLogic.tileIdToString(1));
+	  assertEquals("b1", MahJongLogic.tileIdToString(36));
+	  assertEquals("c1", MahJongLogic.tileIdToString(72));
+	  assertEquals("d0", MahJongLogic.tileIdToString(135));
 	}
 	
+	}
+	
+
 	/*
 	 * private final ImmutableList<Operation> PickOfOne=
 	 * ImmutableList.<Operation> of( new

@@ -31,15 +31,15 @@ public class Chi extends ACommand {
 	public static boolean lastStateValid(MahJongState lastState)
     {
 	   String lastOperation=lastState.getMove().getName();
+	   String lastPlayerId = String.valueOf(lastState.getTurn());
        if (lastOperation=="WaitForChi") 
          return true;	
        else
     	  return false;
     }
 	
-	@SuppressWarnings("null")
 	public static boolean chiCorrect(MahJongState state, List<Integer> chiCombo){
-        Tile[] combo = null;
+        Tile[] combo = new Tile[3];
 		for (int i = 0; i<chiCombo.size(); i++) {
 			combo[i] = state.getTile(chiCombo.get(i)).get();
 		}
