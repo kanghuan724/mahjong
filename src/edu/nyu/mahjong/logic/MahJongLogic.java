@@ -62,8 +62,6 @@ public class MahJongLogic {
 		List<Operation> expectedOperations = getExpectedOperations(lastState,
 				lastMove, verifyMove.getPlayerIds(),
 				verifyMove.getLastMovePlayerId());
-		System.out.println(expectedOperations);
-		System.out.println(lastMove);
 		check(expectedOperations.equals(lastMove), expectedOperations, lastMove);
 		// We use SetTurn, so we don't need to check that the correct player did
 		// the move.
@@ -330,6 +328,7 @@ public class MahJongLogic {
 		check(Hu.lastStateValid(state));
 		List<Integer> lastUsed = state.getTilesUsed();
 		List<Integer> newUsed = new ArrayList<Integer> ();
+		List<Operation> expectedOperations= new ArrayList<Operation> ();
 		if (state.getMove().getName() != PU) 
 			//Hu with a tile from others
 		{
@@ -372,12 +371,6 @@ public class MahJongLogic {
 			Collections.sort(newAtHand);
 			Collections.sort(newAtDeclared);
 			Collections.sort(huCombo);
-			List<Operation> expectedOperations = ImmutableList.<Operation> of(
-					new Set(M, ImmutableList.<String> of(H)), new Set(TU, newUsed), new Set(
-							getAtHandKey(playerId), newAtHand), new Set(
-							getAtDeclaredKey(playerId), newAtDeclared),
-					new SetVisibility(T + tileToHu.get(0)));
-			
 			for (int i = 0; i < state.getTilesAtHand(playerId).size(); i++) {
 				expectedOperations.add(new SetVisibility(T + state.getTilesAtHand(playerId).get(i)));
 			}
@@ -390,7 +383,7 @@ public class MahJongLogic {
 		} else {
 			//Hu by self-helping
 			check(Hu.allSet(state, state.getTilesAtHand(playerId)));
-			List<Operation> expectedOperations = ImmutableList.<Operation> of(new EndGame(playerId));
+			expectedOperations = ImmutableList.<Operation> of(new EndGame(playerId));
 			return expectedOperations;
 		}	
 	}
@@ -456,12 +449,11 @@ public class MahJongLogic {
 		// End the game when no more tiles at wall
 		int playerId = state.getTurn();
 		expectedOperations.add(new SetTurn(nextId(playerId, playerIds)));
+		expectedOperations.add(new Set(M, ImmutableList.<String> of(WG,
+				String.valueOf(playerId))));
 		if (state.getTilesAtWall().isEmpty()) {
-			expectedOperations.add(new EndGame(null));
-		} else {
-			expectedOperations.add(new Set(M, ImmutableList.<String> of(WH,
-					String.valueOf(playerId))));
-		}
+			expectedOperations.add(new EndGame(0));
+		} 
 		return expectedOperations;
 	}
 
@@ -739,6 +731,7 @@ public class MahJongLogic {
 		}
 		ACommand status = factory
 				.makeCommand((ImmutableList<String>) gameApiState.get(M));
+		//System.out.println(((ImmutableList<String>)(gameApiState.get(M))).get(0));
 		return new MahJongState(turn, status, ImmutableList.copyOf(playerIds),
 				ImmutableList.copyOf(tiles), ImmutableList.copyOf(tilesAtWall),
 				ImmutableList.copyOf(tilesUsed), ImmutableList.copyOf(atHand

@@ -53,7 +53,7 @@ public class Gang extends ACommand {
 		for (int i = 0; i<gangCombo.size(); i++) {
 			//getTile returns the certain tile with index of (pengCombo.get(i))
 			combo[i] = state.getTile(gangCombo.get(i)).get();
-			System.out.println(combo[i].toString());
+			//System.out.println(combo[i].toString());
 		}
 		if (combo[0].equals(combo[1]) && combo[1].equals(combo[2])&&combo[2].equals(combo[3])) {
 			return true;

@@ -32,6 +32,8 @@ public class factory {
 			return WaitForGang.fromWaitForGangEntryInGameState(tokens);
 		case ("Hu"):
 			return Hu.fromHuEntryInGameState(tokens);
+		case ("RefuseHu"):
+			return RefuseHu.fromRefuseHuEntryInGameState(tokens);
 
 		}
 		return null;
