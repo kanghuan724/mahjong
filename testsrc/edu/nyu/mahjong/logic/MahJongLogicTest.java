@@ -83,31 +83,54 @@ public class MahJongLogicTest {
 			.<String, Object> of("a", "b");
 	private final ImmutableList<Operation> InvalidPengofOne = ImmutableList
 			.<Operation> of(new SetTurn(aId),
-					new Set(M, ImmutableList.<String> of(P, "aONE")), new Set(
+					new Set(M, ImmutableList.<String> of(P, "a1")), new Set(
 							TU, ImmutableList.<Integer> of()), new Set(
 							AtHandOne, getIndicesInRange(2, 12)), new Set(
-							DeclaredTwo, ImmutableList.<Integer> of(0, 1, 42)),
+							DeclaredTwo, ImmutableList.<Integer> of(0, 1, 52)),
 					new SetVisibility("T0"), new SetVisibility("T1"),
-					new SetVisibility("T42"));
+					new SetVisibility("T52"));
 	private final ImmutableList<Operation> PengofTwo = ImmutableList
 			.<Operation> of(
 					new SetTurn(bId),
-					new Set(M, ImmutableList.<String> of(P, "aONE")),
+					new Set(M, ImmutableList.<String> of(P, "a1")),
 					new Set(TU, ImmutableList.<Integer> of()),
 					new Set(AtHandTwo, getIndicesInRange(15, 25)),
-					new Set(DeclaredTwo, ImmutableList.<Integer> of(13, 14, 42)),
+					new Set(DeclaredTwo, ImmutableList.<Integer> of(13, 14, 52)),
 					new SetVisibility("T13"), new SetVisibility("T14"),
-					new SetVisibility("T42"));
+					new SetVisibility("T52"));
 	private final ImmutableList<Operation> GangofTwo = ImmutableList
 			.<Operation> of(
 					new SetTurn(bId),
-					new Set(M, ImmutableList.<String> of(G, "aONE")),
+					new Set(M, ImmutableList.<String> of(G, "a1")),
 					new Set(TU, ImmutableList.<Integer> of()),
 					new Set(AtHandTwo, getIndicesInRange(16, 25)),
-					new Set(DeclaredTwo, ImmutableList.<Integer> of(13,14,15,42)),
+					new Set(DeclaredTwo, ImmutableList.<Integer> of(13,14,15,52)),
 					new SetVisibility("T13"), new SetVisibility("T14"),
 					new SetVisibility("T15"),
-					new SetVisibility("T42"));
+					new SetVisibility("T52"));
+	private final ImmutableList<Operation> PickUpofTwo = ImmutableList
+			.<Operation> of(
+					new SetTurn(bId),
+					new Set(M, ImmutableList.<String> of(PU)),
+					new Set(TAW, getIndicesInRange(54, 135)),
+					new Set(AtHandTwo, concat(getIndicesInRange(13,25),getIndicesInRange(53,53))),
+					new SetVisibility("T53",ImmutableList.of(bId)));
+	private final ImmutableList<Operation> PickUpofTwoWithWrongMiddle = ImmutableList
+			.<Operation> of(
+					new SetTurn(bId),
+					new Set(M, ImmutableList.<String> of(PU)),
+					new Set(TAW, getIndicesInRange(55, 135)),
+					new Set(AtHandTwo, concat(getIndicesInRange(13,25),getIndicesInRange(53,53))),
+					new SetVisibility("T53",ImmutableList.of(bId)));
+	private final ImmutableList<Operation> PickUpofTwoWithWrongHand = ImmutableList
+			.<Operation> of(
+					new SetTurn(bId),
+					new Set(M, ImmutableList.<String> of(PU)),
+					new Set(TAW, getIndicesInRange(54, 135)),
+					new Set(AtHandTwo, concat(getIndicesInRange(13,26),getIndicesInRange(53,53))),
+					new SetVisibility("T53",ImmutableList.of(bId)));
+	
+	
 	private final ImmutableList<Operation> RefuseGangofTwo = ImmutableList
 			.<Operation> of(
 					new SetTurn(cId),
@@ -120,7 +143,93 @@ public class MahJongLogicTest {
 			.<Operation> of(
 					new SetTurn(bId),
 					new Set(M, ImmutableList.<String> of(RG,String.valueOf(aId))));
-	private MahJongLogic mahjong;
+	private final String getAtHandKey(int id)
+	{
+		return MahJongLogic.getAtHandKey(id);
+	}
+	private final String tileIdToString(int index)
+	{
+		return MahJongLogic.tileIdToString(index);
+	}
+	private final List<String> getTilesInRange(int fromInclusive,int toInclusive)
+	{
+		return MahJongLogic.getTilesInRange(fromInclusive, toInclusive);
+	}
+	private final List<Integer> concat(List<Integer> a, List<Integer> b)
+	{
+		return MahJongLogic.concat(a,b);
+	}
+	private final ImmutableList<Operation> validInitialMove()
+	{
+		List<Operation> mockList=new ArrayList<Operation> ();
+		mockList.add(new Set(M, null));
+		mockList.add(new Set(TAW, getIndicesInRange(0, 135)));
+		mockList.add(new Set(TU, null));
+		for (int i = 0; i < 4; i++) {
+			mockList.add(new Set(getAtHandKey(i), getIndicesInRange(13 * i,
+					13 * i + 12)));
+		}
+		mockList.add(new Set(TAW, getIndicesInRange(52, 135)));
+		for (int i = 0; i < 136; i++) {
+			mockList.add(new Set(T + i, tileIdToString(i)));
+		}
+		mockList.add(new Shuffle(getTilesInRange(0, 135)));
+		// sets visibility
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 13; j++) {
+				mockList.add(new SetVisibility(T + (i * 13 + j),
+				// ImmutableList.of(i)));
+						ImmutableList.of(i)));
+			}
+		}
+		// set the visibility of middle tile to null
+		for (int i = 52; i < 136; i++)
+			mockList.add(new SetVisibility(T + i, ImmutableList.of()));
+		mockList.add(new Set(M, ImmutableList.<String> of(PU)));
+		mockList.add(new SetTurn(0));
+		mockList.add(new Set(TAW,getIndicesInRange(53, 135)));
+		mockList.add(new Set(getAtHandKey(0),concat(getIndicesInRange(0, 12),getIndicesInRange(53, 53))));
+		// new SetVisibility(T + tileIndex,ImmutableList.of(playerId)
+		mockList.add(new SetVisibility(T + 52, ImmutableList.of(0)));
+		return ImmutableList.<Operation>copyOf(mockList);
+		
+	}
+	private final ImmutableList<Operation> invalidInitialMoveWithExtraMove()
+	{
+		List<Operation> mockList=new ArrayList<Operation> ();
+		mockList.add(new Set(M, null));
+		mockList.add(new Set(TAW, getIndicesInRange(0, 135)));
+		mockList.add(new Set(TU, null));
+		for (int i = 0; i < 4; i++) {
+			mockList.add(new Set(getAtHandKey(i), getIndicesInRange(13 * i,
+					13 * i + 12)));
+		}
+		mockList.add(new Set(TAW, getIndicesInRange(52, 135)));
+		for (int i = 0; i < 136; i++) {
+			mockList.add(new Set(T + i, tileIdToString(i)));
+		}
+		mockList.add(new Shuffle(getTilesInRange(0, 135)));
+		// sets visibility
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 13; j++) {
+				mockList.add(new SetVisibility(T + (i * 13 + j),
+				// ImmutableList.of(i)));
+						ImmutableList.of(i)));
+			}
+		}
+		// set the visibility of middle tile to null
+		for (int i = 52; i < 136; i++)
+			mockList.add(new SetVisibility(T + i, ImmutableList.of()));
+		mockList.add(new Set(M, ImmutableList.<String> of(PU)));
+		mockList.add(new SetTurn(0));
+		mockList.add(new Set(TAW,getIndicesInRange(53, 135)));
+		mockList.add(new Set(getAtHandKey(0),concat(getIndicesInRange(0, 12),getIndicesInRange(53, 53))));
+		// new SetVisibility(T + tileIndex,ImmutableList.of(playerId)
+		mockList.add(new SetVisibility(T + 52, ImmutableList.of(0)));
+		mockList.add(new SetTurn(1));
+		return ImmutableList.<Operation>copyOf(mockList);
+	}
+    private MahJongLogic mahjong;
 	private ImmutableMap<String, Object> validStateBeforePeng;
 	private ImmutableMap<String, Object> validStateBeforePengForThree;
 	private ImmutableMap<String, Object> validStateBeforeGang;
@@ -136,13 +245,13 @@ public class MahJongLogicTest {
 		mockMap.put(AtHandOne, getIndicesInRange(0, 12));
 		mockMap.put(AtHandTwo, getIndicesInRange(13, 25));
 		mockMap.put(AtHandThree, getIndicesInRange(26, 38));
-		mockMap.put(AtHandFour, getIndicesInRange(39, 41));
+		mockMap.put(AtHandFour, getIndicesInRange(39, 51));
 		mockMap.put(DeclaredOne, getEmpty());
 		mockMap.put(DeclaredTwo, getEmpty());
 		mockMap.put(DeclaredThree, getEmpty());
 		mockMap.put(DeclaredFour, getEmpty());
-		mockMap.put(TAW, getIndicesInRange(43, 135));
-		mockMap.put(TU, getIndicesInRange(42, 42));
+		mockMap.put(TAW, getIndicesInRange(53, 135));
+		mockMap.put(TU, getIndicesInRange(52, 52));
 		mockMap.put(M, ImmutableList.of(WP, String.valueOf(aId)));
 		
 		Map<String, Object> validMap = new HashMap<String,Object>(mockMap);
@@ -201,7 +310,7 @@ public class MahJongLogicTest {
 		Collections.shuffle(tileIndex);
 		putToGivenPosition(tileIndex, 0, 13);
 		putToGivenPosition(tileIndex, 9, 14);
-		putToGivenPosition(tileIndex, 18, 42);
+		putToGivenPosition(tileIndex, 18, 52);
 		putToGivenPosition(tileIndex, 27, 15);
 		List<String> tileString = new ArrayList<String>();
 		for (int i = 0; i < tileIndex.size(); i++) {
@@ -217,7 +326,7 @@ public class MahJongLogicTest {
 		Collections.shuffle(tileIndex);
 		putToGivenPosition(tileIndex, 0, 13);
 		putToGivenPosition(tileIndex, 9, 14);
-		putToGivenPosition(tileIndex, 18, 42);
+		putToGivenPosition(tileIndex, 18, 52);
 		List<String> tileString = new ArrayList<String>();
 		for (int i = 0; i < tileIndex.size(); i++) {
 			tileString.add(MahJongLogic.tileIdToString(tileIndex.get(i)));
@@ -232,7 +341,7 @@ public class MahJongLogicTest {
 		Collections.shuffle(tileIndex);
 		putToGivenPosition(tileIndex, 0, 26);
 		putToGivenPosition(tileIndex, 9, 27);
-		putToGivenPosition(tileIndex, 18, 42);
+		putToGivenPosition(tileIndex, 18, 52);
 		List<String> tileString = new ArrayList<String>();
 		for (int i = 0; i < tileIndex.size(); i++) {
 			tileString.add(MahJongLogic.tileIdToString(tileIndex.get(i)));
@@ -253,6 +362,10 @@ public class MahJongLogicTest {
 
 	private List<Integer> getEmpty() {
 		return new ArrayList<Integer>();
+	}
+	private ImmutableMap<String,Object> getEmptyMap()
+	{
+		return ImmutableMap.<String,Object> of();
 	}
 
 	private VerifyMove move(int lastMovePlayerId,
@@ -297,16 +410,52 @@ public class MahJongLogicTest {
 		image.put(AtHandOne, getIndicesInRange(0, 12));
 		image.put(AtHandTwo, getIndicesInRange(13, 25));
 		image.put(AtHandThree, getIndicesInRange(26, 38));
-		image.put(AtHandFour, getIndicesInRange(39, 41));
+		image.put(AtHandFour, getIndicesInRange(39, 51));
 		image.put(DeclaredOne, getEmpty());
 		image.put(DeclaredTwo, getEmpty());
 		image.put(DeclaredThree, getEmpty());
 		image.put(DeclaredFour, getEmpty());
-		image.put(TAW, getIndicesInRange(43, 135));
-		image.put(TU, getIndicesInRange(42, 42));
+		image.put(TAW, getIndicesInRange(53, 135));
+		image.put(TU, getIndicesInRange(52, 52));
 		image.put(M, ImmutableList.of(RP, String.valueOf(bId)));
 		addTileInfoToMap(image, shuffleForLegalPengofTwo());
 		return ImmutableMap.copyOf(image);
+	}
+	private ImmutableMap<String, Object> buildValidStateBeforeickUp() {
+		Map<String, Object> image = new HashMap<String, Object>();
+		image.put(TURN, PlayerTwo);
+		image.put(AtHandOne, getIndicesInRange(0, 12));
+		image.put(AtHandTwo, getIndicesInRange(13, 25));
+		image.put(AtHandThree, getIndicesInRange(26, 38));
+		image.put(AtHandFour, getIndicesInRange(39, 51));
+		image.put(DeclaredOne, getEmpty());
+		image.put(DeclaredTwo, getEmpty());
+		image.put(DeclaredThree, getEmpty());
+		image.put(DeclaredFour, getEmpty());
+		image.put(TAW, getIndicesInRange(53, 135));
+		image.put(TU, getIndicesInRange(52, 52));
+		image.put(M, ImmutableList.of(RC, String.valueOf(bId)));
+		addTileInfoToMap(image, shuffleForLegalPengofTwo());
+		return ImmutableMap.copyOf(image);
+		
+	}
+	private ImmutableMap<String, Object> buildValidStateBeforeDiscard() {
+		Map<String, Object> image = new HashMap<String, Object>();
+		image.put(TURN, PlayerTwo);
+		image.put(AtHandOne, getIndicesInRange(0, 12));
+		image.put(AtHandTwo, concat(getIndicesInRange(13, 25),getIndicesInRange(53, 53)));
+		image.put(AtHandThree, getIndicesInRange(26, 38));
+		image.put(AtHandFour, getIndicesInRange(39, 51));
+		image.put(DeclaredOne, getEmpty());
+		image.put(DeclaredTwo, getEmpty());
+		image.put(DeclaredThree, getEmpty());
+		image.put(DeclaredFour, getEmpty());
+		image.put(TAW, getIndicesInRange(54, 135));
+		image.put(TU, getIndicesInRange(52, 52));
+		image.put(M, ImmutableList.of(PU, String.valueOf(bId)));
+		addTileInfoToMap(image, shuffleForLegalPengofTwo());
+		return ImmutableMap.copyOf(image);
+		
 	}
 
 	private final ImmutableMap<String, Object> ValidStateBeforePeng2 = buildValidStateBeforePeng2();
@@ -332,12 +481,12 @@ public class MahJongLogicTest {
 	public void testInvalidPengofThree() {
 		ImmutableList<Operation> pengOfThree = ImmutableList.<Operation> of(
 				new SetTurn(cId),
-				new Set(M, ImmutableList.<String> of(P, "aONE")), new Set(TU,
+				new Set(M, ImmutableList.<String> of(P, "a1")), new Set(TU,
 						ImmutableList.<Integer> of()), new Set(AtHandThree,
 						getIndicesInRange(28, 38)), new Set(DeclaredThree,
-						ImmutableList.<Integer> of(26, 27, 42)),
+						ImmutableList.<Integer> of(26, 27, 52)),
 				new SetVisibility("T26"), new SetVisibility("T27"),
-				new SetVisibility("T42"));
+				new SetVisibility("T52"));
 
 		assertHacker(move(cId, ValidStateBeforePeng2, pengOfThree));
 	}
@@ -345,12 +494,12 @@ public class MahJongLogicTest {
 	public void testValidPengofThree() {
 		ImmutableList<Operation> pengOfThree = ImmutableList.<Operation> of(
 				new SetTurn(cId),
-				new Set(M, ImmutableList.<String> of(P, "aONE")), new Set(TU,
+				new Set(M, ImmutableList.<String> of(P, "a1")), new Set(TU,
 						ImmutableList.<Integer> of()), new Set(AtHandThree,
 						getIndicesInRange(28, 38)), new Set(DeclaredThree,
-						ImmutableList.<Integer> of(26, 27, 42)),
+						ImmutableList.<Integer> of(26, 27, 52)),
 				new SetVisibility("T26"), new SetVisibility("T27"),
-				new SetVisibility("T42"));
+				new SetVisibility("T52"));
 
 		assertMoveOk(move(cId, validStateBeforePengForThree, pengOfThree));
 	}
@@ -380,7 +529,54 @@ public class MahJongLogicTest {
 		assertHacker(move(cId, validStateBeforeRefuseGang, RefuseGangofTwo));
 		assertHacker(move(aId, validStateBeforeRefuseGang, RefuseGangofOne));
 	}
+	@Test
+	public void testInitialMove()
+	{
+		assertMoveOk(move(aId,getEmptyMap(),validInitialMove()));
+		assertHacker(move(bId,getEmptyMap(),validInitialMove()));
+		assertHacker(move(aId,getEmptyMap(),invalidInitialMoveWithExtraMove()));	
+		
+	}
 	
+	@Test
+	public void testPick()
+	{
+		assertMoveOk(move(bId,buildValidStateBeforeickUp(),PickUpofTwo));
+		assertHacker(move(bId,buildValidStateBeforeickUp(),PickUpofTwoWithWrongMiddle));
+		assertHacker(move(bId,buildValidStateBeforeickUp(),PickUpofTwoWithWrongHand));
+	}
+	
+	ImmutableList<Operation> DiscardOfTwo(ImmutableMap<String, Object> lastState)
+	{
+		String target=(String)lastState.get("T53");
+		return ImmutableList
+				.<Operation> of(
+						new SetTurn(bId),
+						new Set(M, ImmutableList.<String> of(D,target)),
+						new Set(TU,getIndicesInRange(52,53)),			
+						new Set(AtHandTwo, getIndicesInRange(13,25)),
+						new SetVisibility("T53"));
+	}
+	ImmutableList<Operation> DiscardOfTwoWithWrongMiddle(ImmutableMap<String, Object> lastState)
+	{
+		String target=(String)lastState.get("T53");
+		return ImmutableList
+				.<Operation> of(
+						new SetTurn(bId),
+						new Set(M, ImmutableList.<String> of(D,target)),
+						new Set(TU,getIndicesInRange(52,54)),			
+						new Set(AtHandTwo, getIndicesInRange(13,25)),
+						new SetVisibility("T53"));
+	}
+	@Test
+	public void testDiscard()
+	{
+		ImmutableMap<String, Object> buildValidStateBeforeDiscard=buildValidStateBeforeDiscard();
+		List<Operation> DiscardOfTwo=DiscardOfTwo(buildValidStateBeforeDiscard);
+		List<Operation> DiscardOfTwoWithWrongMiddle=DiscardOfTwoWithWrongMiddle(buildValidStateBeforeDiscard);
+		assertMoveOk(move(bId,buildValidStateBeforeDiscard,DiscardOfTwo));
+		assertHacker(move(bId,buildValidStateBeforeDiscard,DiscardOfTwoWithWrongMiddle));
+	}
 	}
 	
 	/*

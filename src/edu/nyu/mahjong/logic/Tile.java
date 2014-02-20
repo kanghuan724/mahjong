@@ -47,7 +47,7 @@ public class Tile extends Equality {
    */
   @Override
   public String toString() {
-    return suitValue.getFirstLetterLowerCase()+rankValue.toString() ;
+    return suitValue.getFirstLetterLowerCase()+rankValue.getRankString() ;
   }
 
   @Override
