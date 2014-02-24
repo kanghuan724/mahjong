@@ -12,6 +12,7 @@ import edu.nyu.mahjong.iface.*;
  *** T1...T136, which are mapped to the tiles
  */
 public class MahJongState {
+	  //the playerId
 	  private final int turn;
 	  private final ACommand move;
 	  private final ImmutableList<Integer> playerIds;

@@ -102,8 +102,8 @@ public class MahJongLogic {
 			}
 		}
 		// set the visibility of middle tile to null
-		for (int i = 52; i < 136; i++)
-			operations.add(new SetVisibility(T + i, ImmutableList.of()));
+		//for (int i = 52; i < 136; i++)
+		//	operations.add(new SetVisibility(T + i, ImmutableList.of()));
 		operations.add(new Set(M, ImmutableList.<String> of(PU)));
 		operations.add(new SetTurn(playerIds.get(0)));
 		operations.add(new Set(TAW,getIndicesInRange(53, 135)));
@@ -555,7 +555,7 @@ public class MahJongLogic {
 	// getExpectedOperations need to be developed
 	private Operation getM(List<Operation> lastMove) {
 		for (Operation operation : lastMove) {
-			if (operation.getClassName() == "Set") {
+			if (operation.getMessageName() == "Set") {
 				Set sOperation = (Set) operation;
 				if (sOperation.getKey() == M)
 					return operation;
@@ -706,7 +706,7 @@ public class MahJongLogic {
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	private MahJongState gameApiStateToMahJongState(
+	MahJongState gameApiStateToMahJongState(
 			Map<String, Object> gameApiState, int turn, List<Integer> playerIds) {
 		List<Optional<Tile>> tiles = Lists.newArrayList();
 		for (int i = 0; i < 136; i++) {

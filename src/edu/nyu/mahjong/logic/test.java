@@ -194,8 +194,8 @@ public class test {
 			}
 		}
 		// set the visibility of middle tile to null
-		for (int i = 52; i < 136; i++)
-			mockList.add(new SetVisibility(T + i, ImmutableList.of()));
+		//for (int i = 52; i < 136; i++)
+		//	mockList.add(new SetVisibility(T + i, ImmutableList.of()));
 		mockList.add(new Set(M, ImmutableList.<String> of(PU)));
 		mockList.add(new SetTurn(0));
 		mockList.add(new Set(TAW,getIndicesInRange(53, 135)));
@@ -229,8 +229,8 @@ public class test {
 			}
 		}
 		// set the visibility of middle tile to null
-		for (int i = 52; i < 136; i++)
-			mockList.add(new SetVisibility(T + i, ImmutableList.of()));
+		//for (int i = 52; i < 136; i++)
+		//	mockList.add(new SetVisibility(T + i, ImmutableList.of()));
 		mockList.add(new Set(M, ImmutableList.<String> of(PU)));
 		mockList.add(new SetTurn(0));
 		mockList.add(new Set(TAW,getIndicesInRange(53, 135)));
