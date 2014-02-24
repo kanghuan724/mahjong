@@ -332,24 +332,28 @@ public class MahJongLogic {
 		if (state.getMove().getName() != PU) 
 			//Hu with a tile from others
 		{
-			if (lastUsed.size() > 1)
+			/*if (lastUsed.size() > 1)
 			{
 				newUsed = lastUsed.subList(0, lastUsed.size() - 2);
-			}
+			}*/
+			if (lastUsed.size()>1)
+				newUsed = lastUsed.subList(0,lastUsed.size()-1);
 			List<Integer> tileToHu = lastUsed.subList(lastUsed.size() - 1,
 					lastUsed.size() );
 			Integer tileIndex = tileToHu.get(0);
 			Optional<Tile> huTile = state.getTiles().get(tileIndex);
 			List<Integer> lastAtHand = state.getTilesAtHand(playerId);
-			List<Integer> newAtHand = (List<Integer>) ((Set) lastMove.get(3)).getValue();
-			List<Integer> tilesToHu = subtract(lastAtHand, newAtHand);
+			//List<Integer> newAtHand = (List<Integer>) ((Set) lastMove.get(3)).getValue();
+			List<Integer> newAtHand=concat(lastAtHand,getIndicesInRange(tileIndex,tileIndex));
+			//List<Integer> tilesToHu = subtract(lastAtHand, newAtHand);
 			// List<Integer> newAtHand = subtract(lastAtHand, tilesToChi);
 			List<Integer> lastAtDeclared = state.getTilesAtDeclared(playerId);
-			List<Integer> huCombo = concat(tileToHu, tilesToHu);
-			check(Hu.huCorrect(state, huCombo, newAtHand));
+			//List<Integer> huCombo = concat(tileToHu, tilesToHu);
+			//check(Hu.huCorrect(state, huCombo, newAtHand));
+			 check(Hu.huCorrect(newAtHand));
 			// List<Integer> newAtDeclared = concat(lastAtDeclared,
 			// lastUsed.subList(lastUsed.size() - 1, lastUsed.size() - 1));
-			List<Integer> newAtDeclared = concat(lastAtDeclared, huCombo);
+			List<Integer> newAtDeclared = concat(lastAtDeclared, newAtHand);
 			// Integer tileIndex[] = new Integer[3];
 			// tileIndex[0] = lastUsed.get(lastUsed.size() - 1);
 			// tileIndex[1] = tilesToChi.get(0);
@@ -358,7 +362,6 @@ public class MahJongLogic {
 			// 0) new Set("move", "Hu"),
 			// 1) new Set("tilesUsed", [...]),
 			// 2) new Set("tilesAtHandOf1/2/3/4, [...]),
-			// 3) new Set("tilesAtDeclaredOf1/2/3/4, [...]),
 			// 4) new SetVisibility(T*, null),
 			// 5) new SetVisibility(tilesAtHandOf1/2/3/4, null),
 			// 6) new SetVisibility(tilesAtDeclaredOf1/2/3/4, null),
@@ -366,26 +369,30 @@ public class MahJongLogic {
 			newUsed=new ArrayList<Integer> (newUsed);
 			newAtHand=new ArrayList<Integer> (newAtHand);
 			newAtDeclared=new ArrayList<Integer> (newAtDeclared);
-			huCombo=new ArrayList<Integer> (huCombo);
+			//huCombo=new ArrayList<Integer> (huCombo);
 			Collections.sort(newUsed);
 			Collections.sort(newAtHand);
 			Collections.sort(newAtDeclared);
-			Collections.sort(huCombo);
-			for (int i = 0; i < state.getTilesAtHand(playerId).size(); i++) {
-				expectedOperations.add(new SetVisibility(T + state.getTilesAtHand(playerId).get(i)));
-			}
-			for (int i = 0; i < state.getTilesAtDeclared(playerId).size(); i++) {
-				expectedOperations.add(new SetVisibility(T + state.getTilesAtDeclared(playerId).get(i)));
-			}
-			expectedOperations.add(new EndGame(playerId));
-			return expectedOperations;
+			//Collections.sort(huCombo);
+			expectedOperations.add(new Set(M,ImmutableList.of(H,huTile.get().toString())));
+			expectedOperations.add(new Set(getAtHandKey(playerId),newAtHand));
+			
 			
 		} else {
 			//Hu by self-helping
-			check(Hu.allSet(state, state.getTilesAtHand(playerId)));
-			expectedOperations = ImmutableList.<Operation> of(new EndGame(playerId));
-			return expectedOperations;
-		}	
+			//check(Hu.allSet(state, state.getTilesAtHand(playerId)));
+			List<Integer> lastAtHand = state.getTilesAtHand(playerId);
+			check(Hu.huCorrect(lastAtHand));
+			expectedOperations.add(new Set(M,ImmutableList.of(H)));
+		}
+		for (int i = 0; i < state.getTilesAtHand(playerId).size(); i++) {
+			expectedOperations.add(new SetVisibility(T + state.getTilesAtHand(playerId).get(i)));
+		}
+		for (int i = 0; i < state.getTilesAtDeclared(playerId).size(); i++) {
+			expectedOperations.add(new SetVisibility(T + state.getTilesAtDeclared(playerId).get(i)));
+		}
+		expectedOperations.add(new EndGame(playerId));
+		return expectedOperations;
 	}
 	
 	List<Operation> refusehu(MahJongState state, List<Operation> lastMove,
