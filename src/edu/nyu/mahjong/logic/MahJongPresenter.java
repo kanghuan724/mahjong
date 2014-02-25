@@ -37,6 +37,16 @@ public class MahJongPresenter {
   private static final String WC = "WaitForChi";
   private static final String WG = "WaitForGang";
   private static final String WH = "WaitForHu";
+  private static final String M = "Move";
+  private static final String PU = "PickUp";
+  private static final String D = "Discard";
+  private static final String P = "Peng";
+  private static final String C = "Chi";
+  private static final String G = "Gang";
+  private static final String RP = "RefusePeng";
+  private static final String RC = "RefuseChi";
+  private static final String RG = "RefuseGang";
+  private static final String RH = "RefuseHu";
 	
   interface View {
     /**
@@ -154,7 +164,7 @@ public class MahJongPresenter {
     int yourPlayerIndex = updateUI.getPlayerIndex(yourPlayerId);
     if (updateUI.getState().isEmpty()) {
       // The 0 player sends the initial setup move.
-      if (mahJongState.getTurn() == yourPlayerId && playerIds.indexOf(yourPlayerId) == 0) {
+      if (playerIds.indexOf(yourPlayerId) == 0) {
         sendInitialMove(playerIds);
       }
       return;
@@ -204,18 +214,13 @@ public class MahJongPresenter {
     		getTiles(mahJongState.getTilesAtDeclared(yourPlayerId)),
     		getMahJongMessage());
     
-    // TODO: implement main logic of updateUI
-    
-    //if (isMyTurn()) {
-    //  if (cheatState.isCheater()) {
-    //    checkIfCheated();
-    //  } else {
-        // Choose the next card only if the game is not over
-    //    if (numberOfOpponentCards > 0) {
-    //      chooseNextCard();
-    //    }
-    //  }
-    //}
+    if (isMyTurn()) {
+      if (mahJongState.getMove().getName() == D) {
+    	  chooseTile();
+      } else if (mahJongState.getMove().getName() != PU){
+    	  getMahJongMessage();
+      }
+    }
   }
 
   private boolean canHu() {
@@ -301,19 +306,19 @@ public class MahJongPresenter {
     container.sendMakeMove(mahJongLogic.discard(mahJongState, selectedTileIndex, mahJongState.getPlayerIds()));
   }
 
-  private void huAvailable() {
+  void huAvailable(Tile tileToHu, List<Tile> myTilesAtHand) {
 	    view.huAvailable(lastUsedTile, getTiles(mahJongState.getTilesAtHand(turn)));
   }
   
-  private void gangAvailable() {
+  void gangAvailable(Tile tileToGang, List<Tile> tilesToHu) {
 	    view.gangAvailable(lastUsedTile, getTiles(mahJongState.getTilesAtHand(turn)));
   }
   
-  private void pengAvailable() {
+  void pengAvailable(Tile tile, List<Tile> tilesToPeng) {
 	    view.pengAvailable(lastUsedTile, getTiles(mahJongState.getTilesAtHand(turn)));
   }
   
-  private void chiAvailable() {
+  void chiAvailable(Tile tile, List<Tile> tilesToChi) {
 	    view.chiAvailable(lastUsedTile, getTiles(mahJongState.getTilesAtHand(turn)));
   }
 
