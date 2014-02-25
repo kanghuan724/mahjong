@@ -41,7 +41,7 @@ import com.google.common.collect.Maps;
  * 3) non-empty tileUsed
  * 4) game-over
  * There are several interesting yourPlayerId:
- * 1) 1/2/3/4
+ * 1) 1/2/..
  * 2) viewer
  * For each one of these states and for each yourPlayerId,
  * I will test what methods the presenters calls on the view and container.
@@ -249,108 +249,43 @@ public class MahJongPresenterTest {
     		getTiles(getIndicesInRange(13, 25)), getEmptyTile(),
     		MahJongMessage.INVISIBLE);
   }
+
   @Test
-  public void testNonEmptyMiddleStateForBTurnOfB() {
-    cheatPresenter.updateUI(createUpdateUI(bId, bId, nonEmptyMiddle));
-    verify(mockView).setPlayerState(10, 32, getCards(10, 20), CheaterMessage.IS_OPPONENT_CHEATING);
-    verify(mockView).chooseNextCard(ImmutableList.<Card>of(), getCards(10, 20));
+  public void testNonEmptyMiddleStateForViewerTurnOf2() {
+    mahJongPresenter.updateUI(createUpdateUI(viewerId, bId, nonEmptyTileUsedState));
+    verify(mockView).setViewerState(13, 13, 13, 13,
+    		getEmptyTile(), getEmptyTile(), getEmptyTile(), getEmptyTile(),
+    		82, getTiles(getIndicesInRange(52, 53)), MahJongMessage.INVISIBLE);
   }
 
   @Test
-  public void testNonEmptyMiddleStateForBTurnOfW() {
-    cheatPresenter.updateUI(createUpdateUI(bId, wId, nonEmptyMiddle));
-    verify(mockView).setPlayerState(10, 32, getCards(10, 20), CheaterMessage.INVISIBLE);
+  public void testGameOverStateFor1() {
+    mahJongPresenter.updateUI(createUpdateUI(aId, aId, gameOverState));
+    verify(mockView).setPlayerState(13, 13, 13, getEmptyTile(), getEmptyTile(), getEmptyTile(),
+    		0, getTiles(getIndicesInRange(52, 135)),
+    		getTiles(getIndicesInRange(0, 12)), getEmptyTile(),
+    		MahJongMessage.INVISIBLE);
   }
 
   @Test
-  public void testNonEmptyMiddleStateForViewerTurnOfW() {
-    cheatPresenter.updateUI(createUpdateUI(viewerId, wId, nonEmptyMiddle));
-    verify(mockView).setViewerState(10, 10, 32, CheaterMessage.INVISIBLE);
-  }
-
-  @Test
-  public void testMustDeclareCheaterStateForW() {
-    cheatPresenter.updateUI(createUpdateUI(wId, bId, mustDeclareCheater));
-    verify(mockView).setPlayerState(10, 42, getCards(0, 0), CheaterMessage.INVISIBLE);
-  }
-
-  @Test
-  public void testMustDeclareCheaterStateForB() {
-    cheatPresenter.updateUI(createUpdateUI(bId, bId, mustDeclareCheater));
-    verify(mockView).setPlayerState(0, 42, getCards(0, 10), CheaterMessage.IS_OPPONENT_CHEATING);
-    // Note that B doesn't have chooseNextCard, because he has to declare cheater.
-  }
-
-  @Test
-  public void testMustDeclareCheaterStateForViewer() {
-    cheatPresenter.updateUI(createUpdateUI(viewerId, bId, mustDeclareCheater));
-    verify(mockView).setViewerState(0, 10, 42, CheaterMessage.INVISIBLE);
-  }
-
-  @Test
-  public void testDeclaredCheaterAndIndeedCheatedStateForW() {
-    cheatPresenter.updateUI(createUpdateUI(wId, bId, declaredCheaterAndIndeedCheated));
-    verify(mockView).setPlayerState(10, 42, getCards(0, 0), CheaterMessage.WAS_CHEATING);
-  }
-
-  @Test
-  public void testDeclaredCheaterAndIndeedCheatedStateForB() {
-    UpdateUI updateUI = createUpdateUI(bId, bId, declaredCheaterAndIndeedCheated);
-    CheatState cheatState =
-        cheatLogic.gameApiStateToCheatState(updateUI.getState(), Color.B, playerIds);
-    cheatPresenter.updateUI(updateUI);
-    verify(mockView).setPlayerState(0, 42, getCards(0, 10), CheaterMessage.WAS_CHEATING);
-    verify(mockContainer).sendMakeMove(cheatLogic.getMoveCheckIfCheated(cheatState));
-  }
-
-  @Test
-  public void testDeclaredCheaterAndIndeedCheatedStateForViewer() {
-    cheatPresenter.updateUI(createUpdateUI(viewerId, bId, declaredCheaterAndIndeedCheated));
-    verify(mockView).setViewerState(0, 10, 42, CheaterMessage.WAS_CHEATING);
-  }
-
-  @Test
-  public void testDeclaredCheaterAndDidNotCheatStateForW() {
-    cheatPresenter.updateUI(createUpdateUI(wId, bId, declaredCheaterAndDidNotCheat));
-    verify(mockView).setPlayerState(10, 42, getCards(0, 0), CheaterMessage.WAS_NOT_CHEATING);
-  }
-
-  @Test
-  public void testDeclaredCheaterAndDidNotCheatStateForB() {
-    UpdateUI updateUI = createUpdateUI(bId, bId, declaredCheaterAndDidNotCheat);
-    CheatState cheatState =
-        cheatLogic.gameApiStateToCheatState(updateUI.getState(), Color.B, playerIds);
-    cheatPresenter.updateUI(updateUI);
-    verify(mockView).setPlayerState(0, 42, getCards(0, 10), CheaterMessage.WAS_NOT_CHEATING);
-    verify(mockContainer).sendMakeMove(cheatLogic.getMoveCheckIfCheated(cheatState));
-  }
-
-  @Test
-  public void testDeclaredCheaterAndDidNotCheatStateForViewer() {
-    cheatPresenter.updateUI(createUpdateUI(viewerId, bId, declaredCheaterAndDidNotCheat));
-    verify(mockView).setViewerState(0, 10, 42, CheaterMessage.WAS_NOT_CHEATING);
-  }
-
-  @Test
-  public void testGameOverStateForW() {
-    cheatPresenter.updateUI(createUpdateUI(wId, bId, gameOver));
-    verify(mockView).setPlayerState(52, 0, getCards(0, 0), CheaterMessage.INVISIBLE);
-  }
-
-  @Test
-  public void testGameOverStateForB() {
-    cheatPresenter.updateUI(createUpdateUI(bId, bId, gameOver));
-    verify(mockView).setPlayerState(0, 0, getCards(0, 52), CheaterMessage.INVISIBLE);
+  public void testGameOverStateFor2() {
+    mahJongPresenter.updateUI(createUpdateUI(bId, aId, gameOverState));
+    verify(mockView).setPlayerState(13, 13, 13, getEmptyTile(), getEmptyTile(), getEmptyTile(),
+    		0, getTiles(getIndicesInRange(52, 135)),
+    		getTiles(getIndicesInRange(13, 25)), getEmptyTile(),
+    		MahJongMessage.INVISIBLE);
   }
 
   @Test
   public void testGameOverStateForViewer() {
-    cheatPresenter.updateUI(createUpdateUI(viewerId, bId, gameOver));
-    verify(mockView).setViewerState(0, 52, 0, CheaterMessage.INVISIBLE);
+    mahJongPresenter.updateUI(createUpdateUI(viewerId, aId, gameOverState));
+    verify(mockView).setViewerState(13, 13, 13, 13, 
+    		getEmptyTile(), getEmptyTile(), getEmptyTile(), getEmptyTile(),
+    		0, getTiles(getIndicesInRange(52, 135)), MahJongMessage.INVISIBLE);
   }
 
   /* Tests for preparing a claim. */
-  @Test
+  /*@Test
   public void testEmptyMiddleStateForWTurnOfWPrepareClaimWithTwoCards() {
     UpdateUI updateUI = createUpdateUI(wId, wId, emptyMiddle);
     CheatState cheatState =
@@ -402,43 +337,7 @@ public class MahJongPresenterTest {
     verify(mockView).chooseNextCard(ImmutableList.<Card>of(), getCards(0, 10));
     verify(mockContainer).sendMakeMove(
         cheatLogic.getMoveDeclareCheater(cheatState));
-  }
-
-  private List<Card> getCards(int fromInclusive, int toExclusive) {
-    List<Card> cards = Lists.newArrayList();
-    for (int i = fromInclusive; i < toExclusive; i++) {
-      Rank rank = Rank.values()[i / 4];
-      Suit suit = Suit.values()[i % 4];
-      cards.add(new Card(suit, rank));
-    }
-    return cards;
-  }
-
-  private ImmutableMap<String, Object> createState(
-		  int numberOfTilesAtHand1, int numberOfTilesAtHand2, 
-  		  int numberOfTilesAtHand3, int numberOfTilesAtHand4,
-  		  List<Tile> tilesAtDeclared1, List<Tile> tilesAtDeclared2,
-  		  List<Tile> tilesAtDeclared3, List<Tile> tilesAtDeclared4,
-  		  int numberOfTilesAtWall, List<Tile> tilesUsed) {
-    Map<String, Object> state = Maps.newHashMap();
-    state.put(W, cheatLogic.getIndicesInRange(0, numberOfWhiteCards - 1));
-    state.put(B, cheatLogic.getIndicesInRange(numberOfWhiteCards,
-        numberOfWhiteCards + numberOfBlackCards - 1));
-    state.put(M, cheatLogic.getIndicesInRange(numberOfWhiteCards + numberOfBlackCards, 51));
-    if (isCheater) {
-      state.put(IS_CHEATER, YES);
-    }
-    if (claim.isPresent()) {
-      state.put(CLAIM, Claim.toClaimEntryInGameState(claim.get()));
-    }
-    // We just reveal all the cards (hidden cards are not relevant for our testing).
-    int i = 0;
-    for (Card card : getCards(0, 52)) {
-      state.put(C + (i++),
-          card.getRank().getFirstLetter() + card.getSuit().getFirstLetterLowerCase());
-    }
-    return ImmutableMap.copyOf(state);
-  }
+  }*/
 
   private UpdateUI createUpdateUI(
       int yourPlayerId, int turnOfPlayerId, Map<String, Object> state) {
