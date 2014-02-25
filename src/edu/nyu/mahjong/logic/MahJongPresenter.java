@@ -48,7 +48,8 @@ public class MahJongPresenter {
      * 1) The viewer calls {@link #tileSelected} (usually once) to select the tile to discard
      * 2) The viewer calls {@link #tileDiscarded} to finalize his selection
      * The process of discarding a tile looks as follows to the presenter:
-     * 1) The presenter calls {@link #confirmSelection} and passes the current selection.
+     * 1) The presenter calls {@link #chooseTile} and passes the current selection
+     * 2) The presenter calls {@link #confirmSelection} and passes the current selection.
      *
      * The process of hu/gang/peng/chi a tile looks as follows to the viewer:
      * 1) The viewer calls {@link #hu/gang/peng/chi} to catch the last tile used
@@ -82,7 +83,7 @@ public class MahJongPresenter {
             MahJongMessage mahJongMessage);
 
     /**
-     * Asks the player to confirm the selection.
+     * Asks the player to choose the Tile or finish his selection.
      * We pass what tile is selected (will be discarded), and what tiles will remain in the player hand.
      * The user can either select another tile (by calling {@link #tileSelected),
      * or discard the currently selected tile
@@ -90,7 +91,7 @@ public class MahJongPresenter {
      * If the user selects a tile from remainingTiles, then it replaces selectedTile with that tile,
      * i.e. moves the previous selectedTile to remainingTiles.
      */
-    void confirmSelection(Tile selectedTile, List<Tile> remainingTiles);
+    void chooseTile(Tile selectedTile, List<Tile> remainingTiles);
     
     /**
      * Asks the player to hu.
@@ -257,29 +258,29 @@ public class MahJongPresenter {
 	  return targetTiles;	  
   }
 
-  private void chooseNextCard() {
-    view.chooseNextCard(
-        ImmutableList.copyOf(selectedCards), cheatLogic.subtract(getMyCards(), selectedCards));
-  }
-
   private void check(boolean val) {
-    if (!val) {
-      throw new IllegalArgumentException();
-    }
+	    if (!val) {
+	      throw new IllegalArgumentException();
+	    }
+  }
+  
+  private void chooseTile() {
+    view.chooseTile(selectedTile, 
+    		mahJongLogic.subtract(getTiles(mahJongState.getTilesAtHand(turn)), ImmutableList.of(selectedTile)));
   }
 
   /**
-   * Adds/remove the card from the {@link #selectedCards}.
-   * The view can only call this method if the presenter called {@link View#chooseNextCard}.
+   * Add/remove the tile from the {@link #selectedTile}.
+   * The view can only call this method if the presenter called {@link View#chooseTile}.
    */
-  void cardSelected(Card card) {
-    check(isMyTurn() && !cheatState.isCheater());
-    if (selectedCards.contains(card)) {
-      selectedCards.remove(card);
-    } else if (!selectedCards.contains(card) && selectedCards.size() < 4) {
-      selectedCards.add(card);
+  void tileSelected(Tile tile) {
+    check(isMyTurn());
+    if (selectedTile.equals(tile)) {
+    	selectedTile = null;
+    } else {
+      selectedTile = tile;
     }
-    chooseNextCard();
+    chooseTile();
   }
 
   /**
@@ -287,9 +288,9 @@ public class MahJongPresenter {
    * The view can only call this method if the presenter called {@link View#chooseNextCard}
    * and more than one card was selected by calling {@link #cardSelected}.
    */
-  void finishedSelectingCards() {
-    check(isMyTurn() && !selectedCards.isEmpty());
-    view.chooseRankForClaim(getPossibleRanks());
+  void tileDiscarded() {
+    check(isMyTurn() && selectedTile != null);
+    container.sendMakeMove(mahJongLogic.discard(mahJongState, lastMove, playerIds));
   }
 
   /**
