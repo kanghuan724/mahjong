@@ -142,18 +142,22 @@ public class MahJongLogic {
 	}
 
 	/** Returns the operations for discarding a tile. */
+	//List<Operation> discard(MahJongState state, // List<Integer> tilesToDiscard,
+	//		List<Operation> lastMove, List<Integer> playerIds) {
 	List<Operation> discard(MahJongState state, // List<Integer> tilesToDiscard,
-			List<Operation> lastMove, List<Integer> playerIds) {
+				List<Integer> tilesToDiscard,List<Integer> playerIds) {
 		// discarding up a tile
 		int playerId = state.getTurn();
 		check(state.getTilesAtHand(playerId).size() >= 1);
 		check(Discard.lastStateValid(state));
 		List<Integer> lastAtHand = state.getTilesAtHand(playerId);
-		Set newAtHand = (Set) lastMove.get(3);
-		List<Integer> newAtHandTile = (List<Integer>) newAtHand.getValue();
-		System.out.println(lastAtHand);
-		System.out.println(newAtHandTile);
-		List<Integer> tilesToDiscard = subtract(lastAtHand, newAtHandTile);
+		//newAtHand gets subtracted from lastAtHand
+		List<Integer> newAtHandTile=subtract(lastAtHand,tilesToDiscard);		 
+		//Set newAtHand = (Set) lastMove.get(3);
+		//List<Integer> newAtHandTile = (List<Integer>) newAtHand.getValue();
+		//System.out.println(lastAtHand);
+		//System.out.println(newAtHandTile);
+		//List<Integer> tilesToDiscard = subtract(lastAtHand, newAtHandTile);
 		check(tilesToDiscard.size() == 1);
 		List<Integer> lastUsed = state.getTilesUsed();
 		List<Integer> newUsed = concat(lastUsed, tilesToDiscard);
@@ -180,8 +184,10 @@ public class MahJongLogic {
 		return expectedOperations;
 	}
 
-	List<Operation> chi(MahJongState state, List<Operation> lastMove,
-			List<Integer> playerIds) {
+	//List<Operation> chi(MahJongState state, List<Operation> lastMove,
+	//		List<Integer> playerIds)
+	List<Operation> chi(MahJongState state,List<Integer> chiCombo,List<Integer> playerIds)
+	{
 		// chi a tile with two tiles at hand
 		int playerId = state.getTurn();
 		check(state.getTilesAtHand(playerId).size() >= 4);
@@ -197,11 +203,13 @@ public class MahJongLogic {
 		Integer tileIndex = tileToChi.get(0);
 		Optional<Tile> chiTile = state.getTiles().get(tileIndex);
 		List<Integer> lastAtHand = state.getTilesAtHand(playerId);
-		List<Integer> newAtHand = (List<Integer>) ((Set) lastMove.get(3)).getValue();
-		List<Integer> tilesToChi = subtract(lastAtHand, newAtHand);
-		// List<Integer> newAtHand = subtract(lastAtHand, tilesToChi);
+		//List<Integer> newAtHand = (List<Integer>) ((Set) lastMove.get(3)).getValue();
+	
+		//List<Integer> tilesToChi = subtract(lastAtHand, newAtHand);
+		List<Integer> tilesToChi=subtract(chiCombo,tileToChi);
+		List<Integer> newAtHand=subtract(lastAtHand,tilesToChi);
 		List<Integer> lastAtDeclared = state.getTilesAtDeclared(playerId);
-		List<Integer> chiCombo = concat(tileToChi, tilesToChi);
+		//List<Integer> chiCombo = concat(tileToChi, tilesToChi);
 		check(chiCombo.size() == 3);
 		check(Chi.chiCorrect(state, chiCombo));
 		// List<Integer> newAtDeclared = concat(lastAtDeclared,
@@ -238,8 +246,10 @@ public class MahJongLogic {
 		return expectedOperations;
 	}
 
-	List<Operation> refusechi(MahJongState state, List<Operation> lastMove,
-			List<Integer> playerIds) {
+	//List<Operation> refusechi(MahJongState state, List<Operation> lastMove,
+	//		List<Integer> playerIds) {
+	List<Operation> refusechi(MahJongState state, 
+				List<Integer> playerIds) {
 		check(RefuseChi.lastStateValid(state));
 		int playerId = state.getTurn();
 		int sourceId = ((WaitForChi) state.getMove()).getSource();
@@ -250,7 +260,9 @@ public class MahJongLogic {
 		return expectedOperations;
 	}
 
-	List<Operation> peng(MahJongState state, List<Operation> lastMove,
+	//List<Operation> peng(MahJongState state, List<Operation> lastMove,
+	//		List<Integer> playerIds) {
+	List<Operation> peng(MahJongState state, List<Integer> PengCombo,
 			List<Integer> playerIds) {
 		// peng a tile with two tiles at hand
 		int playerId = state.getTurn();
@@ -269,13 +281,15 @@ public class MahJongLogic {
 		Optional<Tile> tilePeng = state.getTiles().get(tileIndex);
 		List<Integer> lastAtHand = state.getTilesAtHand(playerId);
 		// List<Integer> newAtHand = subtract(lastAtHand, tilesToPeng);
-		List<Integer> newAtHand = (List<Integer>) ((Set) lastMove.get(3))
-				.getValue();
+		List<Integer> tilesToPeng=subtract(PengCombo,tileToPeng);
+		List<Integer> newAtHand=subtract(lastAtHand,tilesToPeng);
+		//List<Integer> newAtHand = (List<Integer>) ((Set) lastMove.get(3))
+		//		.getValue();
 		newAtHand=new ArrayList<Integer> (newAtHand);
-		List<Integer> tilesToPeng = subtract(lastAtHand, newAtHand);
+		//List<Integer> tilesToPeng = subtract(lastAtHand, newAtHand);
 		List<Integer> lastAtDeclared = state.getTilesAtDeclared(playerId);
 		lastAtDeclared=new ArrayList<Integer> (lastAtDeclared);
-		List<Integer> PengCombo = concat(tileToPeng, tilesToPeng);
+		//List<Integer> PengCombo = concat(tileToPeng, tilesToPeng);
 		check(PengCombo.size() == 3);
 		check(Peng.pengCorrect(state, PengCombo));
 		// List<Integer> newAtDeclared = concat(lastAtDeclared,
@@ -305,8 +319,10 @@ public class MahJongLogic {
 		return expectedOperations;
 	}
 
-	List<Operation> refusepeng(MahJongState state, List<Operation> lastMove,
-			List<Integer> playerIds) {
+	//List<Operation> refusepeng(MahJongState state, List<Operation> lastMove,
+	//		List<Integer> playerIds) {
+		List<Operation> refusepeng(MahJongState state,
+				List<Integer> playerIds) {
 		check(RefusePeng.lastStateValid(state));
 		int playerId = state.getTurn();
 		int sourceId;
@@ -395,8 +411,10 @@ public class MahJongLogic {
 		return expectedOperations;
 	}
 	
-	List<Operation> refusehu(MahJongState state, List<Operation> lastMove,
-			List<Integer> playerIds) {
+	//List<Operation> refusehu(MahJongState state, List<Operation> lastMove,
+	//		List<Integer> playerIds) {
+	List<Operation> refusehu(MahJongState state, 
+				List<Integer> playerIds) {
 		check(RefuseHu.lastStateValid(state));
 		int playerId = state.getTurn();
 		int sourceId;
@@ -411,8 +429,10 @@ public class MahJongLogic {
 		return expectedOperations;
 	}
 
-	List<Operation> refusegang(MahJongState state, List<Operation> lastMove,
-			List<Integer> playerIds) {
+	//List<Operation> refusegang(MahJongState state, List<Operation> lastMove,
+	//		List<Integer> playerIds) {
+	List<Operation> refusegang(MahJongState state, 
+					List<Integer> playerIds) {
 		check(RefuseGang.lastStateValid(state));
 		int playerId = state.getTurn();
 		int sourceId;
@@ -427,8 +447,10 @@ public class MahJongLogic {
 		return expectedOperations;
 	}
 
-	List<Operation> WaitForChi(MahJongState state, List<Operation> lastMove,
-			List<Integer> playerIds) {
+	//List<Operation> WaitForChi(MahJongState state, List<Operation> lastMove,
+	//		List<Integer> playerIds) {
+	 List<Operation> WaitForChi(MahJongState state, 
+				List<Integer> playerIds) {
 		check(WaitForChi.lastStateValid(state));
 		int playerId = state.getTurn();
 		List<Operation> expectedOperations = ImmutableList.<Operation> of(
@@ -438,8 +460,10 @@ public class MahJongLogic {
 		return expectedOperations;
 	}
 
-	List<Operation> WaitForHu(MahJongState state, List<Operation> lastMove,
-			List<Integer> playerIds) {
+	//List<Operation> WaitForHu(MahJongState state, List<Operation> lastMove,
+	//		List<Integer> playerIds) {
+    List<Operation> WaitForHu(MahJongState state, 
+				List<Integer> playerIds) {
 		check(WaitForHu.lastStateValid(state));
 		int playerId = state.getTurn();
 		List<Operation> expectedOperations = ImmutableList.<Operation> of(
@@ -449,8 +473,10 @@ public class MahJongLogic {
 		return expectedOperations;
 	}
 
-	List<Operation> WaitForGang(MahJongState state, List<Operation> lastMove,
-			List<Integer> playerIds) {
+	//List<Operation> WaitForGang(MahJongState state, List<Operation> lastMove,
+	//		List<Integer> playerIds) {
+	List<Operation> WaitForGang(MahJongState state,
+				List<Integer> playerIds) {
 		check(WaitForGang.lastStateValid(state));
 		List<Operation> expectedOperations = Lists.newArrayList();
 		// End the game when no more tiles at wall
@@ -464,8 +490,9 @@ public class MahJongLogic {
 		return expectedOperations;
 	}
 
-	List<Operation> WaitForPeng(MahJongState state, List<Operation> lastMove,
-			List<Integer> playerIds) {
+	//List<Operation> WaitForPeng(MahJongState state, List<Operation> lastMove,
+	//		List<Integer> playerIds) {
+	List<Operation> WaitForPeng(MahJongState state, List <Integer> playerIds) {
 		check(WaitForPeng.lastStateValid(state));
 		int playerId = state.getTurn();
 		List<Operation> expectedOperations = ImmutableList.<Operation> of(
@@ -475,8 +502,10 @@ public class MahJongLogic {
 		return expectedOperations;
 	}
 
-	List<Operation> gang(MahJongState state, List<Operation> lastMove,
-			List<Integer> playerIds) {
+	//List<Operation> gang(MahJongState state, List<Operation> lastMove,
+	//		List<Integer> playerIds) {
+	List<Operation> gang(MahJongState state, List<Integer> GangCombo,
+				List<Integer> playerIds) {
 		// peng a tile with two tiles at hand
 		int playerId = state.getTurn();
 		check(state.getTilesAtHand(playerId).size() >= 4);
@@ -486,8 +515,6 @@ public class MahJongLogic {
 		List<Integer> newUsed = new ArrayList<Integer> ();
 		if (lastUsed.size() > 1)
 			newUsed = lastUsed.subList(0, lastUsed.size() - 2);
-		List<Integer> tileToPeng = lastUsed.subList(lastUsed.size() - 1,
-				lastUsed.size());
 
 		List<Integer> tileToGang = lastUsed.subList(lastUsed.size() - 1,
 				lastUsed.size());
@@ -496,11 +523,14 @@ public class MahJongLogic {
 		Optional<Tile> gangTile = state.getTiles().get(tileIndex);
 		List<Integer> lastAtHand = state.getTilesAtHand(playerId);
 		// List<Integer> newAtHand = subtract(lastAtHand, tilesToPeng);
-		List<Integer> newAtHand = (List<Integer>) ((Set) lastMove.get(3))
-				.getValue();
-		List<Integer> tilesToGang = subtract(lastAtHand, newAtHand);
+	
+		List<Integer> tilesToGang=subtract(GangCombo,tileToGang);
+		List<Integer> newAtHand=subtract(lastAtHand,tilesToGang);
+		//List<Integer> newAtHand = (List<Integer>) ((Set) lastMove.get(3))
+		//		.getValue();
+		//List<Integer> tilesToGang = subtract(lastAtHand, newAtHand);
 		List<Integer> lastAtDeclared = state.getTilesAtDeclared(playerId);
-		List<Integer> GangCombo = concat(tileToGang, tilesToGang);
+		//List<Integer> GangCombo = concat(tileToGang, tilesToGang);
 		check(GangCombo.size() == 4);
 		check(Gang.gangCorrect(state, GangCombo));
 		// List<Integer> newAtDeclared = concat(lastAtDeclared,
@@ -580,29 +610,73 @@ public class MahJongLogic {
 		case (PU):
 			return pickUp(lastState, playerIds);
 		case (D):
-			return discard(lastState, lastMove, playerIds);
+		{
+			List<Integer> lastAtHand = lastState.getTilesAtHand(lastState.getTurn());
+			Set newAtHand = (Set) lastMove.get(3);
+			List<Integer> newAtHandTile = (List<Integer>) newAtHand.getValue();
+			List<Integer> tilesToDiscard = subtract(lastAtHand, newAtHandTile);
+			return discard(lastState, tilesToDiscard, playerIds);
+		}
 		case (C):
-			return chi(lastState, lastMove, playerIds);
+		{
+			List<Integer> lastUsed = lastState.getTilesUsed();
+			List<Integer> tileToChi = lastUsed.subList(lastUsed.size() - 1,
+					lastUsed.size() );
+			List<Integer> newAtHand = (List<Integer>) ((Set) lastMove.get(3)).getValue();
+			List<Integer> lastAtHand = lastState.getTilesAtHand(lastState.getTurn());
+			List<Integer> tilesToChi = subtract(lastAtHand, newAtHand);
+			List<Integer> chiCombo=concat(tileToChi,tilesToChi);
+			//chi(lastState, lastMove, playerIds);
+			return chi(lastState,chiCombo,playerIds);
+		}
 		case (P):
-			return peng(lastState, lastMove, playerIds);
+		{
+			List<Integer> lastUsed = lastState.getTilesUsed();
+			List<Integer> tileToPeng = lastUsed.subList(lastUsed.size() - 1,
+					lastUsed.size() );
+			List<Integer> newAtHand = (List<Integer>) ((Set) lastMove.get(3)).getValue();
+			List<Integer> lastAtHand = lastState.getTilesAtHand(lastState.getTurn());
+			List<Integer> tilesToPeng = subtract(lastAtHand, newAtHand);
+			List<Integer> pengCombo=concat(tileToPeng,tilesToPeng);
+			return peng(lastState,pengCombo,playerIds);
+			//return peng(lastState, lastMove, playerIds);
+		}
 		case (G):
-			return gang(lastState, lastMove, playerIds);
+		{
+			List<Integer> lastUsed = lastState.getTilesUsed();
+			List<Integer> tileToGang = lastUsed.subList(lastUsed.size() - 1,
+					lastUsed.size() );
+			List<Integer> newAtHand = (List<Integer>) ((Set) lastMove.get(3)).getValue();
+			List<Integer> lastAtHand = lastState.getTilesAtHand(lastState.getTurn());
+			List<Integer> tilesToGang = subtract(lastAtHand, newAtHand);
+			List<Integer> gangCombo=concat(tileToGang,tilesToGang);
+			//return gang(lastState, lastMove, playerIds);
+			return gang(lastState,gangCombo,playerIds);
+		}
 		case (RG):
-			return refusegang(lastState, lastMove, playerIds);
+			//return refusegang(lastState, lastMove, playerIds);
+			return refusegang(lastState,playerIds);
 		case (RP):
-			return refusepeng(lastState, lastMove, playerIds);
+			//return refusepeng(lastState, lastMove, playerIds);
+			return refusepeng(lastState,playerIds);
 		case (RC):
-			return refusechi(lastState, lastMove, playerIds);
+			//return refusechi(lastState, lastMove, playerIds);
+		    return refusechi(lastState,  playerIds);
 		case (WC):
-			return WaitForChi(lastState, lastMove, playerIds);
+			//return WaitForChi(lastState, lastMove, playerIds);
+			return WaitForChi(lastState,  playerIds);
 		case (WP):
-			return WaitForPeng(lastState, lastMove, playerIds);
+			//return WaitForPeng(lastState, lastMove, playerIds);
+			return WaitForPeng(lastState,  playerIds);
 		case (WG):
-			return WaitForGang(lastState, lastMove, playerIds);
+			//return WaitForGang(lastState, lastMove, playerIds);
+		    return WaitForGang(lastState,  playerIds);
 		case (WH):
-			return WaitForHu(lastState, lastMove, playerIds);
+			//return WaitForHu(lastState, lastMove, playerIds);
+		    return WaitForHu(lastState,  playerIds);
 		case (RH):
-			return refusehu(lastState, lastMove, playerIds);
+			//return refusehu(lastState, lastMove, playerIds);
+		    return refusehu(lastState,  playerIds);
 		}
 		return null;
 
