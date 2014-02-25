@@ -760,7 +760,7 @@ public class MahJongLogic {
 		return "tilesAtHandOf" + index;
 	}
 
-	String getAtDeclaredKey(int playerId) {
+	public static String getAtDeclaredKey(int playerId) {
 		String index = null;
 		switch (playerId) {
 		case 0:
@@ -780,7 +780,7 @@ public class MahJongLogic {
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	MahJongState gameApiStateToMahJongState(
+	public static MahJongState gameApiStateToMahJongState(
 			Map<String, Object> gameApiState, int turn, List<Integer> playerIds) {
 		List<Optional<Tile>> tiles = Lists.newArrayList();
 		for (int i = 0; i < 136; i++) {

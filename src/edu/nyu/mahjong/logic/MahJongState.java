@@ -106,13 +106,13 @@ public class MahJongState {
 
 	  public ImmutableList<Integer> getTilesAtDeclared(int playerId) {
 		    switch (playerId) {
-		    case 1: 
+		    case 0: 
 		    	return tilesAtDeclaredOfOne;    	
-		    case 2: 
+		    case 1: 
 		    	return tilesAtDeclaredOfTwo;
-		    case 3: 
+		    case 2: 
 		    	return tilesAtDeclaredOfThree;
-		    case 4: 
+		    case 3: 
 		    	return tilesAtDeclaredOfFour;
 		    default: 
 		    	return null;

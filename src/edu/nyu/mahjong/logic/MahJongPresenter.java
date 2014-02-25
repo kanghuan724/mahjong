@@ -154,17 +154,20 @@ public class MahJongPresenter {
     int yourPlayerIndex = updateUI.getPlayerIndex(yourPlayerId);
     if (updateUI.getState().isEmpty()) {
       // The 0 player sends the initial setup move.
-      if (mahJongState.getTurn() == yourPlayerId && playerIds.indexOf(yourPlayerId) == 0) {
+      if ( playerIds.indexOf(yourPlayerId) == 0)
+     // if (mahJongState.getTurn() == yourPlayerId && playerIds.indexOf(yourPlayerId) == 0) 
+      {
         sendInitialMove(playerIds);
       }
       return;
     }
+    mahJongState = mahJongLogic.gameApiStateToMahJongState(updateUI.getState(), yourPlayerId, playerIds);
     for (Operation operation : updateUI.getLastMove()) {
       if (operation instanceof SetTurn) {
         turn = playerIds.indexOf(((SetTurn) operation).getPlayerId());
       }
     }
-    mahJongState = mahJongLogic.gameApiStateToMahJongState(updateUI.getState(), yourPlayerId, playerIds);
+    
 
     MahJongMessage mahJongMessage = getMahJongMessage();
     if (updateUI.isViewer()) {
@@ -196,14 +199,18 @@ public class MahJongPresenter {
     List<Tile> tilesAtDeclaredLeft = getTiles(mahJongState.getTilesAtDeclared(leftId));
     List<Tile> tilesAtDeclaredAcross = getTiles(mahJongState.getTilesAtDeclared(acrossId));
     List<Tile> tilesAtDeclaredRight = getTiles(mahJongState.getTilesAtDeclared(rightId));
-
     view.setPlayerState(numberOfTilesAtHandLeft, numberOfTilesAtHandRight, numberOfTilesAtHandAcross,
     		tilesAtDeclaredLeft, tilesAtDeclaredRight, tilesAtDeclaredAcross, 
     		mahJongState.getTilesAtWall().size(), getTiles(mahJongState.getTilesUsed()),
     		getTiles(mahJongState.getTilesAtHand(yourPlayerId)), 
     		getTiles(mahJongState.getTilesAtDeclared(yourPlayerId)),
     		getMahJongMessage());
-    
+   /* System.out.println(numberOfTilesAtHandLeft);
+    System.out.println(numberOfTilesAtHandRight);
+    System.out.println(numberOfTilesAtHandAcross);
+    System.out.println(tilesAtDeclaredLeft);
+    System.out.println(tilesAtDeclaredRight);
+    System.out.println(tilesAtDeclaredAcross);*/
     // TODO: implement main logic of updateUI
     
     //if (isMyTurn()) {
@@ -219,19 +226,19 @@ public class MahJongPresenter {
   }
 
   private boolean canHu() {
-    return true;
+    return false;
   }
   
   private boolean canGang() {
-	    return true;
+	    return false;
   }
   
   private boolean canPeng() {
-	    return true;
+	    return false;
   }
   
   private boolean canChi() {
-	    return true;
+	    return false;
   }
   private MahJongMessage getMahJongMessage() {
     switch (mahJongState.getMove().getName()) {

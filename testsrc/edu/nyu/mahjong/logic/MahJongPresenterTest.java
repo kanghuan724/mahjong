@@ -12,7 +12,6 @@ import java.util.Map;
 
 import edu.nyu.mahjong.logic.MahJongPresenter.MahJongMessage;
 import edu.nyu.mahjong.logic.MahJongPresenter.View;
-
 import edu.nyu.mahjong.logic.MahJongLogic.*;
 
 import org.cheat.client.GameApi;
@@ -130,6 +129,8 @@ public class MahJongPresenterTest {
 		image.put(TAW, getIndicesInRange(53, 135));
 		image.put(TU, getEmpty());
 		image.put(M, ImmutableList.of(PU, String.valueOf(aId)));
+		for (int i=0;i<136;i++)
+			image.put(T+i,MahJongLogic.tileIdToString(i));
 		return ImmutableMap.copyOf(image);
 
 	}
@@ -147,7 +148,9 @@ public class MahJongPresenterTest {
 		image.put(DeclaredFour, getEmpty());
 		image.put(TAW, getIndicesInRange(54, 135));
 		image.put(TU, getIndicesInRange(52, 53));
-		image.put(M, ImmutableList.of(D, String.valueOf(bId)));
+		for (int i=0;i<136;i++)
+			image.put(T+i,MahJongLogic.tileIdToString(i));
+		image.put(M, ImmutableList.of(D, MahJongLogic.tileIdToString(52)));
 		return ImmutableMap.copyOf(image);
 
 	}
@@ -166,6 +169,8 @@ public class MahJongPresenterTest {
 		image.put(TAW, getEmpty());
 		image.put(TU, getIndicesInRange(52, 135));
 		image.put(M, ImmutableList.of(WG, String.valueOf(aId)));
+		for (int i=0;i<136;i++)
+			image.put(T+i,MahJongLogic.tileIdToString(i));
 		return ImmutableMap.copyOf(image);
 
 	}
@@ -203,17 +208,18 @@ public class MahJongPresenterTest {
 
   @Test
   public void testEmptyTileUsedFor1TurnOf1() {
-    mahJongPresenter.updateUI(createUpdateUI(aId, aId, emptyTileUsedState));
-    
+	mahJongState=MahJongLogic.gameApiStateToMahJongState(emptyTileUsedState,aId,playerIds);
+    mahJongPresenter.updateUI(createUpdateUI(aId, aId, emptyTileUsedState));    
     verify(mockView).setPlayerState(13, 13, 13, getEmptyTile(), getEmptyTile(), getEmptyTile(),
     		83, getEmptyTile(),
     		getTiles(MahJongLogic.concat(getIndicesInRange(0, 12),getIndicesInRange(52, 52))), 
     		getEmptyTile(), MahJongMessage.INVISIBLE);
-    verify(mockView).chooseTile(ImmutableList.<Tile>of().get(0), getTiles(getIndicesInRange(0, 12)));
+    //verify(mockView).chooseTile(ImmutableList.<Tile>of().get(0), getTiles(getIndicesInRange(0, 12)));
   }
 
   @Test
   public void testEmptyMiddleStateFor2TurnOf1() {
+    mahJongState=MahJongLogic.gameApiStateToMahJongState(emptyTileUsedState,aId,playerIds);
     mahJongPresenter.updateUI(createUpdateUI(bId, aId, emptyTileUsedState));
     verify(mockView).setPlayerState(14, 13, 13, getEmptyTile(), getEmptyTile(), getEmptyTile(),
     		83, getEmptyTile(),
@@ -223,6 +229,7 @@ public class MahJongPresenterTest {
 
   @Test
   public void testEmptyMiddleStateForViewerTurnOf1() {
+	mahJongState=MahJongLogic.gameApiStateToMahJongState(emptyTileUsedState,aId,playerIds);
     mahJongPresenter.updateUI(createUpdateUI(viewerId, aId, emptyTileUsedState));
     verify(mockView).setViewerState(14, 13, 13, 13, 
     		getEmptyTile(), getEmptyTile(), getEmptyTile(), getEmptyTile(),
@@ -232,6 +239,7 @@ public class MahJongPresenterTest {
 
   @Test
   public void testNonEmptyMiddleStateFor1TurnOf2() {
+	mahJongState=MahJongLogic.gameApiStateToMahJongState(nonEmptyTileUsedState,aId,playerIds);
     mahJongPresenter.updateUI(createUpdateUI(aId, bId, nonEmptyTileUsedState));
     verify(mockView).setPlayerState(13, 13, 13, 
     		getEmptyTile(), getEmptyTile(), getEmptyTile(),
@@ -242,6 +250,7 @@ public class MahJongPresenterTest {
 
   @Test
   public void testNonEmptyTileUsedFor2TurnOf2() {
+	mahJongState=MahJongLogic.gameApiStateToMahJongState(nonEmptyTileUsedState,aId,playerIds);
     mahJongPresenter.updateUI(createUpdateUI(bId, bId, nonEmptyTileUsedState));
     verify(mockView).setPlayerState(13, 13, 13, 
     		getEmptyTile(), getEmptyTile(), getEmptyTile(),
@@ -252,6 +261,7 @@ public class MahJongPresenterTest {
 
   @Test
   public void testNonEmptyMiddleStateForViewerTurnOf2() {
+	mahJongState=MahJongLogic.gameApiStateToMahJongState(nonEmptyTileUsedState,aId,playerIds);
     mahJongPresenter.updateUI(createUpdateUI(viewerId, bId, nonEmptyTileUsedState));
     verify(mockView).setViewerState(13, 13, 13, 13,
     		getEmptyTile(), getEmptyTile(), getEmptyTile(), getEmptyTile(),
@@ -260,6 +270,7 @@ public class MahJongPresenterTest {
 
   @Test
   public void testGameOverStateFor1() {
+	mahJongState=MahJongLogic.gameApiStateToMahJongState(gameOverState,aId,playerIds);
     mahJongPresenter.updateUI(createUpdateUI(aId, aId, gameOverState));
     verify(mockView).setPlayerState(13, 13, 13, getEmptyTile(), getEmptyTile(), getEmptyTile(),
     		0, getTiles(getIndicesInRange(52, 135)),
@@ -269,6 +280,7 @@ public class MahJongPresenterTest {
 
   @Test
   public void testGameOverStateFor2() {
+	mahJongState=MahJongLogic.gameApiStateToMahJongState(gameOverState,aId,playerIds);
     mahJongPresenter.updateUI(createUpdateUI(bId, aId, gameOverState));
     verify(mockView).setPlayerState(13, 13, 13, getEmptyTile(), getEmptyTile(), getEmptyTile(),
     		0, getTiles(getIndicesInRange(52, 135)),
@@ -278,6 +290,7 @@ public class MahJongPresenterTest {
 
   @Test
   public void testGameOverStateForViewer() {
+	mahJongState=MahJongLogic.gameApiStateToMahJongState(gameOverState,aId,playerIds);
     mahJongPresenter.updateUI(createUpdateUI(viewerId, aId, gameOverState));
     verify(mockView).setViewerState(13, 13, 13, 13, 
     		getEmptyTile(), getEmptyTile(), getEmptyTile(), getEmptyTile(),
