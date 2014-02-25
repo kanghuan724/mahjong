@@ -128,7 +128,7 @@ public class MahJongPresenter {
     /**
      * If more than one possible combo exist (except hu), the player needs to choose one.
      */
-    void chooseCombo(List<List<Tile>> combo);
+    //void chooseCombo(List<List<Tile>> combo);
   }
 
   private final MahJongLogic mahJongLogic = new MahJongLogic();
@@ -138,6 +138,7 @@ public class MahJongPresenter {
   private int turn;
   private MahJongState mahJongState;
   private Tile selectedTile;
+  private Tile lastUsedTile;
 
   public MahJongPresenter(View view, Container container) {
     this.view = view;
@@ -284,46 +285,53 @@ public class MahJongPresenter {
   }
 
   /**
-   * Finishes the card selection process.
-   * The view can only call this method if the presenter called {@link View#chooseNextCard}
-   * and more than one card was selected by calling {@link #cardSelected}.
+   * Finishes the tile selection process.
+   * The view can only call this method if the presenter called {@link View#chooseTile}
+   * and exactly one tile was selected by calling {@link #tileSelected}.
    */
-  void tileDiscarded() {
+  void tileDiscarded(List<Operation> lastMove) {
     check(isMyTurn() && selectedTile != null);
-    container.sendMakeMove(mahJongLogic.discard(mahJongState, lastMove, playerIds));
+    container.sendMakeMove(mahJongLogic.discard(mahJongState, lastMove, mahJongState.getPlayerIds()));
+  }
+
+  private void huAvailable() {
+	    view.huAvailable(lastUsedTile, getTiles(mahJongState.getTilesAtHand(turn)));
+  }
+  
+  private void gangAvailable() {
+	    view.gangAvailable(lastUsedTile, getTiles(mahJongState.getTilesAtHand(turn)));
+  }
+  
+  private void pengAvailable() {
+	    view.pengAvailable(lastUsedTile, getTiles(mahJongState.getTilesAtHand(turn)));
+  }
+  
+  private void chiAvailable() {
+	    view.chiAvailable(lastUsedTile, getTiles(mahJongState.getTilesAtHand(turn)));
   }
 
   /**
-   * Selects a rank and sends a claim.
-   * The view can only call this method if the presenter called {@link View#chooseRankForClaim}.
-   */
-  void rankSelected(Rank rank) {
-    check(isMyTurn() && !selectedCards.isEmpty() && getPossibleRanks().contains(rank));
-    List<Integer> myCardIndices = cheatState.getWhiteOrBlack(cheatState.getTurn());
-    List<Card> myCards = getMyCards();
-    List<Integer> cardsToMoveToMiddle = Lists.newArrayList();
-    for (Card card : selectedCards) {
-      int cardIndex = myCardIndices.get(myCards.indexOf(card));
-      cardsToMoveToMiddle.add(cardIndex);
-    }
-    container.sendMakeMove(cheatLogic.getMoveClaim(cheatState, rank, cardsToMoveToMiddle));
-  }
-
-  /**
-   * Sends a move that the opponent is a cheater.
+   * Sends a move of hu/gang/peng/chi.
    * The view can only call this method if the presenter passed
-   * CheaterMessage.IS_OPPONENT_CHEATING in {@link View#setPlayerState}.
+   * CheaterMessage.HU/GANG/PENG/CHI in {@link View#setPlayerState}.
    */
-  void declaredCheater() {
-    check(canDeclareCheater());
-    container.sendMakeMove(cheatLogic.getMoveDeclareCheater(cheatState));
+  void hu(List<Operation> lastMove) {
+    container.sendMakeMove(mahJongLogic.hu(mahJongState, lastMove, mahJongState.getPlayerIds()));
   }
-
-  private void checkIfCheated() {
-    container.sendMakeMove(cheatLogic.getMoveCheckIfCheated(cheatState));
-  }
+  
+  void gang(List<Operation> lastMove) {
+	    container.sendMakeMove(mahJongLogic.gang(mahJongState, lastMove, mahJongState.getPlayerIds()));
+	  }
+  
+  void peng(List<Operation> lastMove) {
+	    container.sendMakeMove(mahJongLogic.peng(mahJongState, lastMove, mahJongState.getPlayerIds()));
+	  }
+  
+  void chi(List<Operation> lastMove) {
+	    container.sendMakeMove(mahJongLogic.chi(mahJongState, lastMove, mahJongState.getPlayerIds()));
+	  }
 
   private void sendInitialMove(List<Integer> playerIds) {
-    container.sendMakeMove(cheatLogic.getMoveInitial(playerIds));
+    container.sendMakeMove(mahJongLogic.getInitialMove(playerIds));
   }
 }
