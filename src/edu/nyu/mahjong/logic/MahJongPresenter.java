@@ -139,6 +139,7 @@ public class MahJongPresenter {
   private MahJongState mahJongState;
   private Tile selectedTile;
   private Tile lastUsedTile;
+  private List<Tile> selectedCombo;
 
   public MahJongPresenter(View view, Container container) {
     this.view = view;
@@ -258,7 +259,7 @@ public class MahJongPresenter {
 	  }
 	  return targetTiles;	  
   }
-
+  
   private void check(boolean val) {
 	    if (!val) {
 	      throw new IllegalArgumentException();
@@ -289,9 +290,15 @@ public class MahJongPresenter {
    * The view can only call this method if the presenter called {@link View#chooseTile}
    * and exactly one tile was selected by calling {@link #tileSelected}.
    */
-  void tileDiscarded(List<Operation> lastMove) {
+  void tileDiscarded() {
     check(isMyTurn() && selectedTile != null);
-    container.sendMakeMove(mahJongLogic.discard(mahJongState, lastMove, mahJongState.getPlayerIds()));
+    List<Integer> selectedTileIndex = Lists.newArrayList();
+    for (int index = 0; index < mahJongState.getTiles().size(); index++) {
+    	if ((mahJongState.getTiles().get(index).get().equals(selectedTile))) {
+    		selectedTileIndex.add(index);
+    	}
+    }
+    container.sendMakeMove(mahJongLogic.discard(mahJongState, selectedTileIndex, mahJongState.getPlayerIds()));
   }
 
   private void huAvailable() {
@@ -319,17 +326,41 @@ public class MahJongPresenter {
     container.sendMakeMove(mahJongLogic.hu(mahJongState, lastMove, mahJongState.getPlayerIds()));
   }
   
-  void gang(List<Operation> lastMove) {
-	    container.sendMakeMove(mahJongLogic.gang(mahJongState, lastMove, mahJongState.getPlayerIds()));
+  void gang() {
+	  List<Integer> selectedComboIndex = Lists.newArrayList();
+	  for (int index = 0; index < mahJongState.getTiles().size(); index++) {
+		  for (int cI = 0; cI < selectedCombo.size(); cI++) {
+			  if ((mahJongState.getTiles().get(index).get().equals(selectedCombo.get(cI)))) {
+				  selectedComboIndex.add(index);
+			  }
+		  }
 	  }
+	  container.sendMakeMove(mahJongLogic.gang(mahJongState, selectedComboIndex, mahJongState.getPlayerIds()));
+  }
   
-  void peng(List<Operation> lastMove) {
-	    container.sendMakeMove(mahJongLogic.peng(mahJongState, lastMove, mahJongState.getPlayerIds()));
+  void peng() {
+	  List<Integer> selectedComboIndex = Lists.newArrayList();
+	  for (int index = 0; index < mahJongState.getTiles().size(); index++) {
+		  for (int cI = 0; cI < selectedCombo.size(); cI++) {
+			  if ((mahJongState.getTiles().get(index).get().equals(selectedCombo.get(cI)))) {
+				  selectedComboIndex.add(index);
+			  }
+		  }
 	  }
+	  container.sendMakeMove(mahJongLogic.peng(mahJongState, selectedComboIndex, mahJongState.getPlayerIds()));
+  }
   
-  void chi(List<Operation> lastMove) {
-	    container.sendMakeMove(mahJongLogic.chi(mahJongState, lastMove, mahJongState.getPlayerIds()));
+  void chi() {
+	  List<Integer> selectedComboIndex = Lists.newArrayList();
+	  for (int index = 0; index < mahJongState.getTiles().size(); index++) {
+		  for (int cI = 0; cI < selectedCombo.size(); cI++) {
+			  if ((mahJongState.getTiles().get(index).get().equals(selectedCombo.get(cI)))) {
+				  selectedComboIndex.add(index);
+			  }
+		  }
 	  }
+	  container.sendMakeMove(mahJongLogic.chi(mahJongState, selectedComboIndex, mahJongState.getPlayerIds()));
+  }
 
   private void sendInitialMove(List<Integer> playerIds) {
     container.sendMakeMove(mahJongLogic.getInitialMove(playerIds));
