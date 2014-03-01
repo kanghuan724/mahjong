@@ -29,7 +29,7 @@ public class MahJongPresenter {
    * PENG: ask the player whether to peng.
    * CHI: ask the player whether to chi.
    */
-  enum MahJongMessage {
+  public enum MahJongMessage {
     INVISIBLE, HU, GANG, PENG, CHI;
   }
 
@@ -48,7 +48,7 @@ public class MahJongPresenter {
   private static final String RG = "RefuseGang";
   private static final String RH = "RefuseHu";
 	
-  interface View {
+  public interface View {
     /**
      * Sets the presenter. The viewer will call certain methods on the presenter, e.g.,
      * when a tile is selected ({@link #tileSelected}),
@@ -216,24 +216,16 @@ public class MahJongPresenter {
     		getTiles(mahJongState.getTilesAtHand(yourPlayerId)), 
     		getTiles(mahJongState.getTilesAtDeclared(yourPlayerId)),
     		getMahJongMessage());
-   /* System.out.println(numberOfTilesAtHandLeft);
-    System.out.println(numberOfTilesAtHandRight);
-    System.out.println(numberOfTilesAtHandAcross);
-    System.out.println(tilesAtDeclaredLeft);
-    System.out.println(tilesAtDeclaredRight);
-    System.out.println(tilesAtDeclaredAcross);*/
+
     // TODO: implement main logic of updateUI
     
-    //if (isMyTurn()) {
-    //  if (cheatState.isCheater()) {
-    //    checkIfCheated();
-    //  } else {
-        // Choose the next card only if the game is not over
-    //    if (numberOfOpponentCards > 0) {
-    //      chooseNextCard();
-    //    }
-    //  }
-    //}
+    /*if (isMyTurn()) {
+        if (mahJongState.getMove().getName() == D) {
+      	  chooseTile();
+        } else if (mahJongState.getMove().getName() != PU){
+      	  getMahJongMessage();
+        }
+      }*/
 
     
     
