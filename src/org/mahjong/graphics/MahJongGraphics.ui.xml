@@ -1,0 +1,19 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+  xmlns:g="urn:import:com.google.gwt.user.client.ui">
+  <g:VerticalPanel width="50px" ui:filed="leftDeclaredArea"/>
+  <g:VerticalPanel width="50px" ui:filed="leftAtHandArea"/>
+  <g:VerticalPanel>
+    <g:HorizontalPanel height="100px" ui:field="acrossDeclaredArea"/>
+    <g:HorizontalPanel height="100px" ui:field="acrossAtHandArea"/>
+    <g:HorizontalPanel height="400px" ui:field="usedArea" />
+    <g:HorizontalPanel height="100px" ui:field="myAtHandArea"/>
+    <g:HorizontalPanel height="100px">
+      <g:HorizontalPanel width="120" height="100px" ui:field="selectedArea"/>
+      <g:Button ui:field="claimBtn" text="Discard"/>
+    </g:HorizontalPanel>
+    <g:HorizontalPanel height="100px" ui:field="myDeclaredArea"/>
+  </g:VerticalPanel>
+  <g:VerticalPanel width="50px" ui:filed="rightAtHandArea"/>
+  <g:VerticalPanel width="50px" ui:filed="rightDeclaredArea"/>
+</ui:UiBinder> 
