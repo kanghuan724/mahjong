@@ -19,5 +19,6 @@
 
   <!-- Specify the paths for translatable code                    -->
   <source path='edu.nyu.mahjong.logic'/>
+  <source path='edu.nyu.mahjong.iface'/>
   <source path='edu.nyu.mahjong.graphics'/>
 </module>
