@@ -19,8 +19,8 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 
 public interface TileImages extends ClientBundle{
-	  @Source("images/tiles/b.jpg")
+	  @Source("Images/Tiles/b.jpg")
 	  ImageResource b();
-	  @Source("images/tiles/a1.jpg")
+	  @Source("Images/Tiles/a1.jpg")
 	  ImageResource a1();
 }
