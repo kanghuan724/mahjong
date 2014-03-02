@@ -3,11 +3,6 @@ package edu.nyu.mahjong.graphics;
 import java.util.Collections;
 import java.util.List;
 
-import org.cheat.client.Card;
-import org.cheat.client.Claim;
-import org.cheat.client.CheatPresenter.CheaterMessage;
-import org.cheat.graphics.PopupChoices;
-
 import edu.nyu.mahjong.logic.*;
 import edu.nyu.mahjong.logic.MahJongPresenter.MahJongMessage;
 import edu.nyu.mahjong.logic.MahJongPresenter.View;
@@ -33,7 +28,7 @@ import com.google.gwt.user.client.ui.Widget;
  * Graphics for the game of mahjong.
  */
 public class MahJongGraphics extends Composite implements MahJongPresenter.View {
-  public interface MahJongGraphicsUiBinder extends UiBinder<Widget, CheatGraphics> {
+  public interface MahJongGraphicsUiBinder extends UiBinder<Widget, MahJongGraphics> {
   }
 
   // TODO: There are 4 more areas: leftDeclaredArea, leftAtHandArea, rightDeclaredArea, rightAtHandArea, 
@@ -71,29 +66,22 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     MahJongGraphicsUiBinder uiBinder = GWT.create(MahJongGraphicsUiBinder.class);
     initWidget(uiBinder.createAndBindUi(this));
   }
-  private List<Image> createBackTiles(int numOfTiles) {
-	    List<TileImage> images = Lists.newArrayList();
-	    for (int i = 0; i < numOfTiles; i++) {
-	      images.add(TileImage.Factory.getBackOfTileImage());
-	    }
-	    return createImages(images, false);
-	  }
 
-  /*private List<Image> createHorizonBackTiles(int numOfTiles) {
+  private List<Image> createHorizonBackTiles(int numOfTiles) {
     List<TileImage> images = Lists.newArrayList();
     for (int i = 0; i < numOfTiles; i++) {
       images.add(TileImage.Factory.getBackOfTileImage());
     }
     return createImages(images, false);
-  }*/
+  }
   
- /* private List<Image> createVerticalBackTiles(int numOfTiles) {
+  private List<Image> createVerticalBackTiles(int numOfTiles) {
 	  List<TileImage> images = Lists.newArrayList();
 	//TODO: The logic to createVerticalBackTiles for the vertical panels for left and right players 
 	  return createImages(images, false);
-  }*/
+  }
 
- /* private List<Image> createHorizonTileImages(List<Tile> cards, boolean withClick) {
+  private List<Image> createHorizonTileImages(List<Tile> tiles, boolean withClick) {
     List<TileImage> images = Lists.newArrayList();
     for (Tile tile : tiles) {
       images.add(TileImage.Factory.getTileImage(tile));
@@ -101,19 +89,13 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     return createImages(images, withClick);
   }
 
-  private List<Image> createVerticalTileImages(List<Tile> cards, boolean withClick) {
+  private List<Image> createVerticalTileImages(List<Tile> tiles, boolean withClick) {
 	  List<TileImage> images = Lists.newArrayList();
 	//TODO: The void to createVerticalTileImages for the vertical panels for left and right players
 	  return createImages(images, withClick);
-  }*/
-
-  private List<Image> createTileImages(List<Tile> tiles, boolean withClick) {
-	    List<TileImage> images = Lists.newArrayList();
-	    for (Tile tile : tiles) {
-	      images.add(TileImage.Factory.getTileImage(tile));
-	    }
-	    return createImages(images, withClick);
   }
+
+
   
   private List<Image> createImages(List<TileImage> images, boolean withClick) {
     List<Image> res = Lists.newArrayList();
@@ -248,8 +230,8 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     placeVerticalImages(leftDeclaredArea, createVerticalTileImages(tilesAtDeclared2, false));
     placeHorizonImages(acrossDeclaredArea, createHorizonTileImages(tilesAtDeclared3, false));
     placeVerticalImages(rightDeclaredArea, createVerticalTileImages(tilesAtDeclared4, false));
-    placeImages(usedArea, createHorizonTileImages(tilesUsed, false));    
-    placeImages(selectedArea, ImmutableList.<Image>of());
+    placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
+    placeHorizonImages(selectedArea, ImmutableList.<Image>of());
     alertMahJongMessage(mahJongMessage);
     //disableClicks();
   }
@@ -258,7 +240,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   public void setPlayerState(int numberOfTilesAtHandLeft, int numberOfTilesAtHandRight, 
   		int numberOfTilesAtHandAcross,
   		List<Tile> tilesAtDeclaredLeft, List<Tile> tilesAtDeclaredRight, 
-  		List<Tile> tilesAtDeclaredAcorss,
+  		List<Tile> tilesAtDeclaredAcross,
   		int numberOfTilesAtWall, List<Tile> tilesUsed,
           List<Tile> myTilesAtHand, List<Tile> myTilesDeclared,
           MahJongMessage mahJongMessage) {
@@ -269,8 +251,8 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     placeVerticalImages(leftDeclaredArea, createVerticalTileImages(tilesAtDeclaredLeft, false));
     placeHorizonImages(acrossDeclaredArea, createHorizonTileImages(tilesAtDeclaredAcross, false));
     placeVerticalImages(rightDeclaredArea, createVerticalTileImages(tilesAtDeclaredRight, false));
-    placeImages(usedArea, createHorizonTileImages(tilesUsed, false));    
-    placeImages(selectedArea, ImmutableList.<Image>of());
+    placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
+    placeHorizonImages(selectedArea, ImmutableList.<Image>of());
     alertMahJongMessage(mahJongMessage);
     //disableClicks();
   }
@@ -280,12 +262,35 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     Collections.sort(remainingTiles);
     Collections.sort(selectedTiles);
     enableClicks = true;
-    claimBtn.setEnabled(!selectedCards.isEmpty());
-    placeHorizonImages(myAtHandArea, createTileImages(remainingTiles, true));
-    placeHorizonImages(selectedArea, createTileImages(ImmutableList.<Tile>copyOf(selectedTiles), true));
+    claimBtn.setEnabled(!selectedTiles.isEmpty());
+    placeHorizonImages(myAtHandArea, createHorizonTileImages(remainingTiles, true));
+    placeHorizonImages(selectedArea, createHorizonTileImages(ImmutableList.<Tile>copyOf(selectedTiles), true));
     //TODO: design the way to discard the selected tile
   }
+@Override
+public void huAvailable(Tile tileToHu, List<Tile> myTilesAtHand) {
+	// TODO Auto-generated method stub
+	
+}
+@Override
+public void gangAvailable(Tile tileToGang, List<Tile> tilesToGang) {
+	// TODO Auto-generated method stub
+	
+}
+@Override
+public void pengAvailable(Tile tileToPeng, List<Tile> tilesToPeng) {
+	// TODO Auto-generated method stub
+	
+}
+@Override
+public void chiAvailable(Tile tileToChi, List<Tile> tilesToChi) {
+	// TODO Auto-generated method stub
+	
+}
+@Override
+public void discard() {
+	// TODO Auto-generated method stub
+	
+}
   
-
-  //TODO: hu/gang/peng/chiAvailable
 }

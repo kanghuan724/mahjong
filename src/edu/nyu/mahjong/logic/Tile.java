@@ -2,8 +2,6 @@ package edu.nyu.mahjong.logic;
 
 import java.util.Arrays;
 
-import org.cheat.client.Card;
-
 import edu.nyu.mahjong.iface.Equality;
 
 public class Tile extends Equality implements Comparable<Tile>{

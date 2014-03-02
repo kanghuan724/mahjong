@@ -32,7 +32,7 @@ public class MahJongPresenter {
    * CHI: ask the player whether to chi.
    */
   public enum MahJongMessage {
-    INVISIBLE, HU, GANG,PENG, CHI,PICK;
+    INVISIBLE, HU, GANG, PENG, CHI, PICK;
   }
 
   private static final String WP = "WaitForPeng";
@@ -89,7 +89,7 @@ public class MahJongPresenter {
     void setPlayerState(int numberOfTilesAtHandLeft, int numberOfTilesAtHandRight, 
     		int numberOfTilesAtHandAcross,
     		List<Tile> tilesAtDeclaredLeft, List<Tile> tilesAtDeclaredRight, 
-    		List<Tile> tilesAtDeclaredAcorss,
+    		List<Tile> tilesAtDeclaredAcross,
     		int numberOfTilesAtWall, List<Tile> tilesUsed,
             List<Tile> myTilesAtHand, List<Tile> myTilesDeclared,
             MahJongMessage mahJongMessage);
@@ -103,7 +103,7 @@ public class MahJongPresenter {
      * If the user selects a tile from remainingTiles, then it replaces selectedTile with that tile,
      * i.e. moves the previous selectedTile to remainingTiles.
      */
-    void chooseTile(List<Tile> selectedTiles, List<Tile> remainingTiles);
+    void chooseTile(List<Tile> selectedTile, List<Tile> remainingTiles);
     
     /**
      * Asks the player to hu.

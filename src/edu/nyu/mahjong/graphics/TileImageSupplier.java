@@ -19,19 +19,19 @@ public class TileImageSupplier {
 	public ImageResource getResource(TileImage tileImage) {
 		    switch (tileImage.kind) {
 		      case BACK:
-		        return getBackOfCardImage();
+		        return getBackOfTileImage();
 		 
 		      case NORMAL:
-		        return getCardImage(tileImage.tile);
+		        return getTileImage(tileImage.tile);
 		      default:
 		        throw new RuntimeException("Forgot kind=" + tileImage.kind);
 		    }
 		  } 
-	public ImageResource getBackOfCardImage() {
-	    //return cardImages.b();
+	public ImageResource getBackOfTileImage() {
+	    return tileImages.b();
 	  } 
-	public ImageResource getCardImage(Tile tile) {
-	    //return cardImages.b();
-	  } 
+	public ImageResource getTileImage(Tile tile) {
+		//TODO: return the TileImage of certain tile
+	  }  
 	  
 }
