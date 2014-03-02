@@ -3,6 +3,11 @@ package edu.nyu.mahjong.graphics;
 import java.util.Collections;
 import java.util.List;
 
+import org.cheat.client.Card;
+import org.cheat.client.Claim;
+import org.cheat.client.CheatPresenter.CheaterMessage;
+import org.cheat.graphics.PopupChoices;
+
 import edu.nyu.mahjong.logic.*;
 import edu.nyu.mahjong.logic.MahJongPresenter.MahJongMessage;
 import edu.nyu.mahjong.logic.MahJongPresenter.View;
@@ -20,6 +25,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -27,7 +33,7 @@ import com.google.gwt.user.client.ui.Widget;
  * Graphics for the game of mahjong.
  */
 public class MahJongGraphics extends Composite implements MahJongPresenter.View {
-  public interface CheatGraphicsUiBinder extends UiBinder<Widget, CheatGraphics> {
+  public interface MahJongGraphicsUiBinder extends UiBinder<Widget, CheatGraphics> {
   }
 
   // TODO: There are 4 more areas: leftDeclaredArea, leftAtHandArea, rightDeclaredArea, rightAtHandArea, 
@@ -41,12 +47,19 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   @UiField
   HorizontalPanel myAtHandArea;
   @UiField
-  HorizontalPanel seletedArea;
+  HorizontalPanel selectedArea;
   @UiField
   HorizontalPanel myDeclaredArea;
   @UiField
-  //Button claimBtn;
-  //private boolean enableClicks = false;
+  VerticalPanel leftAtHandArea;
+  @UiField
+  VerticalPanel leftDeclaredArea;
+  @UiField
+  VerticalPanel rightDeclaredArea;
+  @UiField
+  VerticalPanel rightAtHandArea;
+  Button claimBtn;
+  private boolean enableClicks = false;
   
   // TODO: Auxiliary classes: TileImageSupplier, TileImages, TileImage
   private final TileImageSupplier tileImageSupplier;
@@ -58,22 +71,29 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     MahJongGraphicsUiBinder uiBinder = GWT.create(MahJongGraphicsUiBinder.class);
     initWidget(uiBinder.createAndBindUi(this));
   }
+  private List<Image> createBackTiles(int numOfTiles) {
+	    List<TileImage> images = Lists.newArrayList();
+	    for (int i = 0; i < numOfTiles; i++) {
+	      images.add(TileImage.Factory.getBackOfTileImage());
+	    }
+	    return createImages(images, false);
+	  }
 
-  private List<Image> createHorizonBackTiles(int numOfTiles) {
+  /*private List<Image> createHorizonBackTiles(int numOfTiles) {
     List<TileImage> images = Lists.newArrayList();
     for (int i = 0; i < numOfTiles; i++) {
       images.add(TileImage.Factory.getBackOfTileImage());
     }
     return createImages(images, false);
-  }
+  }*/
   
-  private List<Image> createVerticalBackTiles(int numOfTiles) {
+ /* private List<Image> createVerticalBackTiles(int numOfTiles) {
 	  List<TileImage> images = Lists.newArrayList();
 	//TODO: The logic to createVerticalBackTiles for the vertical panels for left and right players 
 	  return createImages(images, false);
-  }
+  }*/
 
-  private List<Image> createHorizonTileImages(List<Tile> cards, boolean withClick) {
+ /* private List<Image> createHorizonTileImages(List<Tile> cards, boolean withClick) {
     List<TileImage> images = Lists.newArrayList();
     for (Tile tile : tiles) {
       images.add(TileImage.Factory.getTileImage(tile));
@@ -85,9 +105,16 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	  List<TileImage> images = Lists.newArrayList();
 	//TODO: The void to createVerticalTileImages for the vertical panels for left and right players
 	  return createImages(images, withClick);
+  }*/
+
+  private List<Image> createTileImages(List<Tile> tiles, boolean withClick) {
+	    List<TileImage> images = Lists.newArrayList();
+	    for (Tile tile : tiles) {
+	      images.add(TileImage.Factory.getTileImage(tile));
+	    }
+	    return createImages(images, withClick);
   }
-
-
+  
   private List<Image> createImages(List<TileImage> images, boolean withClick) {
     List<Image> res = Lists.newArrayList();
     for (TileImage img : images) {
@@ -110,75 +137,96 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 
   private void placeHorizonImages(HorizontalPanel panel, List<Image> images) {
     panel.clear();
-    Image last = images.isEmpty() ? null : images.get(images.size() - 1);
+   // Image last = images.isEmpty() ? null : images.get(images.size() - 1);
     for (Image image : images) {
       FlowPanel imageContainer = new FlowPanel();
-      imageContainer.setStyleName(image != last ? "imgShortContainer" : "imgContainer");
+      //imageContainer.setStyleName(image != last ? "imgShortContainer" : "imgContainer");
+      imageContainer.setStyleName("imgContainer");
       imageContainer.add(image);
       panel.add(imageContainer);
     }
   }
   
-  private void placeVerticalImages() {
+  private void placeVerticalImages(VerticalPanel panel, List<Image> images) {
 	// TODO: The void to placeVerticalImages for the vertical panels 
 	// (AtHand & Declared) for left and right players
+	  panel.clear();
+	 // Image last = images.isEmpty() ? null : images.get(images.size() - 1);
+	  for (Image image : images) {
+	      FlowPanel imageContainer = new FlowPanel();
+	      //imageContainer.setStyleName(image != last ? "imgShortContainer" : "imgContainer");
+	      imageContainer.setStyleName("imgContainer");
+	      imageContainer.add(image);
+	      panel.add(imageContainer);
+	    }
   }
   
   //TODO: Main logic of MahJongMessage
-	  
-  /*private void alertMahJongMessage(MahJongMessage mahJongMessage) {
-    String message = "";
-    List<String> options = Lists.newArrayList();
-    final String callCheatOption = "Call cheater!";
-    if (lastClaim.isPresent()) {
-      Claim claim = lastClaim.get();
-      message = "Dropped " + claim.getNumberOfCards()
-          + " cards, and claimed they are of rank " + claim.getCardRank() + ". ";
-    }
-    switch (cheaterMessage) {
-      case WAS_CHEATING:
-        message += "The player was cheating.";
+  private void alertMahJongMessage(MahJongMessage mahjongMessage)
+  {
+	  String message="";
+	  List<String> options=Lists.newArrayList();
+	  /*
+	   Discard is not included in mahjongMessage.
+	   mahjongmessage consists of pick, hu, gang, peng, chi and invisible
+	   */
+	   
+	  switch (mahjongMessage) {
+      case PICK:
+        message += "Your Turn To Pick Up A Tile";
         break;
-      case WAS_NOT_CHEATING:
-        message += "The player was NOT cheating.";
+      case HU:
+        message += "Are You Able To Hu?";
+        options.add("Yes,Let me Hu");
+        options.add("No,not now");
         break;
-      case IS_OPPONENT_CHEATING:
-        message += "Did the opponent cheat?";
-        options.add("Probably told the truth");
-        options.add(callCheatOption);
-        break;
+      case GANG:
+    	message += "Wanna Gang That Tile?";
+    	List<Integer> comboToGang=presenter.gangHelper();
+	      if (comboToGang.size()==4)
+    	options.add("Yes, god gang that");
+    	options.add("No, not now");
+    	break;
+      case PENG:
+    	message += "Wanna Peng That Tile?";
+    	List<Integer> comboToPeng=presenter.pengHelper();
+	      if (comboToPeng.size()==3)
+    	options.add("Yes, god peng that");
+    	options.add("No, not now");
+    	break;
+      case CHI:
+    	message += "Wanna Chi That Tile?";
+    	options.add("Yes, god chi that");
+        options.add("No, not now");
+    	break;
       case INVISIBLE:
         break;
       default:
         break;
     }
-    if (message.isEmpty()) {
-      return;
-    }
-    if (options.isEmpty()) {
-      options.add("OK");
-    }
-    new PopupChoices(message, options,
-        new PopupChoices.OptionChosen() {
-      @Override
-      public void optionChosen(String option) {
-        if (option.equals(callCheatOption)) {
-          presenter.declaredCheater();
-        }
-      }
-    }).center();
-  }*/
+	if (message.isEmpty()) 
+	   message += "Your Turn To Pick Up A Tile";
+	if (options.isEmpty()) {
+	      options.add("OK");
+	    }
+	PopupChoices.OptionChosen eventTriggered=eventFactory.build(presenter,mahjongMessage);
+	new PopupChoices(message, options,
+	        eventTriggered).center();
+	   
+  }
+  
+  
 
-  //private void disableClicks() {
-  //  claimBtn.setEnabled(false);
-  //  enableClicks = false;
-  //}
+  private void disableClicks() {
+    claimBtn.setEnabled(false);
+    enableClicks = false;
+  }
 
-  //@UiHandler("claimBtn")
-  //void onClickClaimBtn(ClickEvent e) {
-  //  disableClicks();
-  //  presenter.finishedSelectingCards();
-  //}
+  @UiHandler("claimBtn")
+  void onClickClaimBtn(ClickEvent e) {
+    disableClicks();
+    presenter.finishedSelectingTiles();
+  }
 
   @Override
   public void setPresenter(MahJongPresenter mahJongPresenter) {
@@ -228,13 +276,16 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   }
 
   @Override
-  public void chooseTile(Tile selectedCard, List<Tile> remainingTiles) {
+  public void chooseTile(List<Tile> selectedTiles, List<Tile> remainingTiles) {
     Collections.sort(remainingTiles);
+    Collections.sort(selectedTiles);
     enableClicks = true;
-    placeImages(myAtArea, createHorizonTileImages(remainingTiles, true));
-    placeImages(selectedArea, createHorizonTileImages(ImmutableList.<Tile>of(selectedTile), true));
+    claimBtn.setEnabled(!selectedCards.isEmpty());
+    placeHorizonImages(myAtHandArea, createTileImages(remainingTiles, true));
+    placeHorizonImages(selectedArea, createTileImages(ImmutableList.<Tile>copyOf(selectedTiles), true));
     //TODO: design the way to discard the selected tile
   }
+  
 
   //TODO: hu/gang/peng/chiAvailable
 }

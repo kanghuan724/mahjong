@@ -2,9 +2,11 @@ package edu.nyu.mahjong.logic;
 
 import java.util.Arrays;
 
+import org.cheat.client.Card;
+
 import edu.nyu.mahjong.iface.Equality;
 
-public class Tile extends Equality {
+public class Tile extends Equality implements Comparable<Tile>{
 
   private Suit suitValue;
   private Rank rankValue;
@@ -53,5 +55,9 @@ public class Tile extends Equality {
   @Override
   public Object getId() {
     return Arrays.asList(getSuit(), getRank());
+  }
+  @Override
+  public int compareTo(Tile o) {
+    return this.toString().compareTo(o.toString());
   }
 }

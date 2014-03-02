@@ -114,7 +114,7 @@ public class MahJongLogic {
 	}
 
 	/** Returns the operations for picking up a tile. */
-	List<Operation> pickUp(MahJongState state, List<Integer> playerIds) {
+	public List<Operation> pickUp(MahJongState state, List<Integer> playerIds) {
 		// picking up a tile
 		check(state.getTilesAtWall().size() >= 1);
 		int playerId = state.getTurn();
@@ -144,7 +144,7 @@ public class MahJongLogic {
 	/** Returns the operations for discarding a tile. */
 	//List<Operation> discard(MahJongState state, // List<Integer> tilesToDiscard,
 	//		List<Operation> lastMove, List<Integer> playerIds) {
-	List<Operation> discard(MahJongState state, // List<Integer> tilesToDiscard,
+	public List<Operation> discard(MahJongState state, // List<Integer> tilesToDiscard,
 				List<Integer> tilesToDiscard,List<Integer> playerIds) {
 		// discarding up a tile
 		int playerId = state.getTurn();
@@ -248,7 +248,7 @@ public class MahJongLogic {
 
 	//List<Operation> refusechi(MahJongState state, List<Operation> lastMove,
 	//		List<Integer> playerIds) {
-	List<Operation> refusechi(MahJongState state, 
+	public List<Operation> refusechi(MahJongState state, 
 				List<Integer> playerIds) {
 		check(RefuseChi.lastStateValid(state));
 		int playerId = state.getTurn();
@@ -321,7 +321,7 @@ public class MahJongLogic {
 
 	//List<Operation> refusepeng(MahJongState state, List<Operation> lastMove,
 	//		List<Integer> playerIds) {
-		List<Operation> refusepeng(MahJongState state,
+	public 	List<Operation> refusepeng(MahJongState state,
 				List<Integer> playerIds) {
 		check(RefusePeng.lastStateValid(state));
 		int playerId = state.getTurn();
@@ -413,7 +413,7 @@ public class MahJongLogic {
 	
 	//List<Operation> refusehu(MahJongState state, List<Operation> lastMove,
 	//		List<Integer> playerIds) {
-	List<Operation> refusehu(MahJongState state, 
+	public List<Operation> refusehu(MahJongState state, 
 				List<Integer> playerIds) {
 		check(RefuseHu.lastStateValid(state));
 		int playerId = state.getTurn();
@@ -431,7 +431,7 @@ public class MahJongLogic {
 
 	//List<Operation> refusegang(MahJongState state, List<Operation> lastMove,
 	//		List<Integer> playerIds) {
-	List<Operation> refusegang(MahJongState state, 
+	public List<Operation> refusegang(MahJongState state, 
 					List<Integer> playerIds) {
 		check(RefuseGang.lastStateValid(state));
 		int playerId = state.getTurn();

@@ -1,8 +1,10 @@
 package edu.nyu.mahjong.logic;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import edu.nyu.mahjong.logic.*;
+
 import org.cheat.client.GameApi.Container;
 import org.cheat.client.GameApi.Operation;
 import org.cheat.client.GameApi.SetTurn;
@@ -30,7 +32,7 @@ public class MahJongPresenter {
    * CHI: ask the player whether to chi.
    */
   public enum MahJongMessage {
-    INVISIBLE, HU, GANG, PENG, CHI;
+    INVISIBLE, HU, GANG,PENG, CHI,PICK;
   }
 
   private static final String WP = "WaitForPeng";
@@ -101,7 +103,7 @@ public class MahJongPresenter {
      * If the user selects a tile from remainingTiles, then it replaces selectedTile with that tile,
      * i.e. moves the previous selectedTile to remainingTiles.
      */
-    void chooseTile(Tile selectedTile, List<Tile> remainingTiles);
+    void chooseTile(List<Tile> selectedTiles, List<Tile> remainingTiles);
     
     /**
      * Asks the player to hu.
@@ -134,7 +136,7 @@ public class MahJongPresenter {
      * only allowed if tileToChi and tilesToChi make a valid combo).
      */
     void chiAvailable(Tile tileToChi, List<Tile> tilesToChi);
-
+    void discard();
     /**
      * If more than one possible combo exist (except hu), the player needs to choose one.
      */
@@ -147,7 +149,9 @@ public class MahJongPresenter {
   /** A viewer doesn't have a playerId. */
   private int turn;
   private MahJongState mahJongState;
-  private Tile selectedTile;
+  //private Tile selectedTile;
+  private List<Tile> selectedTile;
+  private boolean chi;
   private Tile lastUsedTile;
   private List<Tile> selectedCombo;
 
@@ -263,7 +267,22 @@ public class MahJongPresenter {
   private boolean isMyTurn() {
     return turn == mahJongState.getTurn();
   }
-
+  /*public void rankSelected(Rank rank) {
+	    check(isMyTurn() && !selectedCards.isEmpty() && getPossibleRanks().contains(rank));
+	    List<Integer> myCardIndices = cheatState.getWhiteOrBlack(cheatState.getTurn());
+	    List<Card> myCards = getMyCards();
+	    List<Integer> cardsToMoveToMiddle = Lists.newArrayList();
+	    for (Card card : selectedCards) {
+	      int cardIndex = myCardIndices.get(myCards.indexOf(card));
+	      cardsToMoveToMiddle.add(cardIndex);
+	    }
+	    container.sendMakeMove(cheatLogic.getMoveClaim(cheatState, rank, cardsToMoveToMiddle));
+	  }*/
+  public void pickUpTile()
+  {
+	  //check
+	  container.sendMakeMove(mahJongLogic.pickUp(mahJongState,  mahJongState.getPlayerIds())); 
+  }
   private List<Tile> getTiles(ImmutableList<Integer> targetIndices) {
 	  List<Tile> targetTiles = Lists.newArrayList();
 	  ImmutableList<Optional<Tile>> tiles = mahJongState.getTiles();
@@ -281,38 +300,54 @@ public class MahJongPresenter {
   
   private void chooseTile() {
     view.chooseTile(selectedTile, 
-    		mahJongLogic.subtract(getTiles(mahJongState.getTilesAtHand(turn)), ImmutableList.of(selectedTile)));
+    		mahJongLogic.subtract(getTiles(mahJongState.getTilesAtHand(turn)), selectedTile));
   }
 
   /**
    * Add/remove the tile from the {@link #selectedTile}.
    * The view can only call this method if the presenter called {@link View#chooseTile}.
    */
-  void tileSelected(Tile tile) {
-    check(isMyTurn());
-    if (selectedTile.equals(tile)) {
-    	selectedTile = null;
-    } else {
-      selectedTile = tile;
+  public void tileSelected(Tile tile) {
+    //check(isMyTurn());
+    if (selectedTile.contains(tile)) {
+    	selectedTile.remove(tile) ;
+    } 
+    else 
+    {
+      if (chi==false)
+      {
+    	if (selectedTile.size()<1)
+        selectedTile .add(tile);
+      }
+      if (chi==true)
+      {
+    	  if (selectedTile.size()<2)
+    		  selectedTile.add(tile);
+      }
     }
     chooseTile();
   }
-
+  
   /**
    * Finishes the tile selection process.
    * The view can only call this method if the presenter called {@link View#chooseTile}
    * and exactly one tile was selected by calling {@link #tileSelected}.
    */
+  //ToDo: Can't use tile as parameter, should give the index.
   void tileDiscarded() {
     check(isMyTurn() && selectedTile != null);
     List<Integer> selectedTileIndex = Lists.newArrayList();
-    for (int index = 0; index < mahJongState.getTiles().size(); index++) {
-    	if ((mahJongState.getTiles().get(index).get().equals(selectedTile))) {
-    		selectedTileIndex.add(index);
+    int playerId=mahJongState.getTurn();
+    List<Integer> atHand=mahJongState.getTilesAtHand(playerId);
+    for (int index = 0; index < atHand.size(); index++) {
+    	if ((mahJongState.getTiles().get(atHand.get(index)).get().equals(selectedTile.get(0)))) {
+    		selectedTileIndex.add(atHand.get(index));
+    		break;
     	}
     }
     container.sendMakeMove(mahJongLogic.discard(mahJongState, selectedTileIndex, mahJongState.getPlayerIds()));
   }
+  
 
   void huAvailable(Tile tileToHu, List<Tile> myTilesAtHand) {
 	    view.huAvailable(lastUsedTile, getTiles(mahJongState.getTilesAtHand(turn)));
@@ -338,28 +373,63 @@ public class MahJongPresenter {
   void hu(List<Operation> lastMove) {
     container.sendMakeMove(mahJongLogic.hu(mahJongState, lastMove, mahJongState.getPlayerIds()));
   }
-  
-  void gang() {
-	  List<Integer> selectedComboIndex = Lists.newArrayList();
-	  for (int index = 0; index < mahJongState.getTiles().size(); index++) {
-		  for (int cI = 0; cI < selectedCombo.size(); cI++) {
-			  if ((mahJongState.getTiles().get(index).get().equals(selectedCombo.get(cI)))) {
-				  selectedComboIndex.add(index);
-			  }
-		  }
+  public List<Integer> gangHelper()
+  {
+      List<Integer> selectedComboIndex = Lists.newArrayList();
+	  
+	  int playerId = mahJongState.getTurn();
+	  List<Integer> lastAtHand = mahJongState.getTilesAtHand(playerId);
+	  List<Integer> Used= mahJongState.getTilesUsed();
+	  int gangIndex=Used.get(Used.size()-1);
+	  String gangtile=mahJongState.getTiles().get(gangIndex).get().toString();
+	  selectedComboIndex.add(gangIndex);
+	  for (int index=0;index<lastAtHand.size();index++)
+	  {
+		  String current=mahJongState.getTiles().get(lastAtHand.get(index)).get().toString();
+		  if (current.equals(gangtile))
+			  selectedComboIndex.add(lastAtHand.get(index));			  
 	  }
-	  container.sendMakeMove(mahJongLogic.gang(mahJongState, selectedComboIndex, mahJongState.getPlayerIds()));
+	  return selectedComboIndex;
   }
-  
-  void peng() {
-	  List<Integer> selectedComboIndex = Lists.newArrayList();
-	  for (int index = 0; index < mahJongState.getTiles().size(); index++) {
-		  for (int cI = 0; cI < selectedCombo.size(); cI++) {
-			  if ((mahJongState.getTiles().get(index).get().equals(selectedCombo.get(cI)))) {
-				  selectedComboIndex.add(index);
-			  }
-		  }
+  public List<Integer> pengHelper()
+  {
+      List<Integer> selectedComboIndex = Lists.newArrayList();	  
+	  int playerId = mahJongState.getTurn();
+	  List<Integer> lastAtHand = mahJongState.getTilesAtHand(playerId);
+	  List<Integer> Used= mahJongState.getTilesUsed();
+	  int gangIndex=Used.get(Used.size()-1);
+	  String gangtile=mahJongState.getTiles().get(gangIndex).get().toString();
+	  selectedComboIndex.add(gangIndex);
+	  for (int index=0;index<lastAtHand.size();index++)
+	  {
+		  String current=mahJongState.getTiles().get(lastAtHand.get(index)).get().toString();
+		  if (current.equals(gangtile))
+			  selectedComboIndex.add(lastAtHand.get(index));			  
 	  }
+	  return selectedComboIndex;
+  }
+  public void gang(List<Integer> selectedComboIndex) {
+	  
+	    container.sendMakeMove(mahJongLogic.gang(mahJongState, selectedComboIndex, mahJongState.getPlayerIds()));
+  }
+  public void refusegang() {
+	  
+	    container.sendMakeMove(mahJongLogic.refusegang(mahJongState,  mahJongState.getPlayerIds()));
+}
+  public void refusepeng() {
+	  
+	    container.sendMakeMove(mahJongLogic.refusepeng(mahJongState,  mahJongState.getPlayerIds()));
+}
+  public void refusehu() {
+	  
+	    container.sendMakeMove(mahJongLogic.refusehu(mahJongState,  mahJongState.getPlayerIds()));
+}
+  public void refusechi() {
+	  
+	    container.sendMakeMove(mahJongLogic.refusechi(mahJongState,  mahJongState.getPlayerIds()));
+}
+  public void peng(List<Integer> selectedComboIndex) {
+	 
 	  container.sendMakeMove(mahJongLogic.peng(mahJongState, selectedComboIndex, mahJongState.getPlayerIds()));
   }
   
@@ -374,7 +444,20 @@ public class MahJongPresenter {
 	  }
 	  container.sendMakeMove(mahJongLogic.chi(mahJongState, selectedComboIndex, mahJongState.getPlayerIds()));
   }
-
+  public void finishedSelectingTiles()
+  {
+	 //check......
+	  if (chi==false)
+	  {	  
+		  tileDiscarded();
+	  }
+	  else
+	  {
+		  //ToDo: Implement how chi is done.....
+	  }
+  }
+  
+  
   private void sendInitialMove(List<Integer> playerIds) {
     container.sendMakeMove(mahJongLogic.getInitialMove(playerIds));
   }
