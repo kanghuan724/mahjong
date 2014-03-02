@@ -191,7 +191,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	if (options.isEmpty()) {
 	      options.add("OK");
 	    }
-	PopupChoices.OptionChosen eventTriggered=eventFactory.build(presenter,mahjongMessage);
+	PopupChoices.OptionChosen eventTriggered=eventFactory.build(presenter, mahjongMessage);
 	new PopupChoices(message, options,
 	        eventTriggered).center();
 	   

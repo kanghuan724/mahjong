@@ -25,7 +25,7 @@ public class Discard extends ACommand {
 
 	@Nullable 
 	public static List<String> toThrowEntryInGameState(@Nullable final Discard t) {
-	    return t == null ? null : ImmutableList.of("Discard",t.getTarget().toString());
+	    return t == null ? null : ImmutableList.of("Discard", t.getTarget().toString());
 	  }
 	public static boolean lastStateValid(MahJongState lastState)
     {

@@ -106,8 +106,8 @@ public class MahJongLogic {
 		//	operations.add(new SetVisibility(T + i, ImmutableList.of()));
 		operations.add(new Set(M, ImmutableList.<String> of(PU)));
 		operations.add(new SetTurn(playerIds.get(0)));
-		operations.add(new Set(TAW,getIndicesInRange(53, 135)));
-		operations.add(new Set(getAtHandKey(0),concat(getIndicesInRange(0, 12),getIndicesInRange(53, 53))));
+		operations.add(new Set(TAW, getIndicesInRange(53, 135)));
+		operations.add(new Set(getAtHandKey(0), concat(getIndicesInRange(0, 12), getIndicesInRange(53, 53))));
 		// new SetVisibility(T + tileIndex,ImmutableList.of(playerId)
 		operations.add(new SetVisibility(T + 52, ImmutableList.of(playerIds.get(0))));
 		return operations;
@@ -353,7 +353,7 @@ public class MahJongLogic {
 				newUsed = lastUsed.subList(0, lastUsed.size() - 2);
 			}*/
 			if (lastUsed.size()>1)
-				newUsed = lastUsed.subList(0,lastUsed.size()-1);
+				newUsed = lastUsed.subList(0,lastUsed.size() - 1);
 			List<Integer> tileToHu = lastUsed.subList(lastUsed.size() - 1,
 					lastUsed.size() );
 			Integer tileIndex = tileToHu.get(0);

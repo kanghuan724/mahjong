@@ -42,7 +42,7 @@ public class TileImage extends Equality{
    public String toString() {
      switch (kind) {
        case BACK:
-         return "tiles/b.gif";
+         return "tiles/b.jpg";
        case NORMAL:
          return "tiles/" + tile2str(tile) + ".gif";
        default:

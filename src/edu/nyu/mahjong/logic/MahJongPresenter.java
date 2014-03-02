@@ -380,7 +380,7 @@ public class MahJongPresenter {
 	  int playerId = mahJongState.getTurn();
 	  List<Integer> lastAtHand = mahJongState.getTilesAtHand(playerId);
 	  List<Integer> Used= mahJongState.getTilesUsed();
-	  int gangIndex=Used.get(Used.size()-1);
+	  int gangIndex=Used.get(Used.size() - 1);
 	  String gangtile=mahJongState.getTiles().get(gangIndex).get().toString();
 	  selectedComboIndex.add(gangIndex);
 	  for (int index=0;index<lastAtHand.size();index++)
@@ -397,7 +397,7 @@ public class MahJongPresenter {
 	  int playerId = mahJongState.getTurn();
 	  List<Integer> lastAtHand = mahJongState.getTilesAtHand(playerId);
 	  List<Integer> Used= mahJongState.getTilesUsed();
-	  int gangIndex=Used.get(Used.size()-1);
+	  int gangIndex=Used.get(Used.size() - 1);
 	  String gangtile=mahJongState.getTiles().get(gangIndex).get().toString();
 	  selectedComboIndex.add(gangIndex);
 	  for (int index=0;index<lastAtHand.size();index++)

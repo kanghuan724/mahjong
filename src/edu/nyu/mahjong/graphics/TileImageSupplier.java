@@ -32,6 +32,7 @@ public class TileImageSupplier {
 	  } 
 	public ImageResource getTileImage(Tile tile) {
 		//TODO: return the TileImage of certain tile
+		return tileImages.a1();
 	  }  
 	  
 }

@@ -26,7 +26,7 @@ public class Chi extends ACommand {
 
 	@Nullable 
 	public static List<String> toChiEntryInGameState(@Nullable final Chi chi) {
-	    return chi == null ? null : ImmutableList.of("Chi",chi.getTarget().toString());
+	    return chi == null ? null : ImmutableList.of("Chi", chi.getTarget().toString());
 	  }
 	public static boolean lastStateValid(MahJongState lastState)
     {
