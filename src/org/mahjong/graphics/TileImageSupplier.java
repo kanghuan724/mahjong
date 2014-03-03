@@ -82,19 +82,19 @@ public class TileImageSupplier {
 			   default: throw new RuntimeException("Forgot rank=" + tileRank);
 			 }
 		 case EAST:
-			 return tileImages.dong();
+			 return tileImages.e0();
 		 case WEST:
-			 return tileImages.xi();
+			 return tileImages.w0();
 		 case SOUTH:
-			 return tileImages.nan();
+			 return tileImages.s0();
 		 case NORTH:
-			 return tileImages.bei();
+			 return tileImages.n0();
 		 case RED:
-			 return tileImages.zhong();
+			 return tileImages.r0();
 		 case GREEN:
-			 return tileImages.fa();
+			 return tileImages.g0();
 		 case DWHITE:
-			 return tileImages.bai();
+			 return tileImages.d0();
 		 default: throw new RuntimeException("Forgot tile=" + tileSuit); 
 		}
 	  }  

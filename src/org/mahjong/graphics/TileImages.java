@@ -75,19 +75,19 @@ public interface TileImages extends ClientBundle{
 	  ImageResource c8();
 	  @Source("Images/Tiles/c9.jpg")
 	  ImageResource c9();
-	  @Source("Images/Tiles/dong.jpg")
-	  ImageResource dong();
-	  @Source("Images/Tiles/xi.jpg")
-	  ImageResource xi();
-	  @Source("Images/Tiles/nan.jpg")
-	  ImageResource nan();
-	  @Source("Images/Tiles/bei.jpg")
-	  ImageResource bei();
-	  @Source("Images/Tiles/zhong.jpg")
-	  ImageResource zhong();
-	  @Source("Images/Tiles/fa.jpg")
-	  ImageResource fa();
-	  @Source("Images/Tiles/bai.jpg")
-	  ImageResource bai();
+	  @Source("Images/Tiles/e0.jpg")
+	  ImageResource e0();
+	  @Source("Images/Tiles/w0.jpg")
+	  ImageResource w0();
+	  @Source("Images/Tiles/s0.jpg")
+	  ImageResource s0();
+	  @Source("Images/Tiles/n0.jpg")
+	  ImageResource n0();
+	  @Source("Images/Tiles/r0.jpg")
+	  ImageResource r0();
+	  @Source("Images/Tiles/g0.jpg")
+	  ImageResource g0();
+	  @Source("Images/Tiles/d0.jpg")
+	  ImageResource d0();
 	  
 }
