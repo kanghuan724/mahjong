@@ -7,6 +7,8 @@ import org.mahjong.client.Tile;
 
 import com.google.gwt.resources.client.ImageResource;
 
+import org.mahjong.client.Suit;
+import org.mahjong.client.Rank;
 
 public class TileImageSupplier {
 
@@ -32,7 +34,69 @@ public class TileImageSupplier {
 	  } 
 	public ImageResource getTileImage(Tile tile) {
 		//TODO: return the TileImage of certain tile
-		return tileImages.a1();
+		Suit tileSuit=tile.getSuit();
+		Rank tileRank=tile.getRank();
+		switch (tileSuit)
+		{
+		 case ACHARACTERS:
+			 switch (tileRank)
+			 {
+			   case ONE: return tileImages.a1();
+			   case TWO: return tileImages.a2();
+			   case THREE: return tileImages.a3();
+			   case FOUR: return tileImages.a4();
+			   case FIVE: return tileImages.a5();
+			   case SIX: return tileImages.a6();
+			   case SEVEN: return tileImages.a7();
+			   case EIGHT: return tileImages.a8();
+			   case NINE: return tileImages.a9();
+			   default: throw new RuntimeException("Forgot rank=" + tileRank);
+			 }
+
+		 case BAMBOOS:
+			 switch (tileRank)
+			 {
+			   case ONE: return tileImages.b1();
+			   case TWO: return tileImages.b2();
+			   case THREE: return tileImages.b3();
+			   case FOUR: return tileImages.b4();
+			   case FIVE: return tileImages.b5();
+			   case SIX: return tileImages.b6();
+			   case SEVEN: return tileImages.b7();
+			   case EIGHT: return tileImages.b8();
+			   case NINE: return tileImages.b9();
+			   default: throw new RuntimeException("Forgot rank=" + tileRank);
+			 }
+		 case CIRCLES:
+			 switch (tileRank)
+			 {
+			   case ONE: return tileImages.c1();
+			   case TWO: return tileImages.c2();
+			   case THREE: return tileImages.c3();
+			   case FOUR: return tileImages.c4();
+			   case FIVE: return tileImages.c5();
+			   case SIX: return tileImages.c6();
+			   case SEVEN: return tileImages.c7();
+			   case EIGHT: return tileImages.c8();
+			   case NINE: return tileImages.c9();
+			   default: throw new RuntimeException("Forgot rank=" + tileRank);
+			 }
+		 case EAST:
+			 return tileImages.dong();
+		 case WEST:
+			 return tileImages.xi();
+		 case SOUTH:
+			 return tileImages.nan();
+		 case NORTH:
+			 return tileImages.bei();
+		 case RED:
+			 return tileImages.zhong();
+		 case GREEN:
+			 return tileImages.fa();
+		 case DWHITE:
+			 return tileImages.bai();
+		 default: throw new RuntimeException("Forgot tile=" + tileSuit); 
+		}
 	  }  
 	  
 }
