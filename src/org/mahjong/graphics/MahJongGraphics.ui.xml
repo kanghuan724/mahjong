@@ -2,8 +2,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
   xmlns:g="urn:import:com.google.gwt.user.client.ui">
   <g:VerticalPanel>
-  	<g:VerticalPanel width="50px" ui:filed="leftDeclaredArea"/>
-  	<g:VerticalPanel width="50px" ui:filed="leftAtHandArea"/>
+  	<g:VerticalPanel width="50px" ui:field="leftDeclaredArea"/>
+  	<g:VerticalPanel width="50px" ui:field="leftAtHandArea"/>
   </g:VerticalPanel>
   <g:VerticalPanel>
     <g:HorizontalPanel height="100px" ui:field="acrossDeclaredArea"/>
@@ -17,7 +17,7 @@
     <g:HorizontalPanel height="100px" ui:field="myDeclaredArea"/>
   </g:VerticalPanel>
   <g:VerticalPanel>
-  	<g:VerticalPanel width="50px" ui:filed="rightAtHandArea"/>
-  	<g:VerticalPanel width="50px" ui:filed="rightDeclaredArea"/>
+  	<g:VerticalPanel width="50px" ui:field="rightAtHandArea"/>
+  	<g:VerticalPanel width="50px" ui:field="rightDeclaredArea"/>
   </g:VerticalPanel>
 </ui:UiBinder> 
