@@ -32,7 +32,7 @@ public class MahJongPresenter {
    * CHI: ask the player whether to chi.
    */
   public enum MahJongMessage {
-    INVISIBLE, HU, GANG, PENG, CHI, PICK;
+    INVISIBLE, HU, GANG, PENG, CHI, PICK,Discard, WaitForHu,WaitForChi,WaitForGang,WaitForPeng;
   }
 
   private static final String WP = "WaitForPeng";
@@ -223,13 +223,19 @@ public class MahJongPresenter {
 
     // TODO: implement main logic of updateUI
     
-    /*if (isMyTurn()) {
-        if (mahJongState.getMove().getName() == D) {
+    if (isMyTurn()) {
+        if (mahJongState.getMove().getName().equals(D)) {
       	  chooseTile();
-        } else if (mahJongState.getMove().getName() != PU){
-      	  getMahJongMessage();
         }
-      }*/
+        if (getMahJongMessage()==MahJongMessage.WaitForHu)
+        	waitForHu();
+        if (getMahJongMessage()==MahJongMessage.WaitForGang)
+        	waitForGang();
+        if (getMahJongMessage()==MahJongMessage.WaitForPeng)
+        	waitForPeng();
+        if (getMahJongMessage()==MahJongMessage.WaitForChi)
+        	waitForChi();
+      }
 
     
     
@@ -251,15 +257,54 @@ public class MahJongPresenter {
 	    return false;
   }
   private MahJongMessage getMahJongMessage() {
+	if (mahJongState.getMove()==null)
+		return MahJongMessage.PICK;
     switch (mahJongState.getMove().getName()) {
+    case (P):
+    	 return MahJongMessage.Discard;
+    case (G):
+    	 return MahJongMessage.PICK;
+    case (PU):
+    	return MahJongMessage.Discard;
+    case (D):
+    	return MahJongMessage.WaitForHu;
     case (WH):
-    	if (canHu()) return MahJongMessage.HU;
+    	//if (canHu()) 
+    	  return MahJongMessage.HU;
+    case (RH):
+    {     RefuseHu move=(RefuseHu)mahJongState.getMove();
+          if (move.getSource()==mahJongState.getTurn())
+    	    return MahJongMessage.WaitForGang;
+          else
+        	return MahJongMessage.HU;
+    }
+    case (RG):
+    {     RefuseGang move=(RefuseGang)mahJongState.getMove();
+          if (move.getSource()==mahJongState.getTurn())
+    	    return MahJongMessage.WaitForPeng;
+          else
+        	return MahJongMessage.GANG;
+    }
+    case (RP):
+    {     RefusePeng move=(RefusePeng)mahJongState.getMove();
+          if (move.getSource()==mahJongState.getTurn())
+    	    return MahJongMessage.WaitForChi;
+          else
+        	return MahJongMessage.PENG;
+    }
+    case (RC):
+    {
+    	return MahJongMessage.PICK;
+    }
     case (WG):
-    	if (canGang()) return MahJongMessage.GANG;
+    	//if (canGang()) 
+    	return MahJongMessage.GANG;
     case (WP):
-    	if (canPeng()) return MahJongMessage.PENG;
+    	//if (canPeng()) 
+    	return MahJongMessage.PENG;
     case (WC):
-    	if (canChi()) return MahJongMessage.CHI;
+    	//if (canChi()) 
+    	return MahJongMessage.CHI;
     }
     return MahJongMessage.INVISIBLE;
   }
@@ -373,6 +418,18 @@ public class MahJongPresenter {
   void hu(List<Operation> lastMove) {
     container.sendMakeMove(mahJongLogic.hu(mahJongState, lastMove, mahJongState.getPlayerIds()));
   }
+  void waitForHu() {
+	    container.sendMakeMove(mahJongLogic.WaitForHu(mahJongState,  mahJongState.getPlayerIds()));
+	  }
+  void waitForGang() {
+	    container.sendMakeMove(mahJongLogic.WaitForGang(mahJongState,  mahJongState.getPlayerIds()));
+	  }
+  void waitForPeng() {
+	    container.sendMakeMove(mahJongLogic.WaitForPeng(mahJongState,  mahJongState.getPlayerIds()));
+	  }
+  void waitForChi() {
+	    container.sendMakeMove(mahJongLogic.WaitForChi(mahJongState,  mahJongState.getPlayerIds()));
+	  }
   public List<Integer> gangHelper()
   {
       List<Integer> selectedComboIndex = Lists.newArrayList();

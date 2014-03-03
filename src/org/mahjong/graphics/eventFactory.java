@@ -27,7 +27,7 @@ public class eventFactory {
 	    	  	        }
 	    	  	    	else
 	    	  	    	{
-	    	  	    		//presenter.refuseHu();
+	    	  	    		presenter.refusehu();
 	    	  	    	}
 	    	  	    	  
 	    		        }

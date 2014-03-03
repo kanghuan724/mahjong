@@ -186,8 +186,6 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
       default:
         break;
     }
-	if (message.isEmpty()) 
-	   message += "Your Turn To Pick Up A Tile";
 	if (options.isEmpty()) {
 	      options.add("OK");
 	    }
@@ -253,8 +251,10 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     placeVerticalImages(rightDeclaredArea, createVerticalTileImages(tilesAtDeclaredRight, false));
     placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
     placeHorizonImages(selectedArea, ImmutableList.<Image>of());
+    placeHorizonImages(myAtHandArea, createHorizonTileImages(myTilesAtHand, false));
+    placeHorizonImages(myDeclaredArea, createHorizonTileImages(myTilesDeclared, false));
     alertMahJongMessage(mahJongMessage);
-    //disableClicks();
+    disableClicks();
   }
 
   @Override
@@ -264,7 +264,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     enableClicks = true;
     claimBtn.setEnabled(!selectedTiles.isEmpty());
     placeHorizonImages(myAtHandArea, createHorizonTileImages(remainingTiles, true));
-    placeHorizonImages(selectedArea, createHorizonTileImages(ImmutableList.<Tile>copyOf(selectedTiles), true));
+    placeHorizonImages(selectedArea, createHorizonTileImages(ImmutableList.<Tile>copyOf(selectedTiles), false));
     //TODO: design the way to discard the selected tile
   }
 @Override
