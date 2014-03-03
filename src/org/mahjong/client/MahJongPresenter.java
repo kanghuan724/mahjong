@@ -208,6 +208,11 @@ public class MahJongPresenter {
     int rightId = MahJongLogic.nextId(yourPlayerId, playerIds);
     int acrossId = MahJongLogic.nextId(rightId, playerIds);
     int leftId = MahJongLogic.nextId(acrossId, playerIds);
+    System.out.println(yourPlayerId);
+    System.out.println(rightId);
+    System.out.println(acrossId);
+    System.out.println(leftId);
+    System.out.println(playerIds);
     int numberOfTilesAtHandLeft = mahJongState.getTilesAtHand(leftId).size();
     int numberOfTilesAtHandAcross = mahJongState.getTilesAtHand(acrossId).size();
     int numberOfTilesAtHandRight = mahJongState.getTilesAtHand(rightId).size();
