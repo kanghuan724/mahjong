@@ -104,7 +104,7 @@ public class MahJongPresenter {
      * i.e. moves the previous selectedTile to remainingTiles.
      */
     void chooseTile(List<Tile> selectedTile, List<Tile> remainingTiles);
-    
+    void chooseTileToChi(List<Tile> selectedTile, List<Tile> remainingTiles);
     /**
      * Asks the player to hu.
      * We pass what tile is last discarded, and what tiles in the player hand.
@@ -182,7 +182,7 @@ public class MahJongPresenter {
         turn = playerIds.indexOf(((SetTurn) operation).getPlayerId());
       }
     }
-    
+    chi=false;
 
     MahJongMessage mahJongMessage = getMahJongMessage();
     if (updateUI.isViewer()) {
@@ -222,18 +222,23 @@ public class MahJongPresenter {
     		getMahJongMessage());
 
     // TODO: implement main logic of updateUI
-    
+    if (getMahJongMessage()==MahJongMessage.CHI)
+    	chi=true;
     if (isMyTurn()) {
-        if (mahJongState.getMove().getName().equals(D)) {
+    	if (chi==true)
+    	{
+    		chooseTileToChi();
+    	}
+        if (mahJongMessage==MahJongMessage.Discard) {
       	  chooseTile();
         }
-        if (getMahJongMessage()==MahJongMessage.WaitForHu)
+        if (mahJongMessage==MahJongMessage.WaitForHu)
         	waitForHu();
-        if (getMahJongMessage()==MahJongMessage.WaitForGang)
+        if (mahJongMessage==MahJongMessage.WaitForGang)
         	waitForGang();
-        if (getMahJongMessage()==MahJongMessage.WaitForPeng)
+        if (mahJongMessage==MahJongMessage.WaitForPeng)
         	waitForPeng();
-        if (getMahJongMessage()==MahJongMessage.WaitForChi)
+        if (mahJongMessage==MahJongMessage.WaitForChi)
         	waitForChi();
       }
 
@@ -261,6 +266,8 @@ public class MahJongPresenter {
 		return MahJongMessage.PICK;
     switch (mahJongState.getMove().getName()) {
     case (P):
+    	 return MahJongMessage.Discard;
+    case (C):
     	 return MahJongMessage.Discard;
     case (G):
     	 return MahJongMessage.PICK;
@@ -347,7 +354,10 @@ public class MahJongPresenter {
     view.chooseTile(selectedTile, 
     		mahJongLogic.subtract(getTiles(mahJongState.getTilesAtHand(turn)), selectedTile));
   }
-
+  private void chooseTileToChi() {
+	    view.chooseTileToChi(selectedTile, 
+	    		mahJongLogic.subtract(getTiles(mahJongState.getTilesAtHand(turn)), selectedTile));
+	  }
   /**
    * Add/remove the tile from the {@link #selectedTile}.
    * The view can only call this method if the presenter called {@link View#chooseTile}.
@@ -392,6 +402,21 @@ public class MahJongPresenter {
     }
     container.sendMakeMove(mahJongLogic.discard(mahJongState, selectedTileIndex, mahJongState.getPlayerIds()));
   }
+  void tileChi() {
+	    check(isMyTurn() && selectedTile != null);
+	    List<Integer> selectedTileIndex = Lists.newArrayList();
+	    int playerId=mahJongState.getTurn();
+	    List<Integer> atHand=mahJongState.getTilesAtHand(playerId);
+	    for (int index = 0; index < atHand.size(); index++) {
+	    	if ((mahJongState.getTiles().get(atHand.get(index)).get().equals(selectedTile.get(0)))) {
+	    		selectedTileIndex.add(atHand.get(index));
+	    		break;
+	    	}
+	    }
+	    List<Integer> Used=mahJongState.getTilesUsed();
+	    selectedTileIndex.add(Used.size()-1);
+	    container.sendMakeMove(mahJongLogic.chi(mahJongState, selectedTileIndex, mahJongState.getPlayerIds()));
+	  }
   
 
   void huAvailable(Tile tileToHu, List<Tile> myTilesAtHand) {
@@ -489,8 +514,25 @@ public class MahJongPresenter {
 	 
 	  container.sendMakeMove(mahJongLogic.peng(mahJongState, selectedComboIndex, mahJongState.getPlayerIds()));
   }
+  public boolean ableToChi()
+  {
+	  List<Integer> ChiCombo=new ArrayList<Integer> ();
+	  for (int i=0;i<selectedTile.size();i++)
+	  {
+		   List<Integer> tileAtHand=mahJongState.getTilesAtHand(turn);
+		   for (int j=0;i<tileAtHand.size();j++)
+		   {
+			 int CurrentIndex=tileAtHand.get(j);
+			 if (mahJongState.getTiles().get(CurrentIndex).equals(selectedTile.get(i)));
+		     ChiCombo.add(CurrentIndex);
+		   }
+	  }
+	  List<Integer> Used=mahJongState.getTilesUsed();
+	  ChiCombo.add(Used.get(Used.size()-1));
+	  return Chi.chiCorrect(mahJongState, ChiCombo);
+  }
   
-  void chi() {
+  /*void chi() {
 	  List<Integer> selectedComboIndex = Lists.newArrayList();
 	  for (int index = 0; index < mahJongState.getTiles().size(); index++) {
 		  for (int cI = 0; cI < selectedCombo.size(); cI++) {
@@ -500,7 +542,7 @@ public class MahJongPresenter {
 		  }
 	  }
 	  container.sendMakeMove(mahJongLogic.chi(mahJongState, selectedComboIndex, mahJongState.getPlayerIds()));
-  }
+  }*/
   public void finishedSelectingTiles()
   {
 	 //check......
@@ -510,7 +552,17 @@ public class MahJongPresenter {
 	  }
 	  else
 	  {
-		  //ToDo: Implement how chi is done.....
+		  if (ableToChi())
+		    tileChi();
+		  //ToDo: Maybe Need to add a new logic FailToChi in Logic
+		  //If that chi is invalid, the player will return to the previous mode that 
+		  //asks whether the player is gonna chi
+		  else
+		  {
+			  
+		  }
+		  
+		  
 	  }
   }
   

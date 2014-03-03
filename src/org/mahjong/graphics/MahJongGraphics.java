@@ -267,6 +267,16 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     placeHorizonImages(selectedArea, createHorizonTileImages(ImmutableList.<Tile>copyOf(selectedTiles), false));
     //TODO: design the way to discard the selected tile
   }
+  @Override
+  public void chooseTileToChi(List<Tile> selectedTiles, List<Tile> remainingTiles) {
+    Collections.sort(remainingTiles);
+    Collections.sort(selectedTiles);
+    enableClicks = true;
+    claimBtn.setEnabled(selectedTiles.size()==2);
+    placeHorizonImages(myAtHandArea, createHorizonTileImages(remainingTiles, true));
+    placeHorizonImages(selectedArea, createHorizonTileImages(ImmutableList.<Tile>copyOf(selectedTiles), false));
+    //TODO: design the way to discard the selected tile
+  }
 @Override
 public void huAvailable(Tile tileToHu, List<Tile> myTilesAtHand) {
 	// TODO Auto-generated method stub
