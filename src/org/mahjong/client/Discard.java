@@ -16,11 +16,12 @@ public class Discard extends ACommand {
 		if (ThrowEntry == null || ThrowEntry.isEmpty()) {
 			return null;
 		}
-		Suit suit = Suit.fromFirstLetterLowerCase(ThrowEntry.get(1).substring(0,
+		/*Suit suit = Suit.fromFirstLetterLowerCase(ThrowEntry.get(1).substring(0,
 				1));
 		Rank rank = Rank.fromRankString(ThrowEntry.get(1).substring(1));
 		Tile tile = new Tile(suit, rank);
-		return new Discard(tile);
+		return new Discard(tile);*/
+		return new Discard(ThrowEntry.get(1));
 	}
 
 	@Nullable 
@@ -36,9 +37,9 @@ public class Discard extends ACommand {
     	  return false;
     }
 	private final String name = "Discard";
-	private final Tile target;
+	private final String target;
 
-	public Discard(Tile target) {
+	public Discard(String target) {
 
 		this.target = target;
 	}
@@ -48,7 +49,7 @@ public class Discard extends ACommand {
 		return name;
 	}
 
-	public Tile getTarget() {
+	public String getTarget() {
 		return target;
 	}
 

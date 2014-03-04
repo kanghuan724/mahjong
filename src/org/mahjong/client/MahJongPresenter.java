@@ -32,7 +32,7 @@ public class MahJongPresenter {
    * CHI: ask the player whether to chi.
    */
   public enum MahJongMessage {
-    INVISIBLE, HU, GANG, PENG, CHI, PICK,Discard, WaitForHu,WaitForChi,WaitForGang,WaitForPeng;
+    INVISIBLE, HU, GANG, PENG, CHI, PICK,Discard, WaitForHu,WaitForChi,WaitForGang,WaitForPeng,BLIND;
   }
 
   private static final String WP = "WaitForPeng";
@@ -235,10 +235,14 @@ public class MahJongPresenter {
     		getMahJongMessage());
     
     // TODO: implement main logic of updateUI
+    if (getMahJongMessage()==MahJongMessage.HU)
+    	System.out.println("Hu");
+    if (getMahJongMessage()==MahJongMessage.WaitForHu)
+    	System.out.println("WaitForHu");
+    else
+    	System.out.println(mahJongState.getMove().getName());
     if (getMahJongMessage()==MahJongMessage.CHI)
     	chi=true;
-    System.out.println("Turn: "+turn);
-    System.out.println("Mah Turn: "+mahJongState.getTurn());
     if (isMyTurn()) {
     	
        
@@ -279,8 +283,8 @@ public class MahJongPresenter {
 	    return false;
   }
   private MahJongMessage getMahJongMessage() {
-	if (mahJongState.getMove()==null)
-		return MahJongMessage.PICK;
+	if (isMyTurn()==false)
+		return MahJongMessage.BLIND;
     switch (mahJongState.getMove().getName()) {
     case ("Empty"):
     	return MahJongMessage.PICK;
@@ -370,8 +374,16 @@ public class MahJongPresenter {
   }
   
   private void chooseTile() {
-	System.out.println(getTiles(mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),turn))).size());
+	  
+    List<Tile> current = getTiles(mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),turn)));
+	/*System.out.println(getTiles(mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),turn))).size());
 	System.out.println( selectedTile.size());
+	if (selectedTile.size()>0)
+	{
+		System.out.println(selectedTile.get(0).toString());
+		for (int i=0;i<current.size();i++)
+		System.out.println(current.get(i).toString());
+	}*/
     view.chooseTile(selectedTile, 
     		mahJongLogic.subtract(getTiles(mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),turn))), selectedTile));
   }
@@ -411,7 +423,7 @@ public class MahJongPresenter {
    */
   //ToDo: Can't use tile as parameter, should give the index.
   void tileDiscarded() {
-    check(isMyTurn() && selectedTile != null);
+    check(isMyTurn() && selectedTile.size()>0);
     List<Integer> selectedTileIndex = Lists.newArrayList();
     int playerId=mahJongState.getTurn();
     List<Integer> atHand=mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),playerId));
@@ -465,6 +477,7 @@ public class MahJongPresenter {
     container.sendMakeMove(mahJongLogic.hu(mahJongState, lastMove, mahJongState.getPlayerIds()));
   }
   void waitForHu() {
+	  System.out.println("I am wait fo rHu");
 	    container.sendMakeMove(mahJongLogic.WaitForHu(mahJongState,  mahJongState.getPlayerIds()));
 	  }
   void waitForGang() {

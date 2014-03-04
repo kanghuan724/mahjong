@@ -30,6 +30,8 @@ public class factory {
 			return WaitForPeng.fromWaitForPengEntryInGameState(tokens);
 		case ("WaitForGang"):
 			return WaitForGang.fromWaitForGangEntryInGameState(tokens);
+		case ("WaitForHu"):
+			return WaitForHu.fromWaitForHuEntryInGameState(tokens);
 		case ("Hu"):
 			return Hu.fromHuEntryInGameState(tokens);
 		case ("RefuseHu"):

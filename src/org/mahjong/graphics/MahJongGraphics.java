@@ -267,7 +267,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     enableClicks = true;
     claimBtn.setEnabled(!selectedTiles.isEmpty());
     placeHorizonImages(myAtHandArea, createHorizonTileImages(remainingTiles, true));
-    placeHorizonImages(selectedArea, createHorizonTileImages(ImmutableList.<Tile>copyOf(selectedTiles), false));
+    placeHorizonImages(selectedArea, createHorizonTileImages(ImmutableList.<Tile>copyOf(selectedTiles), true));
     //TODO: design the way to discard the selected tile
   }
   @Override
