@@ -433,6 +433,7 @@ public class MahJongPresenter {
     		break;
     	}
     }
+    selectedTile=new ArrayList<Tile> ();
     container.sendMakeMove(mahJongLogic.discard(mahJongState, selectedTileIndex, mahJongState.getPlayerIds()));
   }
   void tileChi() {
@@ -448,6 +449,7 @@ public class MahJongPresenter {
 	    }
 	    List<Integer> Used=mahJongState.getTilesUsed();
 	    selectedTileIndex.add(Used.size()-1);
+	    selectedTile=new ArrayList<Tile> ();
 	    container.sendMakeMove(mahJongLogic.chi(mahJongState, selectedTileIndex, mahJongState.getPlayerIds()));
 	  }
   
