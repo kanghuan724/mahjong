@@ -1,7 +1,9 @@
 package org.mahjong.client;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 
 import javax.annotation.Nullable;
 
@@ -40,10 +42,14 @@ public class Chi extends ACommand {
 	
 	public static boolean chiCorrect(MahJongState state, List<Integer> chiCombo){
         Tile[] combo = new Tile[3];
+        System.out.println("checkChi");
 		for (int i = 0; i<chiCombo.size(); i++) {
 			combo[i] = state.getTile(chiCombo.get(i)).get();
+			System.out.println("combo"+i);
+			System.out.println(combo[i].toString());
+			System.out.println("finished");
 		}
-		if ((!combo[0].getSuit().equals(combo[1].getSuit())) || (!combo[1].getSuit().equals(combo[2].getSuit()))) {
+		/*if ((!combo[0].getSuit().equals(combo[1].getSuit())) || (!combo[1].getSuit().equals(combo[2].getSuit()))) {
 			return false;
 		} else {	
      		if ((Rank.COMPARATOR.compare(combo[0].getRank(), combo[1].getRank()) == 1 
@@ -62,7 +68,32 @@ public class Chi extends ACommand {
      		} else {
      			return false;
      		}
-		}	
+		}*/
+		if ((combo[0].getSuit().equals(combo[1].getSuit()))&&(combo[1].getSuit().equals(combo[2].getSuit())))
+				{
+			         System.out.println("I am here true");
+			         List<Integer> rankBuffer=new ArrayList<Integer> ();
+			         for (int i=0;i<3;i++)
+			        	 rankBuffer.add(combo[i].getRank().ordinal());
+			         Collections.sort(rankBuffer);
+			         for (int i=1;i<3;i++)
+			         {
+			        	 if (rankBuffer.get(i)!=rankBuffer.get(i-1)+1)
+			        	 {
+			        		 System.out.println("THey dont match");
+			        		 return false;
+			        	 }
+			         }
+			        	
+			         
+			
+				}
+		else
+		{
+			System.out.println("I am here false");
+			return false;
+		}
+		return true;
 	}
 	
 	private final String name = "Chi";

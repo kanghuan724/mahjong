@@ -642,6 +642,9 @@ public class MahJongLogic {
 			List<Integer> lastAtHand = lastState.getTilesAtHand(idIndex(playerIds,lastState.getTurn()));
 			List<Integer> tilesToChi = subtract(lastAtHand, newAtHand);
 			List<Integer> chiCombo=concat(tileToChi,tilesToChi);
+			System.out.println("chiCombosize: "+chiCombo.size());
+			System.out.println("tilleToChi: "+tileToChi.size());
+			System.out.println("tilesToChi: "+tilesToChi.size());
 			//chi(lastState, lastMove, playerIds);
 			return chi(lastState,chiCombo,playerIds);
 		}

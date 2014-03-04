@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.mahjong.client.*;
-
 import org.mahjong.client.GameApi.Container;
 import org.mahjong.client.GameApi.Operation;
 import org.mahjong.client.GameApi.SetTurn;
@@ -447,8 +446,15 @@ public class MahJongPresenter {
 	    		break;
 	    	}
 	    }
+	    for (int index = 0; index < atHand.size(); index++) {
+	    	if ((mahJongState.getTiles().get(atHand.get(index)).get().equals(selectedTile.get(1)))) {
+	    		selectedTileIndex.add(atHand.get(index));
+	    		break;
+	    	}
+	    }
 	    List<Integer> Used=mahJongState.getTilesUsed();
 	    selectedTileIndex.add(Used.size()-1);
+	    System.out.println(selectedTileIndex);
 	    selectedTile=new ArrayList<Tile> ();
 	    container.sendMakeMove(mahJongLogic.chi(mahJongState, selectedTileIndex, mahJongState.getPlayerIds()));
 	  }
@@ -553,18 +559,26 @@ public class MahJongPresenter {
   public boolean ableToChi()
   {
 	  List<Integer> ChiCombo=new ArrayList<Integer> ();
+      System.out.println("Check1");
 	  for (int i=0;i<selectedTile.size();i++)
 	  {
+		   System.out.println(selectedTile.get(i).toString());
 		   List<Integer> tileAtHand=mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),turn));
-		   for (int j=0;i<tileAtHand.size();j++)
+		   for (int j=0;j<tileAtHand.size();j++)
 		   {
 			 int CurrentIndex=tileAtHand.get(j);
-			 if (mahJongState.getTiles().get(CurrentIndex).equals(selectedTile.get(i)));
-		     ChiCombo.add(CurrentIndex);
+			 if ((mahJongState.getTiles().get(CurrentIndex).get().toString()).equals(selectedTile.get(i).toString())==true)
+			 {
+			   System.out.println(mahJongState.getTiles().get(CurrentIndex).get().toString());
+		       ChiCombo.add(CurrentIndex);
+		       break;
+			 }
 		   }
 	  }
+	  System.out.println("Check2");
 	  List<Integer> Used=mahJongState.getTilesUsed();
 	  ChiCombo.add(Used.get(Used.size()-1));
+	  System.out.println("Check3");
 	  return Chi.chiCorrect(mahJongState, ChiCombo);
   }
   
@@ -588,14 +602,19 @@ public class MahJongPresenter {
 	  }
 	  else
 	  {
-		  if (ableToChi())
+		  if (ableToChi()==true)
+		  
+		  {
+			System.out.println("I can chi that");  
 		    tileChi();
+		    
+		  }
 		  //ToDo: Maybe Need to add a new logic FailToChi in Logic
 		  //If that chi is invalid, the player will return to the previous mode that 
 		  //asks whether the player is gonna chi
 		  else
 		  {
-			  
+			  System.out.println("Nah...I can't");
 		  }
 		  
 		  
