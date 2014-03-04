@@ -139,6 +139,8 @@ public final class GameApi {
     }
 
     public void makeMove(Operation operation) {
+      //Pinji Debug
+      System.out.println(operation);
       if (operation instanceof Set) {
         Set set = (Set) operation;
         String key = set.getKey();
@@ -173,6 +175,8 @@ public final class GameApi {
           state.put(toKey, oldState.get(fromKey));
           visibleTo.put(toKey, oldVisibleTo.get(fromKey));
         }
+        //Pinji Debug
+        System.out.println("pause");
       } else if (operation instanceof AttemptChangeTokens) {
         playerIdToNumberOfTokensInPot =
             ((AttemptChangeTokens) operation).getPlayerIdToNumberOfTokensInPot();

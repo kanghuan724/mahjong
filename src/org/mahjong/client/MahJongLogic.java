@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.ArrayList;
 
 import org.mahjong.client.GameApi.*;
-
 import org.mahjong.client.ACommand;
 
 import com.google.common.base.Optional;
@@ -727,13 +726,14 @@ public class MahJongLogic {
 		return result;
 	}
 
-	public static List<Integer> getIndicesInRange(int fromInclusive,
+	public static ImmutableList<Integer> getIndicesInRange(int fromInclusive,
 			int toInclusive) {
 		List<Integer> keys = Lists.newArrayList();
 		for (int i = fromInclusive; i <= toInclusive; i++) {
 			keys.add(i);
 		}
-		return keys;
+		ImmutableList<Integer> iKeys = ImmutableList.copyOf(keys);
+		return iKeys;
 	}
 
 	public static List<String> getTilesInRange(int fromInclusive, int toInclusive) {
