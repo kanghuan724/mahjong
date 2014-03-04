@@ -36,7 +36,7 @@ public class Pick extends ACommand {
 	public static boolean lastStateValid(MahJongState lastState)
     {
 	   String lastOperation=lastState.getMove().getName();
-       if (lastOperation=="Gang"||lastOperation=="RefuseChi") 
+       if (lastOperation=="Gang"||lastOperation=="RefuseChi"||lastOperation=="Empty") 
          return true;	
        else
     	  return false;

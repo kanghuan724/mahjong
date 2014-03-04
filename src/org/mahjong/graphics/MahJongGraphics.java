@@ -187,12 +187,14 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
       default:
         break;
     }
-	if (options.isEmpty()) {
+	if (mahjongMessage==MahJongMessage.PICK) {
 	      options.add("OK");
 	    }
-	PopupChoices.OptionChosen eventTriggered=eventFactory.build(presenter, mahjongMessage);
-	new PopupChoices(message, options,
-	        eventTriggered).center();
+	if (message.equals("")==false)
+	{
+	  PopupChoices.OptionChosen eventTriggered=eventFactory.build(presenter, mahjongMessage);
+	  new PopupChoices(message, options,eventTriggered).center();
+	}
 	   
   }
   
