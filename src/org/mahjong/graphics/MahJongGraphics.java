@@ -167,7 +167,8 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
         break;
       case HU:
         message += "Are You Able To Hu?";
-        options.add("Yes,Let me Hu");
+        if (presenter.huHelper()==true)
+          options.add("Yes,Let me Hu");
         options.add("No,not now");
         break;
       case GANG:
@@ -186,7 +187,9 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     	break;
       case CHI:
     	message += "Wanna Chi That Tile?";
-    	options.add("Yes, god chi that");
+    	List<Integer> comboToChi=presenter.chiHelper();
+    	if (comboToChi.size()==3)
+    	  options.add("Yes, god chi that");
         options.add("No, not now");
     	break;
       case INVISIBLE:

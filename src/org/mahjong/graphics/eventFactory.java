@@ -24,6 +24,9 @@ public class eventFactory {
 	    		      public void optionChosen(String option) {
 	    	  	    	if (option.charAt(0)=='Y') {
 	    	  	          //presenter.Hu();
+	    	  	    	  boolean ableToHu=presenter.huHelper();
+	    	  	    	  if (ableToHu==true)
+	    	  	    		  presenter.Hu();
 	    	  	        }
 	    	  	    	else
 	    	  	    	{
@@ -73,6 +76,9 @@ public class eventFactory {
     		      public void optionChosen(String option) {
     	  	    	if (option.charAt(0)=='Y') {
     	  	          //presenter.Chi();
+    	  	    	  List<Integer> comboToChi=presenter.chiHelper();
+    	  	    	  if (comboToChi.size()==3)
+    	  	    		  presenter.chi(comboToChi);
     	  	        }
     	  	    	else
     	  	    	{

@@ -2,6 +2,7 @@ package org.mahjong.client;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.HashMap;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -351,7 +352,7 @@ public class MahJongLogic {
 		return expectedOperations;
 	}
 
-	List<Operation> hu(MahJongState state, List<Operation> lastMove,
+	List<Operation> hu(MahJongState state, 
 			List<Integer> playerIds) {
 
 		int playerId = state.getTurn();
@@ -380,7 +381,7 @@ public class MahJongLogic {
 			List<Integer> lastAtDeclared = state.getTilesAtDeclared(playerId);
 			//List<Integer> huCombo = concat(tileToHu, tilesToHu);
 			//check(Hu.huCorrect(state, huCombo, newAtHand));
-			 check(Hu.huCorrect(newAtHand));
+			// check(Hu.huCorrect(newAtHand));
 			// List<Integer> newAtDeclared = concat(lastAtDeclared,
 			// lastUsed.subList(lastUsed.size() - 1, lastUsed.size() - 1));
 			List<Integer> newAtDeclared = concat(lastAtDeclared, newAtHand);
@@ -412,7 +413,7 @@ public class MahJongLogic {
 			//Hu by self-helping
 			//check(Hu.allSet(state, state.getTilesAtHand(playerId)));
 			List<Integer> lastAtHand = state.getTilesAtHand(idIndex(playerIds,playerId));
-			check(Hu.huCorrect(lastAtHand));
+			//check(Hu.huCorrect(lastAtHand));
 			expectedOperations.add(new Set(M,ImmutableList.of(H)));
 		}
 		for (int i = 0; i < state.getTilesAtHand(playerId).size(); i++) {
@@ -476,6 +477,14 @@ public class MahJongLogic {
 
 	//List<Operation> WaitForHu(MahJongState state, List<Operation> lastMove,
 	//		List<Integer> playerIds) {
+   public static List<Operation> GameEnd(List<Integer> playerIds)
+	{
+		Map<Integer,Integer> score=new HashMap<Integer,Integer> ();
+		for (int i=0;i<playerIds.size();i++)
+			score.put(playerIds.get(i), 0);
+		List<Operation> expectedOperations=ImmutableList.<Operation> of(new EndGame(score));
+		return expectedOperations;
+	}
     List<Operation> WaitForHu(MahJongState state, 
 				List<Integer> playerIds) {
 		check(WaitForHu.lastStateValid(state));
@@ -621,6 +630,10 @@ public class MahJongLogic {
 		Set lastSet = (Set) getM(lastMove);
 		List<String> lastSetMove = (List<String>) lastSet.getValue();
 		switch (lastSetMove.get(0)) {
+		case ("GameEnd"):
+			return GameEnd(playerIds);
+		case (H):
+			return hu(lastState,playerIds);
 		case (PU):
 			return pickUp(lastState, playerIds);
 		case (D):

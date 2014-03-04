@@ -50,7 +50,7 @@ public class Hu extends ACommand {
 	    	  return false;
     }
 	@SuppressWarnings("null")
-	/*public static boolean huCorrect(MahJongState state, List<Integer> huCombo, List<Integer> atHand){
+	public static boolean huCorrect(MahJongState state, List<Integer> huCombo, List<Integer> atHand){
         Tile[] combo = new Tile[3];
 		for (int i = 0; i<huCombo.size(); i++) {
 			combo[i] = state.getTile(huCombo.get(i)).get();
@@ -78,11 +78,11 @@ public class Hu extends ACommand {
 
 		}
 		return false;
-	}*/
-	public static boolean huCorrect(List<Integer> atHand)
+	}
+	/*public static boolean huCorrect(List<Integer> atHand)
 	{
 		return true;
-	}
+	}*/
 	@SuppressWarnings("null")
 	public static boolean allSet(MahJongState state, List<Integer> atHand) {
 		List<Integer> AtHand = atHand;
