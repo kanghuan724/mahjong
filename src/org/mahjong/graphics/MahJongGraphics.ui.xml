@@ -3,21 +3,21 @@
   xmlns:g="urn:import:com.google.gwt.user.client.ui">
   <g:HorizontalPanel>
 
-    <g:VerticalPanel width="44px" height="455px" ui:field="leftDeclaredArea"/>
-  	<g:VerticalPanel width="44px" height="455px" ui:field="leftAtHandArea"/>
+    <g:VerticalPanel width="44px" height="490px" styleName="verticalPanel" ui:field="leftDeclaredArea"/>
+  	<g:VerticalPanel width="44px" height="490px" styleName="verticalPanel" ui:field="leftAtHandArea"/>
 
   	<g:VerticalPanel>
-    	<g:HorizontalPanel width="455px" height="44px" ui:field="acrossDeclaredArea"/>
-    	<g:HorizontalPanel width="455px" height="44px" ui:field="acrossAtHandArea"/>
-    	<g:HorizontalPanel width="455px" height="440px" ui:field="usedArea" />
-    	<g:HorizontalPanel width="455px" height="44px" ui:field="myAtHandArea"/>
-    	<g:HorizontalPanel width="455px" height="44px">
+    	<g:HorizontalPanel width="490px" height="44px" ui:field="acrossDeclaredArea"/>
+    	<g:HorizontalPanel width="490px" height="44px" ui:field="acrossAtHandArea"/>
+    	<g:HorizontalPanel width="490px" height="400px" ui:field="usedArea" />
+    	<g:HorizontalPanel width="490px" height="44px" ui:field="myAtHandArea"/>
+    	<g:HorizontalPanel width="490px" height="44px">
       	<g:HorizontalPanel width="300" height="44px" ui:field="selectedArea"/>
       	<g:Button ui:field="claimBtn" text="Discard"/>
     	</g:HorizontalPanel>
-    	<g:HorizontalPanel width="455px" height="44px" ui:field="myDeclaredArea"/>
+    	<g:HorizontalPanel width="490px" height="44px" ui:field="myDeclaredArea"/>
   	</g:VerticalPanel>
-  	<g:VerticalPanel width="44px" height="455px" ui:field="rightAtHandArea"/>
-  	<g:VerticalPanel width="44px" height="455px" ui:field="rightDeclaredArea"/>
+  	<g:VerticalPanel width="44px" height="490px" styleName="verticalPanel" ui:field="rightAtHandArea"/>
+  	<g:VerticalPanel width="44px" height="490px" styleName="verticalPanel" ui:field="rightDeclaredArea"/>
   </g:HorizontalPanel>
 </ui:UiBinder> 

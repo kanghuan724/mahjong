@@ -31,8 +31,6 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   public interface MahJongGraphicsUiBinder extends UiBinder<Widget, MahJongGraphics> {
   }
 
-  // TODO: There are 4 more areas: leftDeclaredArea, leftAtHandArea, rightDeclaredArea, rightAtHandArea, 
-  // TODO: Buttons to be designed
   @UiField
   HorizontalPanel acrossDeclaredArea;
   @UiField
@@ -57,7 +55,6 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   Button claimBtn;
   private boolean enableClicks = false;
   
-  // TODO: Auxiliary classes: TileImageSupplier, TileImages, TileImage
   private final TileImageSupplier tileImageSupplier;
   private MahJongPresenter presenter;
 
@@ -71,31 +68,42 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   private List<Image> createHorizonBackTiles(int numOfTiles) {
     List<TileImage> images = Lists.newArrayList();
     for (int i = 0; i < numOfTiles; i++) {
-      images.add(TileImage.Factory.getBackOfTileImage());
+      images.add(TileImage.Factory.getBackOfTileImage("HORIZONTAL"));
     }
     return createImages(images, false);
   }
   
   private List<Image> createVerticalBackTiles(int numOfTiles) {
 	  List<TileImage> images = Lists.newArrayList();
-	//TODO: The logic to createVerticalBackTiles for the vertical panels for left and right players 
+	  for (int i = 0; i < numOfTiles; i++) {
+		  images.add(TileImage.Factory.getBackOfTileImage("VERTICAL"));
+	  } 
 	  return createImages(images, false);
   }
 
   private List<Image> createHorizonTileImages(List<Tile> tiles, boolean withClick) {
     List<TileImage> images = Lists.newArrayList();
     for (Tile tile : tiles) {
-      images.add(TileImage.Factory.getTileImage(tile));
+      images.add(TileImage.Factory.getTileImage("HORIZONTAL", tile));
     }
     return createImages(images, withClick);
   }
 
-  private List<Image> createVerticalTileImages(List<Tile> tiles, boolean withClick) {
+  private List<Image> createLeftTileImages(List<Tile> tiles, boolean withClick) {
 	  List<TileImage> images = Lists.newArrayList();
-	//TODO: The void to createVerticalTileImages for the vertical panels for left and right players
+	  for (Tile tile : tiles) {
+	      images.add(TileImage.Factory.getTileImage("LEFT", tile));
+	  }
 	  return createImages(images, withClick);
   }
 
+  private List<Image> createRightTileImages(List<Tile> tiles, boolean withClick) {
+	  List<TileImage> images = Lists.newArrayList();
+	  for (Tile tile : tiles) {
+	      images.add(TileImage.Factory.getTileImage("RIGHT", tile));
+	  }
+	  return createImages(images, withClick);
+  }
 
   
   private List<Image> createImages(List<TileImage> images, boolean withClick) {
@@ -138,13 +146,12 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	  for (Image image : images) {
 	      FlowPanel imageContainer = new FlowPanel();
 	      //imageContainer.setStyleName(image != last ? "imgShortContainer" : "imgContainer");
-	      imageContainer.setStyleName("imgContainer");
+	      imageContainer.setStyleName("imgVerticalContainer");
 	      imageContainer.add(image);
 	      panel.add(imageContainer);
 	    }
   }
-  
-  //TODO: Main logic of MahJongMessage
+
   private void alertMahJongMessage(MahJongMessage mahjongMessage)
   {
 	  String message="";
@@ -228,9 +235,9 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     placeHorizonImages(acrossAtHandArea, createHorizonBackTiles(numberOfTilesAtHand3));
     placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHand4));
     placeHorizonImages(myDeclaredArea, createHorizonTileImages(tilesAtDeclared1, false));
-    placeVerticalImages(leftDeclaredArea, createVerticalTileImages(tilesAtDeclared2, false));
+    placeVerticalImages(leftDeclaredArea, createLeftTileImages(tilesAtDeclared2, false));
     placeHorizonImages(acrossDeclaredArea, createHorizonTileImages(tilesAtDeclared3, false));
-    placeVerticalImages(rightDeclaredArea, createVerticalTileImages(tilesAtDeclared4, false));
+    placeVerticalImages(rightDeclaredArea, createRightTileImages(tilesAtDeclared4, false));
     placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
     placeHorizonImages(selectedArea, ImmutableList.<Image>of());
     alertMahJongMessage(mahJongMessage);
@@ -249,9 +256,9 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHandLeft));
     placeHorizonImages(acrossAtHandArea, createHorizonBackTiles(numberOfTilesAtHandAcross));
     placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHandRight));
-    placeVerticalImages(leftDeclaredArea, createVerticalTileImages(tilesAtDeclaredLeft, false));
+    placeVerticalImages(leftDeclaredArea, createLeftTileImages(tilesAtDeclaredLeft, false));
     placeHorizonImages(acrossDeclaredArea, createHorizonTileImages(tilesAtDeclaredAcross, false));
-    placeVerticalImages(rightDeclaredArea, createVerticalTileImages(tilesAtDeclaredRight, false));
+    placeVerticalImages(rightDeclaredArea, createRightTileImages(tilesAtDeclaredRight, false));
     placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
     placeHorizonImages(selectedArea, ImmutableList.<Image>of());
     placeHorizonImages(myAtHandArea, createHorizonTileImages(myTilesAtHand, false));
