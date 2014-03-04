@@ -8,6 +8,8 @@ public class factory {
 		if (tokens.size()==0)
 			return Empty.fromEmptyEntryInGameState(tokens);
 		switch (tokens.get(0)) {
+		case ("GameEnd"):
+			return GameEnd.fromEmptyEntryInGameState();
 		case ("PickUp"):
 			return Pick.fromPickEntryInGameState(tokens);
 		case ("Discard"):
