@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableList;
 public class factory {
 	public static ACommand makeCommand(ImmutableList<String> tokens) {
 		if (tokens.size()==0)
-			return Pick.fromPickEntryInGameState(tokens);
+			return Empty.fromEmptyEntryInGameState(tokens);
 		switch (tokens.get(0)) {
 		case ("PickUp"):
 			return Pick.fromPickEntryInGameState(tokens);
