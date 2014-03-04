@@ -1,25 +1,23 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
   xmlns:g="urn:import:com.google.gwt.user.client.ui">
-  <g:VerticalPanel>
+  <g:HorizontalPanel>
+
+    <g:VerticalPanel width="44px" height="490px" styleName="verticalPanel" ui:field="leftDeclaredArea"/>
+  	<g:VerticalPanel width="44px" height="490px" styleName="verticalPanel" ui:field="leftAtHandArea"/>
+
   	<g:VerticalPanel>
-  		<g:VerticalPanel width="50px" ui:field="leftDeclaredArea"/>
-  		<g:VerticalPanel width="50px" ui:field="leftAtHandArea"/>
-  	</g:VerticalPanel>
-  	<g:VerticalPanel>
-    	<g:HorizontalPanel height="100px" ui:field="acrossDeclaredArea"/>
-    	<g:HorizontalPanel height="100px" ui:field="acrossAtHandArea"/>
-    	<g:HorizontalPanel height="400px" ui:field="usedArea" />
-    	<g:HorizontalPanel height="100px" ui:field="myAtHandArea"/>
-    	<g:HorizontalPanel height="100px">
-      	<g:HorizontalPanel width="120" height="100px" ui:field="selectedArea"/>
+    	<g:HorizontalPanel width="490px" height="44px" ui:field="acrossDeclaredArea"/>
+    	<g:HorizontalPanel width="490px" height="44px" ui:field="acrossAtHandArea"/>
+    	<g:HorizontalPanel width="490px" height="400px" ui:field="usedArea" />
+    	<g:HorizontalPanel width="490px" height="44px" ui:field="myAtHandArea"/>
+    	<g:HorizontalPanel width="490px" height="44px">
+      	<g:HorizontalPanel width="300" height="44px" ui:field="selectedArea"/>
       	<g:Button ui:field="claimBtn" text="Discard"/>
     	</g:HorizontalPanel>
-    	<g:HorizontalPanel height="100px" ui:field="myDeclaredArea"/>
+    	<g:HorizontalPanel width="490px" height="44px" ui:field="myDeclaredArea"/>
   	</g:VerticalPanel>
-  	<g:VerticalPanel>
-  		<g:VerticalPanel width="50px" ui:field="rightAtHandArea"/>
-  		<g:VerticalPanel width="50px" ui:field="rightDeclaredArea"/>
-  	</g:VerticalPanel>
-  </g:VerticalPanel>
+  	<g:VerticalPanel width="44px" height="490px" styleName="verticalPanel" ui:field="rightAtHandArea"/>
+  	<g:VerticalPanel width="44px" height="490px" styleName="verticalPanel" ui:field="rightDeclaredArea"/>
+  </g:HorizontalPanel>
 </ui:UiBinder> 
