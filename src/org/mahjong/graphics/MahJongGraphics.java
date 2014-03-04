@@ -234,13 +234,13 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   		int numberOfTilesAtWall, List<Tile> tilesUsed,
   		MahJongMessage mahJongMessage) {
     placeHorizonImages(myAtHandArea, createHorizonBackTiles(numberOfTilesAtHand1));
-    placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHand2));
+    placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHand2));
     placeHorizonImages(acrossAtHandArea, createHorizonBackTiles(numberOfTilesAtHand3));
-    placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHand4));
+    placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHand4));
     placeHorizonImages(myDeclaredArea, createHorizonTileImages(tilesAtDeclared1, false));
-    placeVerticalImages(leftDeclaredArea, createLeftTileImages(tilesAtDeclared2, false));
+    placeVerticalImages(rightDeclaredArea, createLeftTileImages(tilesAtDeclared2, false));
     placeHorizonImages(acrossDeclaredArea, createHorizonTileImages(tilesAtDeclared3, false));
-    placeVerticalImages(rightDeclaredArea, createRightTileImages(tilesAtDeclared4, false));
+    placeVerticalImages(leftDeclaredArea, createRightTileImages(tilesAtDeclared4, false));
     placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
     placeHorizonImages(selectedArea, ImmutableList.<Image>of());
     alertMahJongMessage(mahJongMessage);
