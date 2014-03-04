@@ -53,6 +53,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   VerticalPanel rightDeclaredArea;
   @UiField
   VerticalPanel rightAtHandArea;
+  @UiField
   Button claimBtn;
   private boolean enableClicks = false;
   

@@ -160,6 +160,13 @@ public class MahJongPresenter {
     this.container = container;
     view.setPresenter(this);
   }
+  public int idIndex(List<Integer> playerIds,int playerId)
+  {
+	  for (int i=0;i<playerIds.size();i++)
+		   if (playerIds.get(i)==playerId)
+			     return i;
+	  return 0;
+  }
 
   /** Updates the presenter and the view with the state in updateUI. */
   public void updateUI(UpdateUI updateUI) {
@@ -213,17 +220,17 @@ public class MahJongPresenter {
     System.out.println(acrossId);
     System.out.println(leftId);
     System.out.println(playerIds);
-    int numberOfTilesAtHandLeft = mahJongState.getTilesAtHand(leftId).size();
-    int numberOfTilesAtHandAcross = mahJongState.getTilesAtHand(acrossId).size();
-    int numberOfTilesAtHandRight = mahJongState.getTilesAtHand(rightId).size();
-    List<Tile> tilesAtDeclaredLeft = getTiles(mahJongState.getTilesAtDeclared(leftId));
-    List<Tile> tilesAtDeclaredAcross = getTiles(mahJongState.getTilesAtDeclared(acrossId));
-    List<Tile> tilesAtDeclaredRight = getTiles(mahJongState.getTilesAtDeclared(rightId));
+    int numberOfTilesAtHandLeft = mahJongState.getTilesAtHand(idIndex(playerIds,leftId)).size();
+    int numberOfTilesAtHandAcross = mahJongState.getTilesAtHand(idIndex(playerIds,acrossId)).size();
+    int numberOfTilesAtHandRight = mahJongState.getTilesAtHand(idIndex(playerIds,rightId)).size();
+    List<Tile> tilesAtDeclaredLeft = getTiles(mahJongState.getTilesAtDeclared(idIndex(playerIds,leftId)));
+    List<Tile> tilesAtDeclaredAcross = getTiles(mahJongState.getTilesAtDeclared(idIndex(playerIds,acrossId)));
+    List<Tile> tilesAtDeclaredRight = getTiles(mahJongState.getTilesAtDeclared(idIndex(playerIds,rightId)));
     view.setPlayerState(numberOfTilesAtHandLeft, numberOfTilesAtHandRight, numberOfTilesAtHandAcross,
     		tilesAtDeclaredLeft, tilesAtDeclaredRight, tilesAtDeclaredAcross, 
     		mahJongState.getTilesAtWall().size(), getTiles(mahJongState.getTilesUsed()),
-    		getTiles(mahJongState.getTilesAtHand(yourPlayerId)), 
-    		getTiles(mahJongState.getTilesAtDeclared(yourPlayerId)),
+    		getTiles(mahJongState.getTilesAtHand(idIndex(playerIds,yourPlayerId))), 
+    		getTiles(mahJongState.getTilesAtDeclared(idIndex(playerIds,yourPlayerId))),
     		getMahJongMessage());
 
     // TODO: implement main logic of updateUI
