@@ -27,13 +27,13 @@ public class MahJongState {
 	   */
 	  private final ImmutableList<Integer> tilesAtWall;
 	  private final ImmutableList<Integer> tilesUsed;
-	  private final ImmutableList<Integer> tilesAtHandOfOne;
+	  private  ImmutableList<Integer> tilesAtHandOfOne;
 	  private final ImmutableList<Integer> tilesAtDeclaredOfOne;
-	  private final ImmutableList<Integer> tilesAtHandOfTwo;
+	  private  ImmutableList<Integer> tilesAtHandOfTwo;
 	  private final ImmutableList<Integer> tilesAtDeclaredOfTwo;
-	  private final ImmutableList<Integer> tilesAtHandOfThree;
+	  private  ImmutableList<Integer> tilesAtHandOfThree;
 	  private final ImmutableList<Integer> tilesAtDeclaredOfThree;
-	  private final ImmutableList<Integer> tilesAtHandOfFour;
+	  private  ImmutableList<Integer> tilesAtHandOfFour;
 	  private final ImmutableList<Integer> tilesAtDeclaredOfFour;
 
 	  public MahJongState(int turn, ACommand move, ImmutableList<Integer> playerIds,
@@ -88,7 +88,34 @@ public class MahJongState {
 	  public ImmutableList<Integer> getTilesUsed() {
 	    return tilesUsed;
 	  }
-
+      public void changeTileSequence(int playerId, ImmutableList<Integer> target)
+      {
+    	  switch(playerId) {
+    	  case 0:
+    	  {
+    		  tilesAtHandOfOne = target;
+    		  break;
+    	  }
+    	  case 1:
+    	  {
+    		  tilesAtHandOfTwo = target;
+    		  break;
+    	  }
+    	  case 2:
+    	  {
+    		  tilesAtHandOfThree = target;
+    		  break;
+    	  }
+    	  case 3:
+    	  {
+    		  tilesAtHandOfFour = target;
+    		  break;
+    	  }
+    		
+    	  default:
+    		  break;
+    	  }
+      }
 	  public ImmutableList<Integer> getTilesAtHand(int playerId) {
 	    switch (playerId) {
 	    case 0: 

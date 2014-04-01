@@ -376,14 +376,6 @@ public class MahJongPresenter {
   private void chooseTile() {
 	  
     List<Tile> current = getTiles(mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),turn)));
-	/*System.out.println(getTiles(mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),turn))).size());
-	System.out.println( selectedTile.size());
-	if (selectedTile.size()>0)
-	{
-		System.out.println(selectedTile.get(0).toString());
-		for (int i=0;i<current.size();i++)
-		System.out.println(current.get(i).toString());
-	}*/
     view.chooseTile(selectedTile, 
     		mahJongLogic.subtract(getTiles(mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),turn))), selectedTile));
   }
@@ -395,6 +387,63 @@ public class MahJongPresenter {
    * Add/remove the tile from the {@link #selectedTile}.
    * The view can only call this method if the presenter called {@link View#chooseTile}.
    */
+  public void tileSwitch(int origin,int des)
+  {
+	  if (origin==des)
+	  {
+		  chooseTile();
+		  return;
+	  }
+	  int id =idIndex(mahJongState.getPlayerIds(),turn);
+	  List<Integer> current = mahJongState.getTilesAtHand(id);
+	  List<Integer> target =new ArrayList<Integer> ();
+	  for (int i=0;i<current.size();i++)
+	  {
+		  if (i!=origin)
+		  {
+			  if (i!=des)
+			    target.add(current.get(i));
+			  else
+			  {
+				  target.add(current.get(origin));
+				  target.add(current.get(i));
+			  }
+				  
+		  }
+		  
+	  }
+	  ImmutableList<Integer> targetImmute = ImmutableList.copyOf(target);
+	  mahJongState.changeTileSequence(id, targetImmute);
+	  chooseTile();
+  }
+  
+  public void tileSwitch(int origin)
+  {
+	  
+	  int id =idIndex(mahJongState.getPlayerIds(),turn);
+	  List<Integer> current = mahJongState.getTilesAtHand(id);
+	  List<Integer> target =new ArrayList<Integer> ();
+	  int des = current.size()-1;
+	  for (int i=0;i<current.size();i++)
+	  {
+		  if (i!=origin)
+		  {
+			  if (i!=des)
+			    target.add(current.get(i));
+			  else
+			  {
+				  
+				  target.add(current.get(i));
+				  target.add(current.get(origin));
+			  }
+				  
+		  }
+		  
+	  }
+	  ImmutableList<Integer> targetImmute = ImmutableList.copyOf(target);
+	  mahJongState.changeTileSequence(id, targetImmute);
+	  chooseTile();
+  }
   public void tileSelected(Tile tile) {
     //check(isMyTurn());
     if (selectedTile.contains(tile)) {
@@ -404,8 +453,10 @@ public class MahJongPresenter {
     {
       if (chi==false)
       {
-    	if (selectedTile.size()<1)
+    	if (selectedTile.size()>=1)
+    		selectedTile.remove(0);
         selectedTile .add(tile);
+    	
       }
       if (chi==true)
       {

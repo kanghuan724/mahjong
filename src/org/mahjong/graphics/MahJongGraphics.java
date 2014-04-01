@@ -7,15 +7,35 @@ import org.mahjong.client.*;
 import org.mahjong.client.MahJongPresenter.MahJongMessage;
 import org.mahjong.client.MahJongPresenter.View;
 
+//import com.google.gwt.user.client.ui.Image;
+import com.allen_sauer.gwt.dnd.client.DragEndEvent;
+//import com.allen_sauer.gwt.dnd.client.DragHandler;
+import com.allen_sauer.gwt.dnd.client.DragStartEvent;
+import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.allen_sauer.gwt.dnd.client.VetoDragException;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DragEndHandler;
+import com.google.gwt.event.dom.client.DragEnterEvent;
+import com.google.gwt.event.dom.client.DragEnterHandler;
+import com.google.gwt.event.dom.client.DragEvent;
+import com.google.gwt.event.dom.client.DragHandler;
+import com.google.gwt.event.dom.client.DragLeaveEvent;
+import com.google.gwt.event.dom.client.DragLeaveHandler;
+import com.google.gwt.event.dom.client.DragOverEvent;
+import com.google.gwt.event.dom.client.DragOverHandler;
+import com.google.gwt.event.dom.client.DragStartHandler;
+import com.google.gwt.event.dom.client.DropEvent;
+import com.google.gwt.event.dom.client.DropHandler;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -30,7 +50,10 @@ import com.google.gwt.user.client.ui.Widget;
 public class MahJongGraphics extends Composite implements MahJongPresenter.View {
   public interface MahJongGraphicsUiBinder extends UiBinder<Widget, MahJongGraphics> {
   }
-
+  @UiField
+  AbsolutePanel animation;
+  @UiField
+  AbsolutePanel panelBoundary;
   @UiField
   HorizontalPanel acrossDeclaredArea;
   @UiField
@@ -57,12 +80,13 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   
   private final TileImageSupplier tileImageSupplier;
   private MahJongPresenter presenter;
-
+  private PickupDragController tileDragController;
   public MahJongGraphics() {
     TileImages tileImages = GWT.create(TileImages.class);
     this.tileImageSupplier = new TileImageSupplier(tileImages);
     MahJongGraphicsUiBinder uiBinder = GWT.create(MahJongGraphicsUiBinder.class);
     initWidget(uiBinder.createAndBindUi(this));
+    tileDragController = new PickupDragController(panelBoundary, false);
   }
 
   private List<Image> createHorizonBackTiles(int numOfTiles) {
@@ -73,12 +97,15 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     return createImages(images, false);
   }
   
-  private List<Image> createVerticalBackTiles(int numOfTiles) {
+  private List<Image> createVerticalBackTiles(int numOfTiles,boolean withClick) {
 	  List<TileImage> images = Lists.newArrayList();
 	  for (int i = 0; i < numOfTiles; i++) {
 		  images.add(TileImage.Factory.getBackOfTileImage("VERTICAL"));
-	  } 
-	  return createImages(images, false);
+	  }
+	  if (withClick==false)
+	   return createImages(images, false);
+	  else
+		  return createImageForRight(images);
   }
 
   private List<Image> createHorizonTileImages(List<Tile> tiles, boolean withClick) {
@@ -102,25 +129,116 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	  for (Tile tile : tiles) {
 	      images.add(TileImage.Factory.getTileImage("RIGHT", tile));
 	  }
-	  return createImages(images, withClick);
+	  return createImages(images,withClick);
   }
 
-  
+  private List<Image> createImageForRight(List<TileImage> images)
+  {
+	  List<Image> res = Lists.newArrayList();
+	    int count=0;
+	    for (TileImage img : images) {
+	    	final TileImage imgFinal = img;
+	    	Image image = new Image(tileImageSupplier.getResource(img));
+	    	if (count==images.size()-1)
+	    	{
+	    		System.out.println("yes i am here");
+	    		 image.addDragOverHandler(new DragOverHandler() {
+	    	      	    @Override
+	    	      	    public void onDragOver(DragOverEvent event) {
+	    	      	    	System.out.println("unique token");
+	    	      	    }
+	    	      	});
+	    	        image.addDropHandler(new DropHandler() {
+	    	      	    @Override
+	    	      	    public void onDrop(DropEvent event) {
+	    	      	        // prevent the native text drop
+	    	      	        event.preventDefault();
+	    	      	        
+	    	      	        // get the data out of the event
+	    	      	        String data = event.getData("index");
+	    	      	        System.out.println("data"+data);
+	    	      	      System.out.println("unique token");
+	    	      	      presenter.tileSwitch(Integer.parseInt(data));
+	    	      	    }
+	    	      	});
+	    	}
+	    		
+	        count++;
+	        res.add(image);
+	    }
+	    return res;
+  }
   private List<Image> createImages(List<TileImage> images, boolean withClick) {
     List<Image> res = Lists.newArrayList();
+    int count=0;
     for (TileImage img : images) {
       final TileImage imgFinal = img;
-      Image image = new Image(tileImageSupplier.getResource(img));
+      final ImageResource temp = tileImageSupplier.getResource(img);
+      final Image image = new DropImage(tileImageSupplier.getResource(img),count);
       if (withClick) {
         image.addClickHandler(new ClickHandler() {
           @Override
           public void onClick(ClickEvent event) {
             if (enableClicks) {
-              presenter.tileSelected(imgFinal.tile);
+              int startX = image.getAbsoluteLeft();
+              System.out.println("startX"+startX);
+              int startY = image.getAbsoluteTop();
+              System.out.println("startY"+startY);
+              int endX = selectedArea.getAbsoluteLeft();
+              System.out.println("endX"+endX);
+              int endY = selectedArea.getAbsoluteTop();
+              System.out.println("endY"+endY);
+              ImageResource context = temp;
+              pieceMoveAnimation anime = new pieceMoveAnimation(image,presenter,imgFinal,startX,startY,endX,endY,context,animation);
+              anime.run(2500);
+            //  System.out.println("I am running finished");
+             // presenter.tileSelected(imgFinal.tile);
+              
             }
           }
         });
+        image.addDragStartHandler(new DragStartHandler() {
+            @Override
+            public void onDragStart(com.google.gwt.event.dom.client.DragStartEvent event)  {
+                System.out.println("I am dragged!");
+                String a = String.valueOf(((DropImage)image).getIndex());
+                System.out.println("Drag Start"+a);
+                event.setData("index", a);
+                
+            } 		
+          });
+        image.addDragOverHandler(new DragOverHandler() {
+      	    @Override
+      	    public void onDragOver(DragOverEvent event) {
+      	    	image.setStyleName("imgBigger");
+      	    	System.out.println("I am getting bigger!");
+      	        
+      	    }
+      	});
+        image.addDragLeaveHandler(new DragLeaveHandler() {
+      	    @Override
+      	    public void onDragLeave(DragLeaveEvent event) {
+      	    	image.setStyleName("imgContainer");
+      	    	System.out.println("I am coming back!");
+      	        
+      	    }
+      	});
+        image.addDropHandler(new DropHandler() {
+      	    @Override
+      	    public void onDrop(DropEvent event) {
+      	        // prevent the native text drop
+      	        event.preventDefault();
+      	        
+      	        // get the data out of the event
+      	        String data = event.getData("index");
+      	        String currentData = String.valueOf(((DropImage)image).getIndex());
+      	        System.out.println("data"+data);
+      	        System.out.println("currentData"+currentData);
+      	      presenter.tileSwitch(Integer.parseInt(data),Integer.parseInt(currentData));
+      	    }
+      	});
       }
+      count++;
       res.add(image);
     }
     return res;
@@ -134,6 +252,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
       //imageContainer.setStyleName(image != last ? "imgShortContainer" : "imgContainer");
       imageContainer.setStyleName("imgContainer");
       imageContainer.add(image);
+      
       panel.add(imageContainer);
     }
   }
@@ -234,9 +353,9 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   		int numberOfTilesAtWall, List<Tile> tilesUsed,
   		MahJongMessage mahJongMessage) {
     placeHorizonImages(myAtHandArea, createHorizonBackTiles(numberOfTilesAtHand1));
-    placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHand2));
+    placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHand2,false));
     placeHorizonImages(acrossAtHandArea, createHorizonBackTiles(numberOfTilesAtHand3));
-    placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHand4));
+    placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHand4,false));
     placeHorizonImages(myDeclaredArea, createHorizonTileImages(tilesAtDeclared1, false));
     placeVerticalImages(rightDeclaredArea, createLeftTileImages(tilesAtDeclared2, false));
     placeHorizonImages(acrossDeclaredArea, createHorizonTileImages(tilesAtDeclared3, false));
@@ -255,10 +374,10 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   		int numberOfTilesAtWall, List<Tile> tilesUsed,
           List<Tile> myTilesAtHand, List<Tile> myTilesDeclared,
           MahJongMessage mahJongMessage) {
-    Collections.sort(myTilesAtHand);
-    placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHandLeft));
+    //Collections.sort(myTilesAtHand);
+    placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHandLeft,false));
     placeHorizonImages(acrossAtHandArea, createHorizonBackTiles(numberOfTilesAtHandAcross));
-    placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHandRight));
+    placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHandRight,true));
     placeVerticalImages(leftDeclaredArea, createLeftTileImages(tilesAtDeclaredLeft, false));
     placeHorizonImages(acrossDeclaredArea, createHorizonTileImages(tilesAtDeclaredAcross, false));
     placeVerticalImages(rightDeclaredArea, createRightTileImages(tilesAtDeclaredRight, false));
@@ -272,7 +391,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 
   @Override
   public void chooseTile(List<Tile> selectedTiles, List<Tile> remainingTiles) {
-    Collections.sort(remainingTiles);
+    //Collections.sort(remainingTiles);
     Collections.sort(selectedTiles);
     enableClicks = true;
     claimBtn.setEnabled(!selectedTiles.isEmpty());
@@ -282,7 +401,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   }
   @Override
   public void chooseTileToChi(List<Tile> selectedTiles, List<Tile> remainingTiles) {
-    Collections.sort(remainingTiles);
+   // Collections.sort(remainingTiles);
     Collections.sort(selectedTiles);
     enableClicks = true;
     claimBtn.setEnabled(selectedTiles.size()==2);
