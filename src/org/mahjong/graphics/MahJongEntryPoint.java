@@ -1,12 +1,13 @@
 package org.mahjong.graphics;
 
+import org.game_api.GameApi.ContainerConnector;
 import org.mahjong.client.MahJongLogic;
 import org.mahjong.client.MahJongPresenter;
-import org.mahjong.client.GameApi;
-import org.mahjong.client.GameApi.Game;
-import org.mahjong.client.GameApi.IteratingPlayerContainer;
-import org.mahjong.client.GameApi.UpdateUI;
-import org.mahjong.client.GameApi.VerifyMove;
+import org.game_api.GameApi;
+import org.game_api.GameApi.Game;
+import org.game_api.GameApi.IteratingPlayerContainer;
+import org.game_api.GameApi.UpdateUI;
+import org.game_api.GameApi.VerifyMove;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -19,7 +20,7 @@ import com.google.gwt.user.client.ui.RootPanel;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class MahJongEntryPoint implements EntryPoint {
-  IteratingPlayerContainer container;
+  ContainerConnector container;
   MahJongPresenter mahJongPresenter;
 
   @Override
@@ -35,7 +36,8 @@ public class MahJongEntryPoint implements EntryPoint {
         mahJongPresenter.updateUI(updateUI);
       }
     };
-    container = new IteratingPlayerContainer(game, 4);
+    container =  new ContainerConnector(game); 
+    //container = new IteratingPlayerContainer(game, 4);
     MahJongGraphics mahJongGraphics = new MahJongGraphics();
     mahJongPresenter =
         new MahJongPresenter(mahJongGraphics, container);
@@ -45,7 +47,7 @@ public class MahJongEntryPoint implements EntryPoint {
     playerSelect.addItem("3");
     playerSelect.addItem("4");
     playerSelect.addItem("Viewer");
-    playerSelect.addChangeHandler(new ChangeHandler() {
+    /*playerSelect.addChangeHandler(new ChangeHandler() {
       @Override
       public void onChange(ChangeEvent event) {
         int selectedIndex = playerSelect.getSelectedIndex();
@@ -53,12 +55,12 @@ public class MahJongEntryPoint implements EntryPoint {
             : container.getPlayerIds().get(selectedIndex);
         container.updateUi(playerId);
       }
-    });
+    });*/
     FlowPanel flowPanel = new FlowPanel();
     flowPanel.add(mahJongGraphics);
     flowPanel.add(playerSelect);
     RootPanel.get("mainDiv").add(flowPanel);
     container.sendGameReady();
-    container.updateUi(container.getPlayerIds().get(0));
+    //container.updateUi(container.getPlayerIds().get(0));
   }
 }

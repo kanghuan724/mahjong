@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module rename-to='mahjong'>
   <!-- Inherit the core Web Toolkit stuff.                        -->
+  <add-linker name='xsiframe' />
+  <inherits name='com.google.gwt.json.JSON'/>
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='com.google.common.collect.Collect'/>
    <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
@@ -18,6 +20,6 @@
   <entry-point class='org.mahjong.graphics.MahJongEntryPoint'/>
 
   <!-- Specify the paths for translatable code                    -->
-  <source path='client'/>
+  <source path='mahjong'/>
   <source path='graphics'/>
 </module>

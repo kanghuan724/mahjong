@@ -37,7 +37,8 @@ public class Gang extends ACommand {
 			return true;
 		if (lastOperation == "RefuseGang") {
 			RefuseGang lastGang = (RefuseGang) (lastState.getMove());
-			if (lastGang.getSource() == lastState.getTurn())
+			String source = String.valueOf(lastGang.getSource());
+			if (source.equals (lastState.getTurn()))
 				return false;
 			else
 				return true;

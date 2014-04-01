@@ -40,8 +40,8 @@ public class WaitForHu extends ACommand {
 		return name;
 	}
 
-	public int getSource() {
-		return source;
+	public String getSource() {
+		return String.valueOf(source);
 	}
 
 	@Override

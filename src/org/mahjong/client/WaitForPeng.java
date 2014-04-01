@@ -1,6 +1,7 @@
 package org.mahjong.client;
 
 import java.util.Arrays;
+
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -22,7 +23,8 @@ public class WaitForPeng extends ACommand {
 		String lastOperation = lastState.getMove().getName();
 		if (lastOperation == "RefuseGang") {
 			RefuseGang lastRefuse = (RefuseGang) lastState.getMove();
-			if (lastRefuse.getSource() != lastState.getTurn())
+			String source = String.valueOf(lastRefuse.getSource());
+    	    if (source.equals(lastState.getTurn()))
 				return false;
 			else
 				return true;
@@ -43,8 +45,8 @@ public class WaitForPeng extends ACommand {
 		return name;
 	}
 
-	public int getSource() {
-		return source;
+	public String getSource() {
+		return String.valueOf(source);
 	}
 
 	@Override

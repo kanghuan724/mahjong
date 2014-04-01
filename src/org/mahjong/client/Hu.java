@@ -41,7 +41,8 @@ public class Hu extends ACommand {
 	    if (lastOperation=="RefuseHu")
 	       {
 	    	   RefuseHu lastHu=(RefuseHu)(lastState.getMove());
-	   	       if (lastHu.getSource()==lastState.getTurn())
+	    	   String source = String.valueOf(lastHu.getSource());
+	   	       if (source.equals(lastState.getTurn()))
 	   	    	return false;
 	   	       else
 	   	    	return true;

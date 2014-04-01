@@ -26,7 +26,8 @@ public class RefusePeng extends ACommand{
        if (lastOperation=="RefusePeng")
          {
     	    RefusePeng lastPeng=(RefusePeng)(lastState.getMove());
-    	    if (lastPeng.getSource()==lastState.getTurn())
+    	    String source = String.valueOf(lastPeng.getSource());
+    	    if (source.equals(lastState.getTurn()))
     	    	return false;
     	    else
     	    	return true;
@@ -48,9 +49,9 @@ public class RefusePeng extends ACommand{
 		return name;
 	}
 
-	public int getSource() {
+	public String getSource() {
 		// TODO Auto-generated method stub
-		return source;
+		return String.valueOf(source);
 	}
 
 	@Override

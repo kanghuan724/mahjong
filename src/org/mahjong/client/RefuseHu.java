@@ -38,7 +38,9 @@ public class RefuseHu extends ACommand {
 			return true;
 		if (lastOperation == "RefuseHu") {
 			RefuseHu lastHu = (RefuseHu) (lastState.getMove());
-			if (lastHu.getSource() == lastState.getTurn()) {
+			
+			String source = String.valueOf(lastHu.getSource());
+    	    if (source.equals(lastState.getTurn())) {
 				return false;
 			} else {
 				return true;
@@ -48,8 +50,8 @@ public class RefuseHu extends ACommand {
 			return false;
 	}
 
-	public int getSource() {
-		return source;
+	public String getSource() {
+		return String.valueOf(source);
 	}
 
 	@Override
