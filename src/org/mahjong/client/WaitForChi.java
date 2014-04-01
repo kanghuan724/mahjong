@@ -1,6 +1,7 @@
 package org.mahjong.client;
 
 import java.util.Arrays;
+
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -21,7 +22,8 @@ public class WaitForChi extends ACommand {
 		String lastOperation = lastState.getMove().getName();
 		if (lastOperation == "RefusePeng") {
 			RefusePeng lastRefuse = (RefusePeng) lastState.getMove();
-			if (lastRefuse.getSource() != lastState.getTurn()) {
+			String source = String.valueOf(lastRefuse.getSource());
+    	    if (source.equals(lastState.getTurn())) {
 				return false;
 			} else {
 				return true;

@@ -36,7 +36,8 @@ public class RefuseGang extends ACommand{
        if (lastOperation=="RefuseGang")
          {
     	    RefuseGang lastGang=(RefuseGang)(lastState.getMove());
-    	    if (lastGang.getSource()==lastState.getTurn())
+    	    String source = String.valueOf(lastGang.getSource());
+    	    if (source.equals(lastState.getTurn()))
     	    	return false;
     	    else
     	    	return true;
@@ -45,9 +46,9 @@ public class RefuseGang extends ACommand{
        else
     	  return false;
     }
-	public int getSource() {
+	public String getSource() {
 		// TODO Auto-generated method stub
-		return source;
+		return String.valueOf(source);
 	}
 
 	@Override
