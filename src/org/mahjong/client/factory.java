@@ -1,10 +1,13 @@
 package org.mahjong.client;
 
+import java.util.List;
+
 import org.mahjong.client.Pick;
+
 import com.google.common.collect.ImmutableList;
 
 public class factory {
-	public static ACommand makeCommand(ImmutableList<String> tokens) {
+	public static ACommand makeCommand(List<String> tokens) {
 		if (tokens.size()==0)
 			return Empty.fromEmptyEntryInGameState(tokens);
 		switch (tokens.get(0)) {

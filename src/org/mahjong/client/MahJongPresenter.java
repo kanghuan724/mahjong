@@ -170,7 +170,6 @@ public class MahJongPresenter {
   /** Updates the presenter and the view with the state in updateUI. */
   public void updateUI(UpdateUI updateUI) {
     List<String> playerIds = updateUI.getPlayerIds();
-    System.out.println("I am here at UPDATE UI");
     String yourPlayerId = updateUI.getYourPlayerId();
     int yourPlayerIndex = updateUI.getPlayerIndex(yourPlayerId);
     if (updateUI.getState().isEmpty()) {
@@ -235,17 +234,9 @@ public class MahJongPresenter {
     		getMahJongMessage());
     
     // TODO: implement main logic of updateUI
-    if (getMahJongMessage()==MahJongMessage.HU)
-    	System.out.println("Hu");
-    if (getMahJongMessage()==MahJongMessage.WaitForHu)
-    	System.out.println("WaitForHu");
-    else
-    	System.out.println(mahJongState.getMove().getName());
     if (getMahJongMessage()==MahJongMessage.CHI)
     	chi=true;
-    if (isMyTurn()) {
-    	
-       
+    if (isMyTurn()) {   	       
     	if (chi==true)
     	{
     		chooseTileToChi();
@@ -254,15 +245,18 @@ public class MahJongPresenter {
       	  chooseTile();
         }
         if (mahJongMessage==MahJongMessage.WaitForHu)
-        	waitForHu();
+        {	waitForHu();}
         if (mahJongMessage==MahJongMessage.WaitForGang)
+        {	
+        	
         	waitForGang();
+        }
         if (mahJongMessage==MahJongMessage.WaitForPeng)
-        	waitForPeng();
+        { 	waitForPeng();}
         if (mahJongMessage==MahJongMessage.WaitForChi)
-        	waitForChi();
+        {	waitForChi();}
       }
-
+    
     
     
   }
@@ -302,23 +296,40 @@ public class MahJongPresenter {
     	//if (canHu()) 
     	  return MahJongMessage.HU;
     case (RH):
-    {     RefuseHu move=(RefuseHu)mahJongState.getMove();
-          if (move.getSource().equals(mahJongState.getTurn()))
+    {     
+    	  RefuseHu move=(RefuseHu)(mahJongState.getMove());
+          String sourceId = move.getSource();
+          String currentTurn = mahJongState.getTurn();
+          if (sourceId.equals(currentTurn))
+          {
     	    return MahJongMessage.WaitForGang;
+          }
           else
+          {
         	return MahJongMessage.HU;
+          }
     }
     case (RG):
-    {     RefuseGang move=(RefuseGang)mahJongState.getMove();
-          if (move.getSource().equals(mahJongState.getTurn()))
+    {     RefuseGang move=(RefuseGang)(mahJongState.getMove());
+          String sourceId = move.getSource();
+          String currentTurn = mahJongState.getTurn();
+          if (sourceId.equals(currentTurn))
+          {
     	    return MahJongMessage.WaitForPeng;
+          }
           else
+          {
         	return MahJongMessage.GANG;
+          }
     }
     case (RP):
-    {     RefusePeng move=(RefusePeng)mahJongState.getMove();
-          if (move.getSource()==mahJongState.getTurn())
+    {     RefusePeng move=(RefusePeng)(mahJongState.getMove());
+          String sourceId = move.getSource();
+          String currentTurn = mahJongState.getTurn();
+          if (sourceId.equals(currentTurn))
+          {
     	    return MahJongMessage.WaitForChi;
+          }
           else
         	return MahJongMessage.PENG;
     }
@@ -340,7 +351,8 @@ public class MahJongPresenter {
   }
 
   private boolean isMyTurn() {
-    return turn == mahJongState.getTurn();
+	
+    return (turn.equals(mahJongState.getTurn()));
   }
   /*public void rankSelected(Rank rank) {
 	    check(isMyTurn() && !selectedCards.isEmpty() && getPossibleRanks().contains(rank));
@@ -545,7 +557,7 @@ public class MahJongPresenter {
     container.sendMakeMove(mahJongLogic.hu(mahJongState,  mahJongState.getPlayerIds()));
   }
   void waitForHu() {
-	  System.out.println("I am wait fo rHu");
+	  
 	    container.sendMakeMove(mahJongLogic.WaitForHu(mahJongState,  mahJongState.getPlayerIds()));
 	  }
   void waitForGang() {
@@ -799,7 +811,6 @@ public class MahJongPresenter {
 		  if (ableToChi()==true)
 		  
 		  {
-			System.out.println("I can chi that");  
 		    tileChi();
 		    
 		  }

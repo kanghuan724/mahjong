@@ -1,6 +1,7 @@
 package org.mahjong.client;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -9,7 +10,7 @@ import com.google.common.collect.ImmutableList;
 import org.mahjong.client.ACommand;
 public class WaitForChi extends ACommand {
 	public static WaitForChi fromWaitForChiEntryInGameState(
-			@Nullable final ImmutableList<String> WaitForChiEntry) {
+			@Nullable final List<String> WaitForChiEntry) {
 		if (WaitForChiEntry == null || WaitForChiEntry.isEmpty()) {
 			return null;
 		}
@@ -23,7 +24,7 @@ public class WaitForChi extends ACommand {
 		if (lastOperation == "RefusePeng") {
 			RefusePeng lastRefuse = (RefusePeng) lastState.getMove();
 			String source = String.valueOf(lastRefuse.getSource());
-    	    if (source.equals(lastState.getTurn())) {
+    	    if (source.equals(lastState.getTurn())==false) {
 				return false;
 			} else {
 				return true;

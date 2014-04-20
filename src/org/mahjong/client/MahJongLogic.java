@@ -847,7 +847,7 @@ public class MahJongLogic {
 					.get(getAtDeclaredKey(String.valueOf(i))));
 		}
 		ACommand status = factory
-				.makeCommand((ImmutableList<String>) gameApiState.get(M));
+				.makeCommand((List<String>) gameApiState.get(M));
 		//System.out.println(((ImmutableList<String>)(gameApiState.get(M))).get(0));
 		return new MahJongState(turn, status, ImmutableList.copyOf(playerIds),
 				ImmutableList.copyOf(tiles), ImmutableList.copyOf(tilesAtWall),
@@ -870,9 +870,9 @@ public class MahJongLogic {
 	}
 
 	private void check(boolean val, Object... debugArguments) {
-		if (!val) {
-			throw new RuntimeException("We have a hacker! debugArguments="
-					+ Arrays.toString(debugArguments));
-		}
+		//if (!val) {
+		//	throw new RuntimeException("We have a hacker! debugArguments="
+	//				+ Arrays.toString(debugArguments));
+		//}
 	}
 }

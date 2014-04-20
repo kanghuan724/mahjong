@@ -1,6 +1,7 @@
 package org.mahjong.client;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -13,7 +14,7 @@ public class RefuseHu extends ACommand {
 	private final int source;
 
 	public static RefuseHu fromRefuseHuEntryInGameState(
-			@Nullable final ImmutableList<String> RefuseHuEntry) {
+			@Nullable final List<String> RefuseHuEntry) {
 		if (RefuseHuEntry == null || RefuseHuEntry.isEmpty()) {
 			return null;
 		}

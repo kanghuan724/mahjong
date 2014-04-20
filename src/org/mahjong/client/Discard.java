@@ -12,7 +12,7 @@ import org.mahjong.client.ACommand;
 public class Discard extends ACommand {
 	//"Throw", "A7"
 	@Nullable
-	public static Discard fromThrowEntryInGameState(@Nullable final ImmutableList<String> ThrowEntry) {
+	public static Discard fromThrowEntryInGameState(List<String> ThrowEntry) {
 		if (ThrowEntry == null || ThrowEntry.isEmpty()) {
 			return null;
 		}

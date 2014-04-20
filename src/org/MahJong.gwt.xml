@@ -4,6 +4,7 @@
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='com.google.common.collect.Collect'/>
   <inherits name='com.google.gwt.json.JSON'/>
+  <add-linker name = 'xsiframe' />
   <inherits name='com.allen_sauer.gwt.voices.gwt-voices'/>
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->
@@ -12,7 +13,7 @@
   <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
-
+   
   <!-- PlayN related module inherits   tripleplay.TriplePlay      -->
 
   <!-- Specify the app entry point class.                         -->

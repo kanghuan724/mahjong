@@ -12,7 +12,7 @@ import org.mahjong.client.ACommand;
 public class Peng extends ACommand {
 	//"Peng", "A7"
 	@Nullable
-	public static Peng fromPengEntryInGameState(@Nullable final ImmutableList<String> PengEntry) {
+	public static Peng fromPengEntryInGameState(@Nullable final List<String> PengEntry) {
 		if (PengEntry == null || PengEntry.isEmpty()) {
 			return null;
 		}

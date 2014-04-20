@@ -20,8 +20,8 @@ import com.google.gwt.user.client.ui.RootPanel;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class MahJongEntryPoint implements EntryPoint {
-    //ContainerConnector container;
-	IteratingPlayerContainer container;
+    ContainerConnector container;
+	//IteratingPlayerContainer container;
   MahJongPresenter mahJongPresenter;
 
   @Override
@@ -37,12 +37,12 @@ public class MahJongEntryPoint implements EntryPoint {
         mahJongPresenter.updateUI(updateUI);
       }
     };
-    //container =  new ContainerConnector(game); 
-    container = new IteratingPlayerContainer(game, 4);
+    container =  new ContainerConnector(game); 
+    //container = new IteratingPlayerContainer(game, 4);
     MahJongGraphics mahJongGraphics = new MahJongGraphics();
     mahJongPresenter =
         new MahJongPresenter(mahJongGraphics, container);
-    final ListBox playerSelect = new ListBox();
+    /*final ListBox playerSelect = new ListBox();
     playerSelect.addItem("1");
     playerSelect.addItem("2");
     playerSelect.addItem("3");
@@ -60,10 +60,10 @@ public class MahJongEntryPoint implements EntryPoint {
     });
     FlowPanel flowPanel = new FlowPanel();
     flowPanel.add(mahJongGraphics);
-    flowPanel.add(playerSelect);
-    RootPanel.get("mainDiv").add(flowPanel);
-   // RootPanel.get("mainDiv").add(mahJongGraphics);
-    //container.sendGameReady();
-    container.updateUi(container.getPlayerIds().get(0));
+    flowPanel.add(playerSelect);*/
+  //  RootPanel.get("mainDiv").add(flowPanel);
+    RootPanel.get("mainDiv").add(mahJongGraphics);
+    container.sendGameReady();
+   // container.updateUi(container.getPlayerIds().get(0));
   }
 }

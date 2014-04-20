@@ -13,7 +13,7 @@ public class Gang extends ACommand {
 	// "Gang", "A7"
 	@Nullable
 	public static Gang fromGangEntryInGameState(
-			@Nullable final ImmutableList<String> GangEntry) {
+			@Nullable final List<String> GangEntry) {
 		if (GangEntry == null || GangEntry.isEmpty()) {
 			return null;
 		}

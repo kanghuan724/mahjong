@@ -1,6 +1,7 @@
 package org.mahjong.client;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -8,7 +9,7 @@ import com.google.common.collect.ImmutableList;
 
 import org.mahjong.client.ACommand;
 public class RefuseChi extends ACommand{
-	public static RefuseChi fromRefuseChiEntryInGameState(@Nullable final ImmutableList<String> RefuseChiEntry) {
+	public static RefuseChi fromRefuseChiEntryInGameState(@Nullable final List<String> RefuseChiEntry) {
 		if (RefuseChiEntry == null || RefuseChiEntry.isEmpty()) {
 			return null;
 		}

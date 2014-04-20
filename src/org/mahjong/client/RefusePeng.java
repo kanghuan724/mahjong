@@ -2,6 +2,7 @@ package org.mahjong.client;
 
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -10,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.mahjong.client.ACommand;
 
 public class RefusePeng extends ACommand{
-	public static RefusePeng fromRefusePengEntryInGameState(@Nullable final ImmutableList<String> RefusePengEntry) {
+	public static RefusePeng fromRefusePengEntryInGameState(@Nullable final List<String> RefusePengEntry) {
 		if (RefusePengEntry == null || RefusePengEntry.isEmpty()) {
 			return null;
 		}

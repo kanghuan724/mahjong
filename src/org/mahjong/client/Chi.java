@@ -14,7 +14,7 @@ import org.mahjong.client.ACommand;
 public class Chi extends ACommand {
 	//"Chi", "A7"
 	@Nullable
-	public static Chi fromChiEntryInGameState(@Nullable final ImmutableList<String> ChiEntry) {
+	public static Chi fromChiEntryInGameState(@Nullable final List<String> ChiEntry) {
 		if (ChiEntry == null || ChiEntry.isEmpty()) {
 			return null;
 		}
