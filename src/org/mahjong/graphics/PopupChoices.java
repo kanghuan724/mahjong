@@ -8,18 +8,24 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.googlecode.mgwt.ui.client.dialog.Dialogs;
+import com.googlecode.mgwt.ui.client.dialog.OptionsDialog;
+import com.googlecode.mgwt.ui.client.theme.base.DialogCss;
 
-public class PopupChoices extends DialogBox {
+public class PopupChoices extends  OptionsDialog {
 	  public interface OptionChosen {
 	    void optionChosen(String option);
 	  }
 
 	  private Button firstChoice;
-
+	  private static Css css =new Css();
+     
 	  public PopupChoices(String mainText, List<String> options, final OptionChosen optionChosen) {
-	    super(false, true);
-	    setText(mainText);
-	    setAnimationEnabled(true);
+	   // super(false, true);
+	    //Dialogs test = new Dialogs();
+	    //setText(mainText);
+	   // setAnimationEnabled(true);
+		super (css);		
 	    HorizontalPanel buttons = new HorizontalPanel();
 	    for (String option : options) {
 	      final String optionF = option;
@@ -42,12 +48,13 @@ public class PopupChoices extends DialogBox {
 	        buttons.add(label);
 	      }
 	    }
-	    setWidget(buttons);
+	    add(buttons);
+	    //setWidget(buttons);
 	  }
 	  
-	  @Override
-	  public void center() {
-	    super.center();
-	    firstChoice.setFocus(true);
-	  }
+	//  @Override
+	//  public void center() {
+	 //   super.center();
+	 //   firstChoice.setFocus(true);
+	 // }
 	}
