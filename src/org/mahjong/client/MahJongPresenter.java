@@ -190,7 +190,7 @@ public class MahJongPresenter {
       }
     }
     chi=false;
-
+    
     MahJongMessage mahJongMessage = getMahJongMessage();
     if (updateUI.isViewer()) {
       view.setViewerState(mahJongState.getTilesAtHand("0").size(), 
@@ -233,6 +233,7 @@ public class MahJongPresenter {
     		getTiles(mahJongState.getTilesAtDeclared(String.valueOf(idIndex(playerIds,yourPlayerId)))),
     		getMahJongMessage());
     
+   
     // TODO: implement main logic of updateUI
     if (getMahJongMessage()==MahJongMessage.CHI)
     	chi=true;
@@ -242,6 +243,7 @@ public class MahJongPresenter {
     		chooseTileToChi();
     	}
         if (mahJongMessage==MahJongMessage.Discard) {
+          System.out.println("DISCARD");
       	  chooseTile();
         }
         if (mahJongMessage==MahJongMessage.WaitForHu)

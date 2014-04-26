@@ -8,7 +8,10 @@
   	  <g:VerticalPanel>
     	<g:HorizontalPanel width="490px" height="44px" styleName="flexiblePanel" ui:field="acrossDeclaredArea"/>
     	<g:HorizontalPanel width="490px" height="44px" ui:field="acrossAtHandArea"/>
-    	<g:HorizontalPanel width="490px" height="400px" styleName="flexiblePanel" ui:field="usedArea" />
+    	<g:HorizontalPanel width="490px" height="260px" styleName="flexiblePanel" ui:field="usedArea" />
+    	<g:AbsolutePanel ui:field="Dialogue">
+    	  <g:HorizontalPanel width="490px" height="140px" styleName="flexiblePanel" ui:field="noUse" />
+    	</g:AbsolutePanel>
     	<g:HorizontalPanel width="490px" height="44px" ui:field="myAtHandArea"/>
       	<g:HorizontalPanel width="490px" height="44px" ui:field="selectedArea"/>
       	<g:Button ui:field="claimBtn" text="Discard"/>
