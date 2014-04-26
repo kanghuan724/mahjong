@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.mahjong.client.*;
-import org.mahjong.client.GameApi.Container;
-import org.mahjong.client.GameApi.Operation;
-import org.mahjong.client.GameApi.SetTurn;
-import org.mahjong.client.GameApi.UpdateUI;
+import org.game_api.GameApi.Container;
+import org.game_api.GameApi.Operation;
+import org.game_api.GameApi.SetTurn;
+import org.game_api.GameApi.UpdateUI;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -146,7 +146,7 @@ public class MahJongPresenter {
   private final View view;
   private final Container container;
   /** A viewer doesn't have a playerId. */
-  private int turn;
+  private String turn;
   private MahJongState mahJongState;
   //private Tile selectedTile;
   private List<Tile> selectedTile=new ArrayList<Tile> ();
@@ -159,19 +159,18 @@ public class MahJongPresenter {
     this.container = container;
     view.setPresenter(this);
   }
-  public int idIndex(List<Integer> playerIds,int playerId)
+  public int idIndex(List<String> playerIds,String playerId)
   {
 	  for (int i=0;i<playerIds.size();i++)
-		   if (playerIds.get(i)==playerId)
+		   if (playerIds.get(i).equals(playerId))
 			     return i;
 	  return 0;
   }
 
   /** Updates the presenter and the view with the state in updateUI. */
   public void updateUI(UpdateUI updateUI) {
-    List<Integer> playerIds = updateUI.getPlayerIds();
-    
-    int yourPlayerId = updateUI.getYourPlayerId();
+    List<String> playerIds = updateUI.getPlayerIds();
+    String yourPlayerId = updateUI.getYourPlayerId();
     int yourPlayerIndex = updateUI.getPlayerIndex(yourPlayerId);
     if (updateUI.getState().isEmpty()) {
       // The 0 player sends the initial setup move.
@@ -191,17 +190,17 @@ public class MahJongPresenter {
       }
     }
     chi=false;
-
+    
     MahJongMessage mahJongMessage = getMahJongMessage();
     if (updateUI.isViewer()) {
-      view.setViewerState(mahJongState.getTilesAtHand(0).size(), 
-    		  mahJongState.getTilesAtHand(1).size(), 
-    		  mahJongState.getTilesAtHand(2).size(),
-    		  mahJongState.getTilesAtHand(3).size(),
-    		  getTiles(mahJongState.getTilesAtDeclared(0)),
-    		  getTiles(mahJongState.getTilesAtDeclared(1)),
-    		  getTiles(mahJongState.getTilesAtDeclared(2)),
-    		  getTiles(mahJongState.getTilesAtDeclared(3)),
+      view.setViewerState(mahJongState.getTilesAtHand("0").size(), 
+    		  mahJongState.getTilesAtHand("1").size(), 
+    		  mahJongState.getTilesAtHand("2").size(),
+    		  mahJongState.getTilesAtHand("3").size(),
+    		  getTiles(mahJongState.getTilesAtDeclared("0")),
+    		  getTiles(mahJongState.getTilesAtDeclared("1")),
+    		  getTiles(mahJongState.getTilesAtDeclared("2")),
+    		  getTiles(mahJongState.getTilesAtDeclared("3")),
     		  mahJongState.getTilesAtWall().size(), getTiles(mahJongState.getTilesUsed()),
     		  mahJongMessage);
       return;
@@ -213,56 +212,53 @@ public class MahJongPresenter {
       return;
     }
     // Must be a player!
-    int rightId = MahJongLogic.nextId(yourPlayerId, playerIds);
-    int acrossId = MahJongLogic.nextId(rightId, playerIds);
-    int leftId = MahJongLogic.nextId(acrossId, playerIds);
+    String rightId = MahJongLogic.nextId(yourPlayerId, playerIds);
+    String acrossId = MahJongLogic.nextId(rightId, playerIds);
+    String leftId = MahJongLogic.nextId(acrossId, playerIds);
     /*System.out.println(yourPlayerId);
     System.out.println(rightId);
     System.out.println(acrossId);
     System.out.println(leftId);
     System.out.println(playerIds);*/
-    int numberOfTilesAtHandLeft = mahJongState.getTilesAtHand(idIndex(playerIds,leftId)).size();
-    int numberOfTilesAtHandAcross = mahJongState.getTilesAtHand(idIndex(playerIds,acrossId)).size();
-    int numberOfTilesAtHandRight = mahJongState.getTilesAtHand(idIndex(playerIds,rightId)).size();
-    List<Tile> tilesAtDeclaredLeft = getTiles(mahJongState.getTilesAtDeclared(idIndex(playerIds,leftId)));
-    List<Tile> tilesAtDeclaredAcross = getTiles(mahJongState.getTilesAtDeclared(idIndex(playerIds,acrossId)));
-    List<Tile> tilesAtDeclaredRight = getTiles(mahJongState.getTilesAtDeclared(idIndex(playerIds,rightId)));
+    int numberOfTilesAtHandLeft = mahJongState.getTilesAtHand(String.valueOf(idIndex(playerIds,leftId))).size();
+    int numberOfTilesAtHandAcross = mahJongState.getTilesAtHand(String.valueOf(idIndex(playerIds,acrossId))).size();
+    int numberOfTilesAtHandRight = mahJongState.getTilesAtHand(String.valueOf(idIndex(playerIds,rightId))).size();
+    List<Tile> tilesAtDeclaredLeft = getTiles(mahJongState.getTilesAtDeclared(String.valueOf(idIndex(playerIds,leftId))));
+    List<Tile> tilesAtDeclaredAcross = getTiles(mahJongState.getTilesAtDeclared(String.valueOf(idIndex(playerIds,acrossId))));
+    List<Tile> tilesAtDeclaredRight = getTiles(mahJongState.getTilesAtDeclared(String.valueOf(idIndex(playerIds,rightId))));
     view.setPlayerState(numberOfTilesAtHandLeft, numberOfTilesAtHandRight, numberOfTilesAtHandAcross,
     		tilesAtDeclaredLeft, tilesAtDeclaredRight, tilesAtDeclaredAcross, 
     		mahJongState.getTilesAtWall().size(), getTiles(mahJongState.getTilesUsed()),
-    		getTiles(mahJongState.getTilesAtHand(idIndex(playerIds,yourPlayerId))), 
-    		getTiles(mahJongState.getTilesAtDeclared(idIndex(playerIds,yourPlayerId))),
+    		getTiles(mahJongState.getTilesAtHand(String.valueOf(idIndex(playerIds,yourPlayerId)))), 
+    		getTiles(mahJongState.getTilesAtDeclared(String.valueOf(idIndex(playerIds,yourPlayerId)))),
     		getMahJongMessage());
     
+   
     // TODO: implement main logic of updateUI
-    if (getMahJongMessage()==MahJongMessage.HU)
-    	System.out.println("Hu");
-    if (getMahJongMessage()==MahJongMessage.WaitForHu)
-    	System.out.println("WaitForHu");
-    else
-    	System.out.println(mahJongState.getMove().getName());
     if (getMahJongMessage()==MahJongMessage.CHI)
     	chi=true;
-    if (isMyTurn()) {
-    	
-       
+    if (isMyTurn()) {   	       
     	if (chi==true)
     	{
     		chooseTileToChi();
     	}
         if (mahJongMessage==MahJongMessage.Discard) {
+          System.out.println("DISCARD");
       	  chooseTile();
         }
         if (mahJongMessage==MahJongMessage.WaitForHu)
-        	waitForHu();
+        {	waitForHu();}
         if (mahJongMessage==MahJongMessage.WaitForGang)
+        {	
+        	
         	waitForGang();
+        }
         if (mahJongMessage==MahJongMessage.WaitForPeng)
-        	waitForPeng();
+        { 	waitForPeng();}
         if (mahJongMessage==MahJongMessage.WaitForChi)
-        	waitForChi();
+        {	waitForChi();}
       }
-
+    
     
     
   }
@@ -302,23 +298,40 @@ public class MahJongPresenter {
     	//if (canHu()) 
     	  return MahJongMessage.HU;
     case (RH):
-    {     RefuseHu move=(RefuseHu)mahJongState.getMove();
-          if (move.getSource()==mahJongState.getTurn())
+    {     
+    	  RefuseHu move=(RefuseHu)(mahJongState.getMove());
+          String sourceId = move.getSource();
+          String currentTurn = mahJongState.getTurn();
+          if (sourceId.equals(currentTurn))
+          {
     	    return MahJongMessage.WaitForGang;
+          }
           else
+          {
         	return MahJongMessage.HU;
+          }
     }
     case (RG):
-    {     RefuseGang move=(RefuseGang)mahJongState.getMove();
-          if (move.getSource()==mahJongState.getTurn())
+    {     RefuseGang move=(RefuseGang)(mahJongState.getMove());
+          String sourceId = move.getSource();
+          String currentTurn = mahJongState.getTurn();
+          if (sourceId.equals(currentTurn))
+          {
     	    return MahJongMessage.WaitForPeng;
+          }
           else
+          {
         	return MahJongMessage.GANG;
+          }
     }
     case (RP):
-    {     RefusePeng move=(RefusePeng)mahJongState.getMove();
-          if (move.getSource()==mahJongState.getTurn())
+    {     RefusePeng move=(RefusePeng)(mahJongState.getMove());
+          String sourceId = move.getSource();
+          String currentTurn = mahJongState.getTurn();
+          if (sourceId.equals(currentTurn))
+          {
     	    return MahJongMessage.WaitForChi;
+          }
           else
         	return MahJongMessage.PENG;
     }
@@ -340,7 +353,8 @@ public class MahJongPresenter {
   }
 
   private boolean isMyTurn() {
-    return turn == mahJongState.getTurn();
+	
+    return (turn.equals(mahJongState.getTurn()));
   }
   /*public void rankSelected(Rank rank) {
 	    check(isMyTurn() && !selectedCards.isEmpty() && getPossibleRanks().contains(rank));
@@ -375,18 +389,21 @@ public class MahJongPresenter {
   
   private void chooseTile() {
 	  
-    List<Tile> current = getTiles(mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),turn)));
+
+    List<Tile> current = getTiles(mahJongState.getTilesAtHand(String.valueOf(idIndex(mahJongState.getPlayerIds(),turn))));
+
     view.chooseTile(selectedTile, 
-    		mahJongLogic.subtract(getTiles(mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),turn))), selectedTile));
+    		mahJongLogic.subtract(getTiles(mahJongState.getTilesAtHand(String.valueOf(idIndex(mahJongState.getPlayerIds(),turn)))), selectedTile));
   }
   private void chooseTileToChi() {
 	    view.chooseTileToChi(selectedTile, 
-	    		mahJongLogic.subtract(getTiles(mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),turn))), selectedTile));
+	    		mahJongLogic.subtract(getTiles(mahJongState.getTilesAtHand(String.valueOf(idIndex(mahJongState.getPlayerIds(),turn)))), selectedTile));
 	  }
   /**
    * Add/remove the tile from the {@link #selectedTile}.
    * The view can only call this method if the presenter called {@link View#chooseTile}.
    */
+
   public void tileSwitch(int origin,int des)
   {
 	  if (origin==des)
@@ -395,7 +412,9 @@ public class MahJongPresenter {
 		  return;
 	  }
 	  int id =idIndex(mahJongState.getPlayerIds(),turn);
-	  List<Integer> current = mahJongState.getTilesAtHand(id);
+
+	  List<Integer> current = mahJongState.getTilesAtHand(String.valueOf(id));
+
 	  List<Integer> target =new ArrayList<Integer> ();
 	  for (int i=0;i<current.size();i++)
 	  {
@@ -421,7 +440,9 @@ public class MahJongPresenter {
   {
 	  
 	  int id =idIndex(mahJongState.getPlayerIds(),turn);
-	  List<Integer> current = mahJongState.getTilesAtHand(id);
+
+	  List<Integer> current = mahJongState.getTilesAtHand(String.valueOf(id));
+
 	  List<Integer> target =new ArrayList<Integer> ();
 	  int des = current.size()-1;
 	  for (int i=0;i<current.size();i++)
@@ -444,6 +465,15 @@ public class MahJongPresenter {
 	  mahJongState.changeTileSequence(id, targetImmute);
 	  chooseTile();
   }
+
+  public boolean tilePosition(Tile tile) {
+	  if (selectedTile.contains(tile)) {
+	    	return false;
+	    } 
+	  
+		  return true;
+  }
+
   public void tileSelected(Tile tile) {
     //check(isMyTurn());
     if (selectedTile.contains(tile)) {
@@ -476,8 +506,8 @@ public class MahJongPresenter {
   void tileDiscarded() {
     check(isMyTurn() && selectedTile.size()>0);
     List<Integer> selectedTileIndex = Lists.newArrayList();
-    int playerId=mahJongState.getTurn();
-    List<Integer> atHand=mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),playerId));
+    String playerId=mahJongState.getTurn();
+    List<Integer> atHand=mahJongState.getTilesAtHand(String.valueOf(idIndex(mahJongState.getPlayerIds(),playerId)));
     for (int index = 0; index < atHand.size(); index++) {
     	if ((mahJongState.getTiles().get(atHand.get(index)).get().equals(selectedTile.get(0)))) {
     		selectedTileIndex.add(atHand.get(index));
@@ -490,8 +520,8 @@ public class MahJongPresenter {
   void tileChi() {
 	    check(isMyTurn() && selectedTile != null);
 	    List<Integer> selectedTileIndex = Lists.newArrayList();
-	    int playerId=mahJongState.getTurn();
-	    List<Integer> atHand=mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),playerId));
+	    String playerId=mahJongState.getTurn();
+	    List<Integer> atHand=mahJongState.getTilesAtHand(String.valueOf(idIndex(mahJongState.getPlayerIds(),playerId)));
 	    for (int index = 0; index < atHand.size(); index++) {
 	    	if ((mahJongState.getTiles().get(atHand.get(index)).get().equals(selectedTile.get(0)))) {
 	    		selectedTileIndex.add(atHand.get(index));
@@ -537,7 +567,7 @@ public class MahJongPresenter {
     container.sendMakeMove(mahJongLogic.hu(mahJongState,  mahJongState.getPlayerIds()));
   }
   void waitForHu() {
-	  System.out.println("I am wait fo rHu");
+	  
 	    container.sendMakeMove(mahJongLogic.WaitForHu(mahJongState,  mahJongState.getPlayerIds()));
 	  }
   void waitForGang() {
@@ -556,8 +586,8 @@ public class MahJongPresenter {
   {
       List<Integer> selectedComboIndex = Lists.newArrayList();
 	  
-	  int playerId = mahJongState.getTurn();
-	  List<Integer> lastAtHand = mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),playerId));
+	  String playerId = mahJongState.getTurn();
+	  List<Integer> lastAtHand = mahJongState.getTilesAtHand(String.valueOf(idIndex(mahJongState.getPlayerIds(),playerId)));
 	  List<Integer> Used= mahJongState.getTilesUsed();
 	  int gangIndex=Used.get(Used.size() - 1);
 	  String gangtile=mahJongState.getTiles().get(gangIndex).get().toString();
@@ -572,12 +602,12 @@ public class MahJongPresenter {
   }
   public boolean huHelper()
   {
-	  int playerId = mahJongState.getTurn();
+	  String playerId = mahJongState.getTurn();
 	  List<Integer> Used=mahJongState.getTilesUsed();
 	  int huIndex=Used.get(Used.size()-1);
 	  List<Integer> huTile=new ArrayList<Integer> ();
 	  huTile.add(huIndex);
-	  List<Integer> lastAtHand= mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),playerId));
+	  List<Integer> lastAtHand= mahJongState.getTilesAtHand(String.valueOf(idIndex(mahJongState.getPlayerIds(),playerId)));
 	  List<Integer> pengcombo=pengHelper();
 	  List<Integer> chicombo=chiHelper();
 	 //Need some modification about hucorrect;
@@ -592,8 +622,8 @@ public class MahJongPresenter {
   public List<Integer> pengHelper()
   {
       List<Integer> selectedComboIndex = Lists.newArrayList();	  
-	  int playerId = mahJongState.getTurn();
-	  List<Integer> lastAtHand = mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),playerId));
+	  String playerId = mahJongState.getTurn();
+	  List<Integer> lastAtHand = mahJongState.getTilesAtHand(String.valueOf(idIndex(mahJongState.getPlayerIds(),playerId)));
 	  List<Integer> Used= mahJongState.getTilesUsed();
 	  int gangIndex=Used.get(Used.size() - 1);
 	  String gangtile=mahJongState.getTiles().get(gangIndex).get().toString();
@@ -621,8 +651,8 @@ public class MahJongPresenter {
   public List<Integer> chiHelper_1()
   {
       List<Integer> selectedComboIndex = Lists.newArrayList();	  
-	  int playerId = mahJongState.getTurn();
-	  List<Integer> lastAtHand = mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),playerId));
+	  String playerId = mahJongState.getTurn();
+	  List<Integer> lastAtHand = mahJongState.getTilesAtHand(String.valueOf(idIndex(mahJongState.getPlayerIds(),playerId)));
 	  List<Integer> Used= mahJongState.getTilesUsed();
 	  int chiIndex=Used.get(Used.size() - 1);
 	  Tile chitile=mahJongState.getTiles().get(chiIndex).get();
@@ -653,8 +683,8 @@ public class MahJongPresenter {
   public List<Integer> chiHelper_2()
   {
 	  List<Integer> selectedComboIndex = Lists.newArrayList();	  
-	  int playerId = mahJongState.getTurn();
-	  List<Integer> lastAtHand = mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),playerId));
+	  String playerId =mahJongState.getTurn();
+	  List<Integer> lastAtHand = mahJongState.getTilesAtHand(String.valueOf(idIndex(mahJongState.getPlayerIds(),playerId)));
 	  List<Integer> Used= mahJongState.getTilesUsed();
 	  int chiIndex=Used.get(Used.size() - 1);
 	  Tile chitile=mahJongState.getTiles().get(chiIndex).get();
@@ -685,8 +715,8 @@ public class MahJongPresenter {
   public List<Integer> chiHelper_3()
   {
 	  List<Integer> selectedComboIndex = Lists.newArrayList();	  
-	  int playerId = mahJongState.getTurn();
-	  List<Integer> lastAtHand = mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),playerId));
+	  String playerId = mahJongState.getTurn();
+	  List<Integer> lastAtHand = mahJongState.getTilesAtHand(String.valueOf(idIndex(mahJongState.getPlayerIds(),playerId)));
 	  List<Integer> Used= mahJongState.getTilesUsed();
 	  int chiIndex=Used.get(Used.size() - 1);
 	  Tile chitile=mahJongState.getTiles().get(chiIndex).get();
@@ -749,7 +779,7 @@ public class MahJongPresenter {
 	  for (int i=0;i<selectedTile.size();i++)
 	  {
 		   System.out.println(selectedTile.get(i).toString());
-		   List<Integer> tileAtHand=mahJongState.getTilesAtHand(idIndex(mahJongState.getPlayerIds(),turn));
+		   List<Integer> tileAtHand=mahJongState.getTilesAtHand(String.valueOf(idIndex(mahJongState.getPlayerIds(),turn)));
 		   for (int j=0;j<tileAtHand.size();j++)
 		   {
 			 int CurrentIndex=tileAtHand.get(j);
@@ -791,7 +821,6 @@ public class MahJongPresenter {
 		  if (ableToChi()==true)
 		  
 		  {
-			System.out.println("I can chi that");  
 		    tileChi();
 		    
 		  }
@@ -808,7 +837,7 @@ public class MahJongPresenter {
   }
   
   
-  private void sendInitialMove(List<Integer> playerIds) {
+  private void sendInitialMove(List<String> playerIds) {
     container.sendMakeMove(mahJongLogic.getInitialMove(playerIds));
   }
 }

@@ -12,7 +12,7 @@ import org.mahjong.client.ACommand;
 public class Peng extends ACommand {
 	//"Peng", "A7"
 	@Nullable
-	public static Peng fromPengEntryInGameState(@Nullable final ImmutableList<String> PengEntry) {
+	public static Peng fromPengEntryInGameState(@Nullable final List<String> PengEntry) {
 		if (PengEntry == null || PengEntry.isEmpty()) {
 			return null;
 		}
@@ -36,7 +36,8 @@ public class Peng extends ACommand {
 	    if (lastOperation=="RefusePeng")
 	       {
 	    	   RefusePeng lastPeng=(RefusePeng)(lastState.getMove());
-	   	       if (lastPeng.getSource()==lastState.getTurn())
+	    	   String source = String.valueOf(lastPeng.getSource());
+	   	       if (source.equals(lastState.getTurn()))
 	   	    	return false;
 	   	       else
 	   	    	return true;

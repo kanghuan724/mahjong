@@ -15,7 +15,7 @@ import org.mahjong.client.MahJongLogic;
 public class Hu extends ACommand {
 	//"Hu", "A7"
 	@Nullable
-	public static Hu fromHuEntryInGameState(@Nullable final ImmutableList<String> HuEntry) {
+	public static Hu fromHuEntryInGameState(@Nullable final List<String> HuEntry) {
 		if (HuEntry == null || HuEntry.isEmpty()) {
 			return null;
 		}
@@ -41,7 +41,8 @@ public class Hu extends ACommand {
 	    if (lastOperation=="RefuseHu")
 	       {
 	    	   RefuseHu lastHu=(RefuseHu)(lastState.getMove());
-	   	       if (lastHu.getSource()==lastState.getTurn())
+	    	   String source = String.valueOf(lastHu.getSource());
+	   	       if (source.equals(lastState.getTurn()))
 	   	    	return false;
 	   	       else
 	   	    	return true;

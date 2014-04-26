@@ -1,6 +1,7 @@
 package org.mahjong.client;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -10,7 +11,7 @@ import org.mahjong.client.ACommand;
 public class RefuseGang extends ACommand{
     private final String name;
     private final int source;
-    public static RefuseGang fromRefuseGangEntryInGameState(@Nullable final ImmutableList<String> RefuseGangEntry) {
+    public static RefuseGang fromRefuseGangEntryInGameState(@Nullable final List<String> RefuseGangEntry) {
 		if (RefuseGangEntry == null || RefuseGangEntry.isEmpty()) {
 			return null;
 		}
@@ -36,7 +37,8 @@ public class RefuseGang extends ACommand{
        if (lastOperation=="RefuseGang")
          {
     	    RefuseGang lastGang=(RefuseGang)(lastState.getMove());
-    	    if (lastGang.getSource()==lastState.getTurn())
+    	    String source = String.valueOf(lastGang.getSource());
+    	    if (source.equals(lastState.getTurn()))
     	    	return false;
     	    else
     	    	return true;
@@ -45,9 +47,9 @@ public class RefuseGang extends ACommand{
        else
     	  return false;
     }
-	public int getSource() {
+	public String getSource() {
 		// TODO Auto-generated method stub
-		return source;
+		return String.valueOf(source);
 	}
 
 	@Override

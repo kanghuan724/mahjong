@@ -1,0 +1,5 @@
+App Engine URL : 3-dot-huan-kang.appspot.com/MahJong.html (Without Emulator)
+
+Functionality in Mobile device: 1. Drag and Drop for different tiles
+2. Animation (Animation is triggered after you click the tile)
+3. Sound (Every time when you trigger an animation, there will be a sound)

@@ -1,6 +1,8 @@
 package org.mahjong.client;
 
 import java.util.Arrays;
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -9,7 +11,7 @@ import org.mahjong.client.ACommand;
 
 public class WaitForHu extends ACommand {
 	public static WaitForHu fromWaitForHuEntryInGameState(
-			@Nullable final ImmutableList<String> WaitForHuEntry) {
+			@Nullable final List<String> WaitForHuEntry) {
 		if (WaitForHuEntry == null || WaitForHuEntry.isEmpty()) {
 			return null;
 		}
@@ -40,8 +42,8 @@ public class WaitForHu extends ACommand {
 		return name;
 	}
 
-	public int getSource() {
-		return source;
+	public String getSource() {
+		return String.valueOf(source);
 	}
 
 	@Override

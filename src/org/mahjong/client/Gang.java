@@ -13,7 +13,7 @@ public class Gang extends ACommand {
 	// "Gang", "A7"
 	@Nullable
 	public static Gang fromGangEntryInGameState(
-			@Nullable final ImmutableList<String> GangEntry) {
+			@Nullable final List<String> GangEntry) {
 		if (GangEntry == null || GangEntry.isEmpty()) {
 			return null;
 		}
@@ -37,7 +37,8 @@ public class Gang extends ACommand {
 			return true;
 		if (lastOperation == "RefuseGang") {
 			RefuseGang lastGang = (RefuseGang) (lastState.getMove());
-			if (lastGang.getSource() == lastState.getTurn())
+			String source = String.valueOf(lastGang.getSource());
+			if (source.equals (lastState.getTurn()))
 				return false;
 			else
 				return true;

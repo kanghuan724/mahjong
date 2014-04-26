@@ -1,6 +1,8 @@
 package org.mahjong.client;
 
 import java.util.Arrays;
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -9,7 +11,7 @@ import org.mahjong.client.ACommand;
 
 public class WaitForGang extends ACommand {
 	public static WaitForGang fromWaitForGangEntryInGameState(
-			@Nullable final ImmutableList<String> WaitForGangEntry) {
+			@Nullable final List<String> WaitForGangEntry) {
 		if (WaitForGangEntry == null || WaitForGangEntry.isEmpty()) {
 			return null;
 		}
@@ -20,14 +22,17 @@ public class WaitForGang extends ACommand {
 
 	public static boolean lastStateValid(MahJongState lastState) {
 		String lastOperation = lastState.getMove().getName();
-		if (lastOperation == "RefuseHu") {
+		if (lastOperation .equals( "RefuseHu")==true) {
 			RefuseHu lastRefuse = (RefuseHu) lastState.getMove();
-			if (lastRefuse.getSource() != lastState.getTurn()) {
+			String source = String.valueOf(lastRefuse.getSource());
+    	    if (source.equals(lastState.getTurn())==false) {
+    	    	//throw new RuntimeException ("Are you kidding me???....");
 				return false;
 			} else {
 				return true;
 			}
 		} else {
+			//throw new RuntimeException ("Are you kidding me???");
 			return false;
 		}
 	}
@@ -45,8 +50,8 @@ public class WaitForGang extends ACommand {
 		return name;
 	}
 
-	public int getSource() {
-		return source;
+	public String getSource() {
+		return String.valueOf(source);
 	}
 
 	@Override

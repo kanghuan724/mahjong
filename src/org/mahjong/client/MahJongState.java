@@ -13,9 +13,9 @@ import org.mahjong.client.ACommand;
  */
 public class MahJongState {
 	  //the playerId
-	  private final int turn;
+	  private final String turn;
 	  private final ACommand move;
-	  private final ImmutableList<Integer> playerIds;
+	  private final ImmutableList<String> playerIds;
 
 	  /**
 	   * Note that some of the entries will have null, meaning the card is not visible to us.
@@ -36,7 +36,7 @@ public class MahJongState {
 	  private  ImmutableList<Integer> tilesAtHandOfFour;
 	  private final ImmutableList<Integer> tilesAtDeclaredOfFour;
 
-	  public MahJongState(int turn, ACommand move, ImmutableList<Integer> playerIds,
+	  public MahJongState(String turn, ACommand move, ImmutableList<String> playerIds,
 	      ImmutableList<Optional<Tile>> tiles, ImmutableList<Integer> tilesAtWall,
 	      ImmutableList<Integer> tilesUsed, 
 	      ImmutableList<Integer> tilesAtHandOfOne, ImmutableList<Integer> tilesAtDeclaredOfOne,
@@ -61,7 +61,7 @@ public class MahJongState {
 	  
 	  }
 
-	  public int getTurn() {
+	  public String getTurn() {
 	    return turn;
 	  }
 	  
@@ -69,7 +69,7 @@ public class MahJongState {
 	    return move;
 	  }
 
-	  public ImmutableList<Integer> getPlayerIds() {
+	  public ImmutableList<String> getPlayerIds() {
 	    return playerIds;
 	  }
 
@@ -116,30 +116,32 @@ public class MahJongState {
     		  break;
     	  }
       }
-	  public ImmutableList<Integer> getTilesAtHand(int playerId) {
+
+	  public ImmutableList<Integer> getTilesAtHand(String playerId) {
+
 	    switch (playerId) {
-	    case 0: 
+	    case "0": 
 	    	return tilesAtHandOfOne;	
-	    case 1: 
+	    case "1": 
 	    	return tilesAtHandOfTwo;	
-	    case 2: 
+	    case "2": 
 	    	return tilesAtHandOfThree;
-	    case 3: 
+	    case "3": 
 	    	return tilesAtHandOfFour;
 	    default:
 	    	return null;
 	    }
 	  }
 
-	  public ImmutableList<Integer> getTilesAtDeclared(int playerId) {
+	  public ImmutableList<Integer> getTilesAtDeclared(String playerId) {
 		    switch (playerId) {
-		    case 0: 
+		    case "0": 
 		    	return tilesAtDeclaredOfOne;    	
-		    case 1: 
+		    case "1": 
 		    	return tilesAtDeclaredOfTwo;
-		    case 2: 
+		    case "2": 
 		    	return tilesAtDeclaredOfThree;
-		    case 3: 
+		    case "3": 
 		    	return tilesAtDeclaredOfFour;
 		    default: 
 		    	return null;
