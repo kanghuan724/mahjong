@@ -3,3 +3,14 @@ App Engine URL : 3-dot-huan-kang.appspot.com/MahJong.html (Without Emulator)
 Functionality in Mobile device: 1. Drag and Drop for different tiles
 2. Animation (Animation is triggered after you click the tile)
 3. Sound (Every time when you trigger an animation, there will be a sound)
+
+App Engine URL Update: 4-dot-huan-kang.appspot.com/MahJong.html (Inside Emulator)
+ChangeLog in Emulator:
+1.Drag and Drop is disabled (Because of the dnd bug)
+2.Animation(Animation is triggered after you clikc on the tile)
+3.Sound(Every time when you trigger an animation, there will be an sound)
+
+Instruction on how to play:
+Everytime when the game begins, Click on the button "Your turn to Pick Up a Tile:OK"
+After that , you can select a tile that you want to drop.(In version 3, when you play outside the Emulator, you can use drag and drop to switch the position of all the tiles)
+After discarding the tile, it's gonna be next player's turn
