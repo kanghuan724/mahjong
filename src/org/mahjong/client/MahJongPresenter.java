@@ -190,7 +190,7 @@ public class MahJongPresenter {
       }
     }
     chi=false;
-
+    
     MahJongMessage mahJongMessage = getMahJongMessage();
     if (updateUI.isViewer()) {
       view.setViewerState(mahJongState.getTilesAtHand("0").size(), 
@@ -233,6 +233,7 @@ public class MahJongPresenter {
     		getTiles(mahJongState.getTilesAtDeclared(String.valueOf(idIndex(playerIds,yourPlayerId)))),
     		getMahJongMessage());
     
+   
     // TODO: implement main logic of updateUI
     if (getMahJongMessage()==MahJongMessage.CHI)
     	chi=true;
@@ -242,6 +243,7 @@ public class MahJongPresenter {
     		chooseTileToChi();
     	}
         if (mahJongMessage==MahJongMessage.Discard) {
+          System.out.println("DISCARD");
       	  chooseTile();
         }
         if (mahJongMessage==MahJongMessage.WaitForHu)
@@ -387,7 +389,9 @@ public class MahJongPresenter {
   
   private void chooseTile() {
 	  
+
     List<Tile> current = getTiles(mahJongState.getTilesAtHand(String.valueOf(idIndex(mahJongState.getPlayerIds(),turn))));
+
     view.chooseTile(selectedTile, 
     		mahJongLogic.subtract(getTiles(mahJongState.getTilesAtHand(String.valueOf(idIndex(mahJongState.getPlayerIds(),turn)))), selectedTile));
   }
@@ -399,7 +403,7 @@ public class MahJongPresenter {
    * Add/remove the tile from the {@link #selectedTile}.
    * The view can only call this method if the presenter called {@link View#chooseTile}.
    */
-  
+
   public void tileSwitch(int origin,int des)
   {
 	  if (origin==des)
@@ -408,7 +412,9 @@ public class MahJongPresenter {
 		  return;
 	  }
 	  int id =idIndex(mahJongState.getPlayerIds(),turn);
+
 	  List<Integer> current = mahJongState.getTilesAtHand(String.valueOf(id));
+
 	  List<Integer> target =new ArrayList<Integer> ();
 	  for (int i=0;i<current.size();i++)
 	  {
@@ -434,7 +440,9 @@ public class MahJongPresenter {
   {
 	  
 	  int id =idIndex(mahJongState.getPlayerIds(),turn);
+
 	  List<Integer> current = mahJongState.getTilesAtHand(String.valueOf(id));
+
 	  List<Integer> target =new ArrayList<Integer> ();
 	  int des = current.size()-1;
 	  for (int i=0;i<current.size();i++)
@@ -457,6 +465,7 @@ public class MahJongPresenter {
 	  mahJongState.changeTileSequence(id, targetImmute);
 	  chooseTile();
   }
+
   public boolean tilePosition(Tile tile) {
 	  if (selectedTile.contains(tile)) {
 	    	return false;
@@ -464,6 +473,7 @@ public class MahJongPresenter {
 	  
 		  return true;
   }
+
   public void tileSelected(Tile tile) {
     //check(isMyTurn());
     if (selectedTile.contains(tile)) {

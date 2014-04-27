@@ -116,7 +116,9 @@ public class MahJongState {
     		  break;
     	  }
       }
+
 	  public ImmutableList<Integer> getTilesAtHand(String playerId) {
+
 	    switch (playerId) {
 	    case "0": 
 	    	return tilesAtHandOfOne;	

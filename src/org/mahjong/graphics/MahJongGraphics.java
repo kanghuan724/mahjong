@@ -2,15 +2,18 @@ package org.mahjong.graphics;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.mahjong.client.*;
 import org.mahjong.client.MahJongPresenter.MahJongMessage;
 import org.mahjong.client.MahJongPresenter.View;
 
+
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
 import com.allen_sauer.gwt.voices.client.Sound;
 import com.allen_sauer.gwt.voices.client.SoundController;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -30,7 +33,9 @@ import com.google.gwt.event.dom.client.DragOverHandler;
 import com.google.gwt.event.dom.client.DragStartHandler;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
+
 import com.google.gwt.media.client.Audio;
+
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -45,16 +50,19 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.media.client.Audio;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.googlecode.mgwt.ui.client.dialog.Dialogs;
 /**
  * Graphics for the game of mahjong.
  */
 public class MahJongGraphics extends Composite implements MahJongPresenter.View {
   public interface MahJongGraphicsUiBinder extends UiBinder<Widget, MahJongGraphics> {
   }
-  
+
   @UiField
   AbsolutePanel animation;
- 
+  @UiField
+  AbsolutePanel Dialogue;
+
   @UiField
   HorizontalPanel acrossDeclaredArea;
   @UiField
@@ -81,23 +89,28 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   
   private final TileImageSupplier tileImageSupplier;
   private MahJongPresenter presenter;
+
   private Audio pieceDown;
   private Audio pieceCaptured;
   private GameSounds gameSounds;
   private PickupDragController dragController;
   private String systemTime;
   private SoundController soundController;
+  private Dialogs dialogue;
   
-  
+
   public MahJongGraphics() {
     TileImages tileImages = GWT.create(TileImages.class);
      gameSounds = GWT.create(GameSounds.class);
     this.tileImageSupplier = new TileImageSupplier(tileImages);
     MahJongGraphicsUiBinder uiBinder = GWT.create(MahJongGraphicsUiBinder.class);
     initWidget(uiBinder.createAndBindUi(this));
+
     systemTime = String.valueOf(System.currentTimeMillis());
     soundController = new SoundController();
+    dialogue = new Dialogs();
  
+
   }
 
   private List<Image> createHorizonBackTiles(int numOfTiles) {
@@ -152,10 +165,12 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	    	Image image = new Image(tileImageSupplier.getResource(img));
 	    	if (count==images.size()-1)
 	    	{
+
 	    		 image.addDragOverHandler(new DragOverHandler() {
 	    	      	    @Override
 	    	      	    public void onDragOver(DragOverEvent event) {
 	    	      	    
+
 	    	      	    }
 	    	      	});
 	    	        image.addDropHandler(new DropHandler() {
@@ -166,6 +181,8 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	    	      	        
 	    	      	        // get the data out of the event
 	    	      	        String data = event.getData("index");
+
+
 	    	      	      presenter.tileSwitch(Integer.parseInt(data));
 	    	      	    }
 	    	      	});
@@ -176,6 +193,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	    }
 	    return res;
   }
+
   public void setTime(String time)
   {
 	  this.systemTime = time;
@@ -185,6 +203,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     int count=0;
     dragController = new PickupDragController(RootPanel.get(), false);
     dragController.setBehaviorDragStartSensitivity(1);
+
     for (TileImage img : images) {
       final TileImage imgFinal = img;
       final ImageResource temp = tileImageSupplier.getResource(img);
@@ -193,6 +212,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
         image.addClickHandler(new ClickHandler() {
           @Override
           public void onClick(ClickEvent event) {
+
             long currentTime = System.currentTimeMillis();
             long lastDropTime = Long.parseLong(systemTime);
             
@@ -228,10 +248,12 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
                  // pieceDown.play();
          // }
          
+
               
             }
           }
         });
+
         
         dragController.makeDraggable(image);
         DropController dropController = new TileDropController(image,presenter,this);
@@ -251,13 +273,16 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
                                 .asString(), AudioElement.TYPE_WAV);
                 pieceCaptured.play();
                 }
+
             } 		
           });
         image.addDragOverHandler(new DragOverHandler() {
       	    @Override
       	    public void onDragOver(DragOverEvent event) {
       	    	image.setStyleName("imgBigger");
+
       	    	
+
       	        
       	    }
       	});
@@ -265,7 +290,8 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
       	    @Override
       	    public void onDragLeave(DragLeaveEvent event) {
       	    	image.setStyleName("imgContainer");
-      	    	
+	
+
       	        
       	    }
       	});
@@ -278,6 +304,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
       	        // get the data out of the event
       	        String data = event.getData("index");
       	        String currentData = String.valueOf(((DropImage)image).getIndex());
+
       	    
       	      if (Audio.isSupported()) {
                   pieceDown = Audio.createIfSupported();
@@ -290,6 +317,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
       	      presenter.tileSwitch(Integer.parseInt(data),Integer.parseInt(currentData));
       	    }
       	});*/
+
       }
       count++;
       res.add(image);
@@ -305,7 +333,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
       imageContainer.add(image);
       //imageContainer.setStyleName(image != last ? "imgShortContainer" : "imgContainer");
       imageContainer.setStyleName("imgContainer");
-      
+
       
       panel.add(imageContainer);
     }
@@ -324,16 +352,31 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	      panel.add(imageContainer);
 	    }
   }
-
+  private List<Dialogs.OptionsDialogEntry> getButtons(List<String> options)
+  {
+	  List<Dialogs.OptionsDialogEntry> result = new ArrayList<Dialogs.OptionsDialogEntry> ();
+	  for (int i=0;i<options.size();i++)
+	  {
+		  
+		  result.add(new Dialogs.OptionsDialogEntry(options.get(i),Dialogs.ButtonType.NORMAL));
+	  }
+	  return result;
+  }
   private void alertMahJongMessage(MahJongMessage mahjongMessage)
   {
 	  String message="";
 	  List<String> options=Lists.newArrayList();
+	  List<Dialogs.OptionsDialogEntry> welcomeButton = new ArrayList<Dialogs.OptionsDialogEntry> ();
+	  if (mahjongMessage!=MahJongMessage.Discard)
+	    welcomeButton.add(new Dialogs.OptionsDialogEntry("Please Wait For Other Players.....",Dialogs.ButtonType.IMPORTANT));
+	  else
+		welcomeButton.add(new Dialogs.OptionsDialogEntry("Please Discard One Tile",Dialogs.ButtonType.IMPORTANT)); 
+	  Dialogs.OptionCallback decoration = new callBackHelper();
+	  dialogue.options(welcomeButton,null,Dialogue);
 	  /*
 	   Discard is not included in mahjongMessage.
 	   mahjongmessage consists of pick, hu, gang, peng, chi and invisible
 	   */
-	   
 	  switch (mahjongMessage) {
       case PICK:
         message += "Your Turn To Pick Up A Tile";
@@ -341,29 +384,29 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
       case HU:
         message += "Are You Able To Hu?";
         if (presenter.huHelper()==true)
-          options.add("Yes,Let me Hu");
-        options.add("No,not now");
+          options.add("Let he Hu!");
+        options.add(message+"No,not now");
         break;
       case GANG:
     	message += "Wanna Gang That Tile?";
     	List<Integer> comboToGang=presenter.gangHelper();
 	      if (comboToGang.size()==4)
-    	options.add("Yes, god gang that");
-    	options.add("No, not now");
+    	options.add( "Let me Gang!");
+    	options.add(message+"No, not now");
     	break;
       case PENG:
     	message += "Wanna Peng That Tile?";
     	List<Integer> comboToPeng=presenter.pengHelper();
 	      if (comboToPeng.size()==3)
-    	options.add("Yes, god peng that");
-    	options.add("No, not now");
+    	options.add("Let me Peng!");
+    	options.add(message+"No, not now");  	
     	break;
       case CHI:
     	message += "Wanna Chi That Tile?";
     	List<Integer> comboToChi=presenter.chiHelper();
     	if (comboToChi.size()==3)
-    	  options.add("Yes, god chi that");
-        options.add("No, not now");
+    	  options.add("Let me Chi!");
+        options.add(message+"No, not now");
     	break;
       case INVISIBLE:
         break;
@@ -372,12 +415,21 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
         break;
     }
 	if (mahjongMessage==MahJongMessage.PICK) {
-	      options.add("OK");
+	      options.add(message+":OK");
 	    }
+	
 	if (message.equals("")==false)
 	{
+	
 	  PopupChoices.OptionChosen eventTriggered=eventFactory.build(presenter, mahjongMessage);
-	  new PopupChoices(message, options,eventTriggered).show();
+	//  PopupChoices box = new PopupChoices(message, options,eventTriggered);
+	  List<Dialogs.OptionsDialogEntry> buttons = getButtons(options);
+	 
+	  Dialogs.OptionCallback callback = new callBackHelper(eventTriggered,mahjongMessage,buttons);
+	  dialogue.options(buttons, callback,Dialogue);
+	   
+	  //box.hide();
+	 
 	 
 	}
 	   
@@ -432,6 +484,9 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
           List<Tile> myTilesAtHand, List<Tile> myTilesDeclared,
           MahJongMessage mahJongMessage) {
     //Collections.sort(myTilesAtHand);
+
+
+
     placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHandLeft,false));
     placeHorizonImages(acrossAtHandArea, createHorizonBackTiles(numberOfTilesAtHandAcross));
     placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHandRight,true));

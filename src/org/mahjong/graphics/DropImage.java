@@ -12,10 +12,12 @@ public class DropImage extends Image{
 	{
 		return index;
 	}
+
 	@Override
 	public String toString()
 	{
 		return String.valueOf(index);
 	}
+
 
 }

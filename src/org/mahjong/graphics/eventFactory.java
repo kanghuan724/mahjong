@@ -16,6 +16,7 @@ public class eventFactory {
 	    	return new PopupChoices.OptionChosen() {
 	  	      @Override
 		      public void optionChosen(String option) {
+	  	    	
 		          presenter.pickUpTile();	  	    	  
 		        }};
 	      case HU:
@@ -30,6 +31,7 @@ public class eventFactory {
 	    	  	        }
 	    	  	    	else
 	    	  	    	{
+	    	  	    		
 	    	  	    		presenter.refusehu();
 	    	  	    	}
 	    	  	    	  
@@ -47,6 +49,7 @@ public class eventFactory {
     	  	        }
     	  	    	else
     	  	    	{
+    	  	    		
     	  	    	  presenter.refusegang();
     	  	    	}
     	  	    	  
@@ -57,14 +60,17 @@ public class eventFactory {
 	    	  return new PopupChoices.OptionChosen() {
     	  	      @Override
     		      public void optionChosen(String option) {
+    	  	    	System.out.println("Option"+option);
     	  	    	if (option.charAt(0)=='Y') {
     	  	          //presenter.Peng();
     	  	    	  List<Integer> comboToPeng=presenter.pengHelper();
+    	  	   
        	  	    	  if (comboToPeng.size()==3)
        	  	    		  presenter.peng(comboToPeng); 	    
     	  	        }
     	  	    	else
     	  	    	{
+    	  	    		
     	  	    		presenter.refusepeng();
     	  	    	}
     		        }
@@ -74,6 +80,7 @@ public class eventFactory {
 	    	  return new PopupChoices.OptionChosen() {
     	  	      @Override
     		      public void optionChosen(String option) {
+    	  	    	System.out.println("Option"+option);
     	  	    	if (option.charAt(0)=='Y') {
     	  	          //presenter.Chi();
     	  	    	  List<Integer> comboToChi=presenter.chiHelper();
