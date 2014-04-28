@@ -33,9 +33,42 @@
 	  margin-top: 44px !important;
 	  display: block !important;
   }
+  body.dragdrop-dropTarget.dragdrop-boundary {
+    background-color: whitesmoke;
+  }
+  div.GHFMKLQCMM, div.GHFMKLQCPI.GHFMKLQCHM.GHFMKLQCAN {
+    background-color: whitesmoke;
+    background-image: none;
+    border: none;
+  }
+  button.gwt-Button {
+    width: 95%;
+    margin-left: 1em;
+    margin-right: 1em;
+    border-radius: 5px;
+    line-height: 2.5em;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    border: black;
+    background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #3D52D6),color-stop(1, #1564EF));
+  }
+  
+  .languageOption {
+    margin: 20px;
+    width: 100px;
+  }
+  
+  button.gwt-Button[disabled] {
+    display: none;
+  }
     </style>
   </head>
   <body>
+    <div id="languageDiv">
+      <span class="languageOption"><a href="http://4.mahjong-nyu.appspot.com/MahJong.html">English</a></span>
+      <span class="languageOption"><a href="http://4.mahjong-nyu.appspot.com/MahJong.html?locale=zh">中文</a></span>
+    </div>
     <div id="mainDiv" width="700" height="750"></div>
   </body>
 </html>
