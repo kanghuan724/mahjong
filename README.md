@@ -1,7 +1,10 @@
 mahjong
 =======
 Read Me
-http://3-dot-huan-kang.appspot.com/MahJong.html
+English Version: http://4.mahjong-nyu.appspot.com/MahJong.html
+
+Chinese Version: http://4.mahjong-nyu.appspot.com/MahJong.html?locale=zh
+
 Zhao, Pinji / Kang, Huan
 1.	Introduction of the basic operations:
 Pick Up: To fetch a tile from the tile at wall and put it into the tiles at hand.

@@ -34,7 +34,7 @@
 	  display: block !important;
   }
   body.dragdrop-dropTarget.dragdrop-boundary {
-    background-color: whitesmoke;
+    background-color: whitesmoke!important;
   }
   div.GHFMKLQCMM, div.GHFMKLQCPI.GHFMKLQCHM.GHFMKLQCAN {
     background-color: whitesmoke;
@@ -59,12 +59,16 @@
     width: 100px;
   }
   
+  .languageOption:first-child {
+    margin-left: 100px;
+  }
+  
   button.gwt-Button[disabled] {
     display: none;
   }
     </style>
   </head>
-  <body>
+  <body style="background:whitesmoke">
     <div id="languageDiv">
       <span class="languageOption"><a href="http://4.mahjong-nyu.appspot.com/MahJong.html">English</a></span>
       <span class="languageOption"><a href="http://4.mahjong-nyu.appspot.com/MahJong.html?locale=zh">中文</a></span>
