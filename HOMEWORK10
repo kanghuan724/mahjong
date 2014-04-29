@@ -5,6 +5,7 @@ Functionality in Mobile device: 1. Drag and Drop for different tiles
 3. Sound (Every time when you trigger an animation, there will be a sound)
 
 App Engine URL Update: 4-dot-huan-kang.appspot.com/MahJong.html (Inside Emulator)
+Note: The number of players should be 4 when doing the set up in the emulator
 ChangeLog in Emulator:
 1.Drag and Drop is disabled (Because of the dnd bug)
 2.Animation(Animation is triggered after you clikc on the tile)
