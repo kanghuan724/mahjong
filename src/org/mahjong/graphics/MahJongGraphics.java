@@ -239,7 +239,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
               pieceMoveAnimation anime = new pieceMoveAnimation(image,presenter,imgFinal,startX,startY,endX,endY,context,animation);
               anime.run(1500);
               Sound sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_WAV_PCM,
-                  "http://3-dot-huan-kang.appspot.com/pieceCaptured.wav");
+                  "http://5-dot-huan-kang.appspot.com/pieceCaptured.wav");
               sound.play();
             //  if (Audio.isSupported()) {
                  // pieceDown = Audio.createIfSupported();
