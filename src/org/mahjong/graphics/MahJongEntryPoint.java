@@ -3,6 +3,7 @@ package org.mahjong.graphics;
 import org.game_api.GameApi.ContainerConnector;
 import org.mahjong.client.MahJongLogic;
 import org.mahjong.client.MahJongPresenter;
+import org.mahjong.client.MahjongConstants;
 import org.game_api.GameApi;
 import org.game_api.GameApi.Game;
 import org.game_api.GameApi.IteratingPlayerContainer;
@@ -10,6 +11,7 @@ import org.game_api.GameApi.UpdateUI;
 import org.game_api.GameApi.VerifyMove;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -38,6 +40,7 @@ public class MahJongEntryPoint implements EntryPoint {
       }
     };
     //container =  new ContainerConnector(game); 
+    MahjongConstants constants = (MahjongConstants) GWT.create(MahjongConstants.class);
     container = new IteratingPlayerContainer(game, 4);
     MahJongGraphics mahJongGraphics = new MahJongGraphics();
     mahJongPresenter =
@@ -47,7 +50,7 @@ public class MahJongEntryPoint implements EntryPoint {
     playerSelect.addItem("2");
     playerSelect.addItem("3");
     playerSelect.addItem("4");
-    playerSelect.addItem("Viewer");
+    playerSelect.addItem(constants.viewer());
     playerSelect.addChangeHandler(new ChangeHandler() {
       @Override
       public void onChange(ChangeEvent event) {

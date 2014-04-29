@@ -29,7 +29,7 @@ public class pieceMoveAnimation extends Animation{
 
    // Audio soundAtEnd;
     Sound sound;
-  //  String urlAddress = "https://nyu-gaming-course-2013.googlecode.com/svn/trunk/eclipse/src/org/simongellis/hw5/pieceDown.wav";
+
 
     //Audio soundAtEnd;
     boolean cancelled;
@@ -56,7 +56,9 @@ public class pieceMoveAnimation extends Animation{
 
     SoundController soundController = new SoundController();
     sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_WAV_PCM,
-                   "http://3-dot-huan-kang.appspot.com/pieceCaptured.wav");
+
+            "http://5-dot-huan-kang.appspot.com/pieceCaptured.wav");
+
 
 
    }

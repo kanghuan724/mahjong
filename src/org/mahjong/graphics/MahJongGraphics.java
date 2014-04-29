@@ -242,8 +242,10 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
               pieceMoveAnimation anime = new pieceMoveAnimation(image,presenter,imgFinal,startX,startY,endX,endY,context,animation);
               anime.run(1500);
               Sound sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_WAV_PCM,
-                   "http://3-dot-huan-kang.appspot.com/pieceCaptured.wav");
-               sound.play();
+
+                  "http://5-dot-huan-kang.appspot.com/pieceCaptured.wav");
+              sound.play();
+
             //  if (Audio.isSupported()) {
                  // pieceDown = Audio.createIfSupported();
                  // pieceDown.addSource(gameSounds.pieceDownMp3().getSafeUri()
@@ -367,13 +369,14 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   }
   private void alertMahJongMessage(MahJongMessage mahjongMessage)
   {
+	  MahjongConstants constants = (MahjongConstants) GWT.create(MahjongConstants.class);
 	  String message="";
 	  List<String> options=Lists.newArrayList();
 	  List<Dialogs.OptionsDialogEntry> welcomeButton = new ArrayList<Dialogs.OptionsDialogEntry> ();
 	  if (mahjongMessage!=MahJongMessage.Discard)
-	    welcomeButton.add(new Dialogs.OptionsDialogEntry("Please Wait For Other Players.....",Dialogs.ButtonType.IMPORTANT));
+	    welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.waitFor(), Dialogs.ButtonType.IMPORTANT));
 	  else
-		welcomeButton.add(new Dialogs.OptionsDialogEntry("Please Discard One Tile",Dialogs.ButtonType.IMPORTANT)); 
+		welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.discardTile(), Dialogs.ButtonType.IMPORTANT)); 
 	  Dialogs.OptionCallback decoration = new callBackHelper();
 	  dialogue.options(welcomeButton,null,Dialogue);
 	  /*
@@ -382,34 +385,37 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	   */
 	  switch (mahjongMessage) {
       case PICK:
-        message += "Your Turn To Pick Up A Tile";
+        //message += "Your Turn To Pick Up A Tile";
+    	message += constants.yourTurn();
         break;
       case HU:
-        message += "Are You Able To Hu?";
+        //message += "Are You Able To Hu?";
+    	message += constants.huMsg();
         if (presenter.huHelper()==true)
-          options.add("Let he Hu!");
-        options.add(message+"No,not now");
+          options.add(constants.huYes());
+          options.add(message + constants.deny());
         break;
       case GANG:
-    	message += "Wanna Gang That Tile?";
+    	//message += "Wanna Gang That Tile?";
+    	message += constants.gangMsg();
     	List<Integer> comboToGang=presenter.gangHelper();
 	      if (comboToGang.size()==4)
-    	options.add( "Let me Gang!");
-    	options.add(message+"No, not now");
+    	options.add(constants.gangYes());
+    	options.add(message + constants.deny());
     	break;
       case PENG:
-    	message += "Wanna Peng That Tile?";
+    	message += constants.pengMsg();
     	List<Integer> comboToPeng=presenter.pengHelper();
 	      if (comboToPeng.size()==3)
-    	options.add("Let me Peng!");
-    	options.add(message+"No, not now");  	
+    	options.add(constants.pengYes());
+    	options.add(message + constants.deny());  	
     	break;
       case CHI:
-    	message += "Wanna Chi That Tile?";
+    	message += constants.chiMsg();
     	List<Integer> comboToChi=presenter.chiHelper();
     	if (comboToChi.size()==3)
-    	  options.add("Let me Chi!");
-        options.add(message+"No, not now");
+    	  options.add(constants.chiYes());
+        options.add(message + constants.deny());
     	break;
       case INVISIBLE:
         break;
@@ -418,7 +424,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
         break;
     }
 	if (mahjongMessage==MahJongMessage.PICK) {
-	      options.add(message+":OK");
+	      options.add(message + ":" + constants.accept());
 	    }
 	
 	if (message.equals("")==false)

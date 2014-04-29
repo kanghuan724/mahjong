@@ -1,25 +1,28 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-  xmlns:g="urn:import:com.google.gwt.user.client.ui">
+  xmlns:g="urn:import:com.google.gwt.user.client.ui"
+  ui:generateFormat='com.google.gwt.i18n.rebind.format.PropertiesFormat'
+  ui:generateKeys="com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator"
+  ui:generateLocales="default">
   <g:AbsolutePanel width="700px" height="750px" ui:field="animation">
-  <g:HorizontalPanel>
-      <g:VerticalPanel width="44px" height="490px" styleName="flexibleVerticalPanel" ui:field="leftDeclaredArea"/>
-  	  <g:VerticalPanel width="44px" height="490px" styleName="verticalPanel" ui:field="leftAtHandArea"/>
-  	  <g:VerticalPanel>
-    	<g:HorizontalPanel width="490px" height="44px" styleName="flexiblePanel" ui:field="acrossDeclaredArea"/>
-    	<g:HorizontalPanel width="490px" height="44px" ui:field="acrossAtHandArea"/>
-
-    	<g:HorizontalPanel width="490px" height="260px" styleName="flexiblePanel" ui:field="usedArea" />
-    	<g:AbsolutePanel ui:field="Dialogue">
-    	  <g:HorizontalPanel width="490px" height="140px" styleName="flexiblePanel" ui:field="noUse" />
-    	</g:AbsolutePanel>
-    	<g:HorizontalPanel width="490px" height="44px" ui:field="myAtHandArea"/>
-      	<g:HorizontalPanel width="490px" height="44px" ui:field="selectedArea"/>
-      	<g:Button ui:field="claimBtn" text="Discard"/>
-    	<g:HorizontalPanel width="490px" height="44px" styleName="flexiblePanel" ui:field="myDeclaredArea"/>
-  	  </g:VerticalPanel>
-  	  <g:VerticalPanel width="44px" height="490px" styleName="verticalPanel" ui:field="rightAtHandArea"/>
-  	  <g:VerticalPanel width="44px" height="490px" styleName="flexibleVerticalPanel" ui:field="rightDeclaredArea"/>
-  </g:HorizontalPanel>
+	  <g:HorizontalPanel>
+	      <g:VerticalPanel width="44px" height="490px" styleName="flexibleVerticalPanel" ui:field="leftDeclaredArea"/>
+	  	  <g:VerticalPanel width="44px" height="490px" styleName="verticalPanel" ui:field="leftAtHandArea"/>
+	  	  <g:VerticalPanel>
+	    	<g:HorizontalPanel width="490px" height="44px" styleName="flexiblePanel" ui:field="acrossDeclaredArea"/>
+	    	<g:HorizontalPanel width="490px" height="44px" ui:field="acrossAtHandArea"/>
+	
+	    	<g:HorizontalPanel width="490px" height="260px" styleName="flexiblePanel" ui:field="usedArea" />
+	    	<g:AbsolutePanel ui:field="Dialogue">
+	    	  <g:HorizontalPanel width="490px" height="140px" styleName="flexiblePanel" ui:field="noUse" />
+	    	</g:AbsolutePanel>
+	    	<g:HorizontalPanel width="490px" height="44px" ui:field="myAtHandArea"/>
+      	  <g:HorizontalPanel width="490px" height="44px" ui:field="selectedArea"/>
+      	  <g:Button ui:field="claimBtn"><ui:msg description="discard">Discard</ui:msg></g:Button>
+	    	<g:HorizontalPanel width="490px" height="44px" styleName="flexiblePanel" ui:field="myDeclaredArea"/>
+	  	  </g:VerticalPanel>
+	  	  <g:VerticalPanel width="44px" height="490px" styleName="verticalPanel" ui:field="rightAtHandArea"/>
+	  	  <g:VerticalPanel width="44px" height="490px" styleName="flexibleVerticalPanel" ui:field="rightDeclaredArea"/>
+	  </g:HorizontalPanel>
   </g:AbsolutePanel>
 </ui:UiBinder> 
