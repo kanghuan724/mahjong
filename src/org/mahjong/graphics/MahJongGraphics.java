@@ -217,6 +217,9 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
             long lastDropTime = Long.parseLong(systemTime);
             
             if (enableClicks&&currentTime-lastDropTime>1000) {
+             // Sound sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_WAV_PCM,
+                  //       "http://3-dot-huan-kang.appspot.com/pieceCaptured.wav");
+             // sound.play();
               int startX,startY,endX,endY;
               boolean tilePosition = presenter.tilePosition(imgFinal.tile);
               if (tilePosition == true)
@@ -239,8 +242,8 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
               pieceMoveAnimation anime = new pieceMoveAnimation(image,presenter,imgFinal,startX,startY,endX,endY,context,animation);
               anime.run(1500);
               Sound sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_WAV_PCM,
-                  "http://3-dot-huan-kang.appspot.com/pieceCaptured.wav");
-              sound.play();
+                   "http://3-dot-huan-kang.appspot.com/pieceCaptured.wav");
+               sound.play();
             //  if (Audio.isSupported()) {
                  // pieceDown = Audio.createIfSupported();
                  // pieceDown.addSource(gameSounds.pieceDownMp3().getSafeUri()

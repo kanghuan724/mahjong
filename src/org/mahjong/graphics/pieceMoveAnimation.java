@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.Image;
 
 public class pieceMoveAnimation extends Animation{
 
-	private final String audioAdress ="https://nyu-gaming-course-2013.googlecode.com/svn/trunk/eclipse/src/org/simongellis/hw5/pieceCaptured.mp3";
+	//private final String audioAdress ="https://nyu-gaming-course-2013.googlecode.com/svn/trunk/eclipse/src/org/simongellis/hw5/pieceCaptured.mp3";
 
 	AbsolutePanel panel;
 	FlowPanel imageContainer;
@@ -27,9 +27,9 @@ public class pieceMoveAnimation extends Animation{
     MahJongPresenter presenter;
     TileImage tileimage;
 
-    Audio soundAtEnd;
+   // Audio soundAtEnd;
     Sound sound;
-    String urlAddress = "https://nyu-gaming-course-2013.googlecode.com/svn/trunk/eclipse/src/org/simongellis/hw5/pieceDown.wav";
+  //  String urlAddress = "https://nyu-gaming-course-2013.googlecode.com/svn/trunk/eclipse/src/org/simongellis/hw5/pieceDown.wav";
 
     //Audio soundAtEnd;
     boolean cancelled;
@@ -55,7 +55,8 @@ public class pieceMoveAnimation extends Animation{
     start.removeFromParent();
 
     SoundController soundController = new SoundController();
-    sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_MPEG, urlAddress);
+    sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_WAV_PCM,
+                   "http://3-dot-huan-kang.appspot.com/pieceCaptured.wav");
 
 
    }
