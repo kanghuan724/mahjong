@@ -23,11 +23,14 @@ public class eventFactory {
 	    		  return new PopupChoices.OptionChosen() {
 	    	  	      @Override
 	    		      public void optionChosen(String option) {
+	    	  	    	//System.out.println("option: "+option);
 	    	  	    	if (option.charAt(0)=='Y') {
 	    	  	          //presenter.Hu();
-	    	  	    	  boolean ableToHu=presenter.huHelper();
-	    	  	    	  if (ableToHu==true)
-	    	  	    		  presenter.Hu();
+	    	  	    	  //boolean ableToHu=presenter.huHelper();
+	    	  	    	  //if (ableToHu==true)
+	    	  	    		//System.out.println("presenter is gonna choose");
+	    	  	    		presenter.huChoose();
+	    	  	    		//presenter.Hu();
 	    	  	        }
 	    	  	    	else
 	    	  	    	{

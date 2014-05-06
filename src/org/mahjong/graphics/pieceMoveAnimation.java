@@ -56,7 +56,7 @@ public class pieceMoveAnimation extends Animation{
 
     SoundController soundController = new SoundController();
     sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_WAV_PCM,
-            "http://5-dot-huan-kang.appspot.com/pieceCaptured.wav");
+            "http://huan-kang.appspot.com/pieceCaptured.wav");
 
 
    }
