@@ -85,6 +85,10 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   VerticalPanel rightAtHandArea;
   @UiField
   Button claimBtn;
+  @UiField
+  Button claimHu;
+  
+  
   private boolean enableClicks = false;
   
   private final TileImageSupplier tileImageSupplier;
@@ -98,10 +102,11 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   private SoundController soundController;
   private Dialogs dialogue;
   
+  
 
   public MahJongGraphics() {
     TileImages tileImages = GWT.create(TileImages.class);
-     gameSounds = GWT.create(GameSounds.class);
+    gameSounds = GWT.create(GameSounds.class);
     this.tileImageSupplier = new TileImageSupplier(tileImages);
     MahJongGraphicsUiBinder uiBinder = GWT.create(MahJongGraphicsUiBinder.class);
     initWidget(uiBinder.createAndBindUi(this));
@@ -127,9 +132,9 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 		  images.add(TileImage.Factory.getBackOfTileImage("VERTICAL"));
 	  }
 	  if (withClick==false)
-	   return createImages(images, false);
+	     return createImages(images, false);
 	  else
-		  return createImageForRight(images);
+		 return createImageForRight(images);
   }
 
   private List<Image> createHorizonTileImages(List<Tile> tiles, boolean withClick) {
@@ -139,6 +144,14 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     }
     return createImages(images, withClick);
   }
+  private List<Image> createHorizonTileImagesForHu(List<Tile> tiles, boolean withClick) {
+	    List<TileImage> images = Lists.newArrayList();
+	    for (Tile tile : tiles) {
+	      images.add(TileImage.Factory.getTileImage("HORIZONTAL", tile));
+	    }
+	    return createImagesForHu(images, withClick);
+	  }
+
 
   private List<Image> createLeftTileImages(List<Tile> tiles, boolean withClick) {
 	  List<TileImage> images = Lists.newArrayList();
@@ -162,30 +175,14 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	    int count=0;
 	    for (TileImage img : images) {
 	    	final TileImage imgFinal = img;
-	    	Image image = new Image(tileImageSupplier.getResource(img));
+	    	final ImageResource temp = tileImageSupplier.getResource(img);
+	        final Image image = new DropImage(tileImageSupplier.getResource(img),count);
 	    	if (count==images.size()-1)
 	    	{
-
-	    		 image.addDragOverHandler(new DragOverHandler() {
-	    	      	    @Override
-	    	      	    public void onDragOver(DragOverEvent event) {
-	    	      	    
-
-	    	      	    }
-	    	      	});
-	    	        image.addDropHandler(new DropHandler() {
-	    	      	    @Override
-	    	      	    public void onDrop(DropEvent event) {
-	    	      	        // prevent the native text drop
-	    	      	        event.preventDefault();
-	    	      	        
-	    	      	        // get the data out of the event
-	    	      	        String data = event.getData("index");
-
-
-	    	      	      presenter.tileSwitch(Integer.parseInt(data));
-	    	      	    }
-	    	      	});
+	    		
+	    	    DropController dropController = new TileDropControllerForRight(image,presenter,this);
+	    	    dragController.registerDropController(dropController);
+	    	    
 	    	}
 	    		
 	        count++;
@@ -243,7 +240,8 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
               anime.run(1500);
               Sound sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_WAV_PCM,
 
-                  "http://5-dot-huan-kang.appspot.com/pieceCaptured.wav");
+                  "http://huan-kang.appspot.com/pieceCaptured.wav");
+
               sound.play();
 
             //  if (Audio.isSupported()) {
@@ -263,65 +261,6 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
         dragController.makeDraggable(image);
         DropController dropController = new TileDropController(image,presenter,this);
         dragController.registerDropController(dropController);
-        /*image.addDragStartHandler(new DragStartHandler() {
-            @Override
-            public void onDragStart(com.google.gwt.event.dom.client.DragStartEvent event)  {
-             
-                String a = String.valueOf(((DropImage)image).getIndex());
-                System.out.println("Drag Start"+a);
-                event.setData("index", a);
-                pieceCaptured = Audio.createIfSupported();
-                if (Audio.isSupported()) {
-                pieceCaptured.addSource(gameSounds.pieceCapturedMp3().getSafeUri()
-                                .asString(), AudioElement.TYPE_MP3);
-                pieceCaptured.addSource(gameSounds.pieceCapturedWav().getSafeUri()
-                                .asString(), AudioElement.TYPE_WAV);
-                pieceCaptured.play();
-                }
-
-            } 		
-          });
-        image.addDragOverHandler(new DragOverHandler() {
-      	    @Override
-      	    public void onDragOver(DragOverEvent event) {
-      	    	image.setStyleName("imgBigger");
-
-      	    	
-
-      	        
-      	    }
-      	});
-        image.addDragLeaveHandler(new DragLeaveHandler() {
-      	    @Override
-      	    public void onDragLeave(DragLeaveEvent event) {
-      	    	image.setStyleName("imgContainer");
-	
-
-      	        
-      	    }
-      	});
-        image.addDropHandler(new DropHandler() {
-      	    @Override
-      	    public void onDrop(DropEvent event) {
-      	        // prevent the native text drop
-      	        event.preventDefault();
-      	        
-      	        // get the data out of the event
-      	        String data = event.getData("index");
-      	        String currentData = String.valueOf(((DropImage)image).getIndex());
-
-      	    
-      	      if (Audio.isSupported()) {
-                  pieceDown = Audio.createIfSupported();
-                  pieceDown.addSource(gameSounds.pieceDownMp3().getSafeUri()
-                                  .asString(), AudioElement.TYPE_MP3);
-                  pieceDown.addSource(gameSounds.pieceDownWav().getSafeUri()
-                                  .asString(), AudioElement.TYPE_WAV);
-                  pieceDown.play();
-          }
-      	      presenter.tileSwitch(Integer.parseInt(data),Integer.parseInt(currentData));
-      	    }
-      	});*/
 
       }
       count++;
@@ -329,7 +268,24 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     }
     return res;
   }
+  private List<Image> createImagesForHu(List<TileImage> images, boolean withClick) {
+	    List<Image> res = Lists.newArrayList();
+	    int count=0;
+	    dragController = new PickupDragController(RootPanel.get(), false);
+	    dragController.setBehaviorDragStartSensitivity(1);
 
+	    for (TileImage img : images) {
+	      final TileImage imgFinal = img;
+	      final ImageResource temp = tileImageSupplier.getResource(img);
+	      final Image image = new DropImage(tileImageSupplier.getResource(img),count);
+	      dragController.makeDraggable(image);
+	      DropController dropController = new TileDropController(image,presenter,this);
+	      dragController.registerDropController(dropController);	      
+	      count++;
+	      res.add(image);
+	    }
+	    return res;
+	  }
   private void placeHorizonImages(HorizontalPanel panel, List<Image> images) {
     panel.clear();
    // Image last = images.isEmpty() ? null : images.get(images.size() - 1);
@@ -373,10 +329,26 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	  String message="";
 	  List<String> options=Lists.newArrayList();
 	  List<Dialogs.OptionsDialogEntry> welcomeButton = new ArrayList<Dialogs.OptionsDialogEntry> ();
-	  if (mahjongMessage!=MahJongMessage.Discard)
+	  switch (mahjongMessage)
+	  {
+	    case END:
+		  welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.youWin(), Dialogs.ButtonType.IMPORTANT));
+	      break;
+	    case LOSE:
+	    	welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.youLose(), Dialogs.ButtonType.IMPORTANT));
+	    	break;
+	    case Discard:
+	    	welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.discardTile(), Dialogs.ButtonType.IMPORTANT));
+	    	break;
+	    default:
+	    	welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.waitFor(), Dialogs.ButtonType.IMPORTANT));
+	    	//welcomeButton.add(new Dialogs.OptionsDialogEntry(mahjongMessage.toString(), Dialogs.ButtonType.IMPORTANT));
+	    	break;
+	  }
+	  /*if (mahjongMessage!=MahJongMessage.Discard)
 	    welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.waitFor(), Dialogs.ButtonType.IMPORTANT));
 	  else
-		welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.discardTile(), Dialogs.ButtonType.IMPORTANT)); 
+		welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.discardTile(), Dialogs.ButtonType.IMPORTANT));*/ 
 	  Dialogs.OptionCallback decoration = new callBackHelper();
 	  dialogue.options(welcomeButton,null,Dialogue);
 	  /*
@@ -384,6 +356,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	   mahjongmessage consists of pick, hu, gang, peng, chi and invisible
 	   */
 	  switch (mahjongMessage) {
+	  
       case PICK:
         //message += "Your Turn To Pick Up A Tile";
     	message += constants.yourTurn();
@@ -391,9 +364,9 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
       case HU:
         //message += "Are You Able To Hu?";
     	message += constants.huMsg();
-        if (presenter.huHelper()==true)
-          options.add(constants.huYes());
-          options.add(message + constants.deny());
+       // if (presenter.huHelper()==true)
+        options.add(constants.huYes());
+        options.add(message + constants.deny());
         break;
       case GANG:
     	//message += "Wanna Gang That Tile?";
@@ -433,7 +406,6 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	  PopupChoices.OptionChosen eventTriggered=eventFactory.build(presenter, mahjongMessage);
 	//  PopupChoices box = new PopupChoices(message, options,eventTriggered);
 	  List<Dialogs.OptionsDialogEntry> buttons = getButtons(options);
-	 
 	  Dialogs.OptionCallback callback = new callBackHelper(eventTriggered,mahjongMessage,buttons);
 	  dialogue.options(buttons, callback,Dialogue);
 	   
@@ -445,9 +417,10 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   }
   
   
-
+  
   private void disableClicks() {
     claimBtn.setEnabled(false);
+    claimHu.setEnabled(false);
     enableClicks = false;
    // enableClicks = true;
   }
@@ -457,7 +430,15 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     disableClicks();
     presenter.finishedSelectingTiles();
   }
-
+  
+  @UiHandler("claimHu")
+  void onClickClaimHu(ClickEvent e) {
+	  
+    disableClicks();
+    //System.out.println("Hu!!!!!");
+    presenter.Hu();
+  }
+  
   @Override
   public void setPresenter(MahJongPresenter mahJongPresenter) {
     this.presenter = mahJongPresenter;
@@ -471,19 +452,23 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   		int numberOfTilesAtWall, List<Tile> tilesUsed,
   		MahJongMessage mahJongMessage) {
     placeHorizonImages(myAtHandArea, createHorizonBackTiles(numberOfTilesAtHand1));
-    placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHand2,false));
+    if (numberOfTilesAtHand2<0)
+      placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHand2,false));
     placeHorizonImages(acrossAtHandArea, createHorizonBackTiles(numberOfTilesAtHand3));
-    placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHand4,false));
+    if (numberOfTilesAtHand4<0)
+      placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHand4,false));
     placeHorizonImages(myDeclaredArea, createHorizonTileImages(tilesAtDeclared1, false));
-    placeVerticalImages(rightDeclaredArea, createLeftTileImages(tilesAtDeclared2, false));
+    if (numberOfTilesAtHand2<0)
+      placeVerticalImages(rightDeclaredArea, createLeftTileImages(tilesAtDeclared2, false));
     placeHorizonImages(acrossDeclaredArea, createHorizonTileImages(tilesAtDeclared3, false));
-    placeVerticalImages(leftDeclaredArea, createRightTileImages(tilesAtDeclared4, false));
+    if (numberOfTilesAtHand4<0)
+      placeVerticalImages(leftDeclaredArea, createRightTileImages(tilesAtDeclared4, false));
     placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
     placeHorizonImages(selectedArea, ImmutableList.<Image>of());
     alertMahJongMessage(mahJongMessage);
     //disableClicks();
   }
-
+  
   @Override
   public void setPlayerState(int numberOfTilesAtHandLeft, int numberOfTilesAtHandRight, 
   		int numberOfTilesAtHandAcross,
@@ -493,18 +478,54 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
           List<Tile> myTilesAtHand, List<Tile> myTilesDeclared,
           MahJongMessage mahJongMessage) {
     //Collections.sort(myTilesAtHand);
-
-
-
-    placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHandLeft,false));
+	placeHorizonImages(myAtHandArea, createHorizonTileImages(myTilesAtHand, false));
+	if (numberOfTilesAtHandLeft>0)
+      placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHandLeft,false));
     placeHorizonImages(acrossAtHandArea, createHorizonBackTiles(numberOfTilesAtHandAcross));
-    placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHandRight,true));
-    placeVerticalImages(leftDeclaredArea, createLeftTileImages(tilesAtDeclaredLeft, false));
+    if (numberOfTilesAtHandRight>0)
+      placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHandRight,true));
+    if (numberOfTilesAtHandLeft>0)
+      placeVerticalImages(leftDeclaredArea, createLeftTileImages(tilesAtDeclaredLeft, false));
     placeHorizonImages(acrossDeclaredArea, createHorizonTileImages(tilesAtDeclaredAcross, false));
-    placeVerticalImages(rightDeclaredArea, createRightTileImages(tilesAtDeclaredRight, false));
+    if (numberOfTilesAtHandRight>0)
+      placeVerticalImages(rightDeclaredArea, createRightTileImages(tilesAtDeclaredRight, false));
     placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
     placeHorizonImages(selectedArea, ImmutableList.<Image>of());
-    placeHorizonImages(myAtHandArea, createHorizonTileImages(myTilesAtHand, false));
+    placeHorizonImages(myDeclaredArea, createHorizonTileImages(myTilesDeclared, false));
+    alertMahJongMessage(mahJongMessage);
+    disableClicks();
+  }
+  
+  @Override
+  public void setPlayerState(List<Tile> tilesAtLeft,List<Tile> tilesAtRight, 
+		  List<Tile> tilesAtAcross,
+  		List<Tile> tilesAtDeclaredLeft, List<Tile> tilesAtDeclaredRight, 
+  		List<Tile> tilesAtDeclaredAcross,
+  		int numberOfTilesAtWall, List<Tile> tilesUsed,
+          List<Tile> myTilesAtHand, List<Tile> myTilesDeclared,
+          MahJongMessage mahJongMessage) {
+    //Collections.sort(myTilesAtHand);
+
+
+
+	
+	placeHorizonImages(myAtHandArea, createHorizonTileImages(myTilesAtHand, false));
+	if (tilesAtLeft!=null)
+	  placeVerticalImages(leftAtHandArea, createLeftTileImages(tilesAtLeft,false));
+    //placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHandLeft,false));
+    //placeHorizonImages(acrossAtHandArea, createHorizonBackTiles(numberOfTilesAtHandAcross));
+	placeHorizonImages(acrossAtHandArea, createHorizonTileImages(tilesAtAcross, false));
+	
+    //placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHandRight,true));
+	if (tilesAtRight!=null)
+	  placeVerticalImages(rightAtHandArea, createRightTileImages(tilesAtRight,false));
+	if (tilesAtLeft!=null)
+      placeVerticalImages(leftDeclaredArea, createLeftTileImages(tilesAtDeclaredLeft, false));
+    placeHorizonImages(acrossDeclaredArea, createHorizonTileImages(tilesAtDeclaredAcross, false));
+    if (tilesAtRight!=null)
+      placeVerticalImages(rightDeclaredArea, createRightTileImages(tilesAtDeclaredRight, false));
+    placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
+    placeHorizonImages(selectedArea, ImmutableList.<Image>of());
     placeHorizonImages(myDeclaredArea, createHorizonTileImages(myTilesDeclared, false));
     alertMahJongMessage(mahJongMessage);
     disableClicks();
@@ -516,8 +537,30 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     Collections.sort(selectedTiles);
     enableClicks = true;
     claimBtn.setEnabled(!selectedTiles.isEmpty());
-    placeHorizonImages(myAtHandArea, createHorizonTileImages(remainingTiles, true));
+    
     placeHorizonImages(selectedArea, createHorizonTileImages(ImmutableList.<Tile>copyOf(selectedTiles), true));
+    placeHorizonImages(myAtHandArea, createHorizonTileImages(remainingTiles, true));
+    int widgetCount = rightAtHandArea.getWidgetCount();
+    placeVerticalImages(rightAtHandArea, createVerticalBackTiles(widgetCount,true));
+    
+    if (presenter.huHelper()==true)
+    	claimHu.setEnabled(true);
+    //TODO: design the way to discard the selected tile
+  }
+  @Override
+  public void chooseTileToHu(List<Tile> remainingTiles) {
+    //Collections.sort(remainingTiles);
+	//System.out.println("i got here");
+    enableClicks = true;
+    if (remainingTiles!=null)
+    {
+      placeHorizonImages(myAtHandArea, createHorizonTileImagesForHu(remainingTiles, false));
+      int widgetCount = rightAtHandArea.getWidgetCount();
+      placeVerticalImages(rightAtHandArea, createVerticalBackTiles(widgetCount,true));
+    }
+    alertMahJongMessage(MahJongMessage.HU);
+    if (presenter.huHelper()==true)
+    	claimHu.setEnabled(true);
     //TODO: design the way to discard the selected tile
   }
   @Override

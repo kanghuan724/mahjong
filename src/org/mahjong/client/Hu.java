@@ -20,11 +20,11 @@ public class Hu extends ACommand {
 			return null;
 		}
 		// "rankA"
-		Suit suit = Suit.fromFirstLetterLowerCase(HuEntry.get(1).substring(0,
+	/*	Suit suit = Suit.fromFirstLetterLowerCase(HuEntry.get(1).substring(0,
 				1));
 		Rank rank = Rank.fromRankString(HuEntry.get(1).substring(1));
-		Tile tile = new Tile(suit, rank);
-		return new Hu(tile);
+		Tile tile = new Tile(suit, rank);*/
+		return new Hu();
 	}
 
 	@Nullable 
@@ -107,7 +107,10 @@ public class Hu extends ACommand {
 
 		this.target = target;
 	}
-
+    public Hu ()
+    {
+    	this.target = null;
+    }
 	@Override
 	public String getName() {
 		return name;

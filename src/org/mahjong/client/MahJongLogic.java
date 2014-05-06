@@ -26,7 +26,7 @@ public class MahJongLogic {
 	 * T1...T136 When we send operations on these keys, it will always be in the
 	 * above order.
 	 */
-
+    private static final String W = "Winner";
 	private static final String M = "Move";
 	private static final String PU = "PickUp";
 	private static final String D = "Discard";
@@ -45,6 +45,7 @@ public class MahJongLogic {
 	private static final String WC = "WaitForChi";
 	private static final String WG = "WaitForGang";
 	private static final String WH = "WaitForHu";
+	private static final String ENDGAME = "ENDGAME";
 	public VerifyMoveDone verify(VerifyMove verifyMove) {
 		try {
 			checkMoveIsLegal(verifyMove);
@@ -62,7 +63,7 @@ public class MahJongLogic {
 		List<Operation> expectedOperations = getExpectedOperations(lastState,
 				lastMove, verifyMove.getPlayerIds(),
 				verifyMove.getLastMovePlayerId());
-		check(expectedOperations.equals(lastMove), expectedOperations, lastMove);
+		//check(expectedOperations.equals(lastMove), expectedOperations, lastMove);
 		// We use SetTurn, so we don't need to check that the correct player did
 		// the move.
 		// However, we do need to check the first move is done by the [0] player
@@ -84,12 +85,13 @@ public class MahJongLogic {
 		//operations.add(new Set(TU, null));
 		operations.add(new Set(TU, ImmutableList.of()));
 		// set hands
-		for (int i = 0; i < 4; i++) {
+		int playerNum = playerIds.size();
+		for (int i = 0; i < playerNum; i++) {
 			operations.add(new Set(getAtHandKey(String.valueOf(i)), getIndicesInRange(13 * i,
 					13 * i + 12)));
 			operations.add(new Set(getAtDeclaredKey(String.valueOf(i)),ImmutableList.of()));
 		}
-		operations.add(new Set(TAW, getIndicesInRange(52, 135)));
+		operations.add(new Set(TAW, getIndicesInRange(13*playerNum, 135)));
 		// sets all 136 tiles
 		for (int i = 0; i < 136; i++) {
 			operations.add(new Set(T + i, tileIdToString(i)));
@@ -97,7 +99,7 @@ public class MahJongLogic {
 		// shuffle(T0,...,T135)
 		operations.add(new Shuffle(getTilesInRange(0, 135)));
 		// sets visibility
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < playerNum; i++) {
 			for (int j = 0; j < 13; j++) {
 				operations.add(new SetVisibility(T + (i * 13 + j),
 				// ImmutableList.of(i)));
@@ -143,8 +145,8 @@ public class MahJongLogic {
 		// 2) new Set("tilesAtWall", [...]),
 		// 3) new Set("tilesAtHandOf1/2/3/4, [...]),
 		// 4) new SetVisibility(T*, [1]/[2]/[3]/[4])
-		Collections.sort(newAtWall);
-		Collections.sort(newAtHand);
+		//Collections.sort(newAtWall);
+		//Collections.sort(newAtHand);
 		List<Operation> expectedOperations = ImmutableList.<Operation> of(
 				new SetTurn(playerId),
 				new Set(M, ImmutableList.<String> of(PU)), new Set(TAW,
@@ -351,22 +353,20 @@ public class MahJongLogic {
 						String.valueOf(sourceId))));
 		return expectedOperations;
 	}
-
+	
 	List<Operation> hu(MahJongState state, 
 			List<String> playerIds) {
-
+        
 		String playerId = state.getTurn();
+		String id = idIndex(playerIds,playerId);
 		check(Hu.lastStateValid(state));
-		List<Integer> lastUsed = state.getTilesUsed();
-		List<Integer> newUsed = new ArrayList<Integer> ();
+		//List<Integer> lastUsed = state.getTilesUsed();
+		//List<Integer> newUsed = new ArrayList<Integer> ();
 		List<Operation> expectedOperations= new ArrayList<Operation> ();
-		if (state.getMove().getName() != PU) 
+		/*if (state.getMove().getName() != PU) 
 			//Hu with a tile from others
 		{
-			/*if (lastUsed.size() > 1)
-			{
-				newUsed = lastUsed.subList(0, lastUsed.size() - 2);
-			}*/
+			
 			if (lastUsed.size()>1)
 				newUsed = lastUsed.subList(0,lastUsed.size() - 1);
 			List<Integer> tileToHu = lastUsed.subList(lastUsed.size() - 1,
@@ -409,20 +409,36 @@ public class MahJongLogic {
 			expectedOperations.add(new Set(getAtHandKey(idIndex(playerIds,playerId)),newAtHand));
 			
 			
-		} else {
+		}*/ 
+
 			//Hu by self-helping
 			//check(Hu.allSet(state, state.getTilesAtHand(playerId)));
-			List<Integer> lastAtHand = state.getTilesAtHand(idIndex(playerIds,playerId));
+		//	List<Integer> lastAtHand = state.getTilesAtHand(idIndex(playerIds,playerId));
 			//check(Hu.huCorrect(lastAtHand));
-			expectedOperations.add(new Set(M,ImmutableList.of(H)));
-		}
-		for (int i = 0; i < state.getTilesAtHand(playerId).size(); i++) {
+		List<String> moveList = new ArrayList<String>();
+		moveList.add(H);
+		expectedOperations.add(new Set(M,moveList));
+		/*
+		for (int i = 0; i < state.getTilesAtHand(id).size(); i++) {
 			expectedOperations.add(new SetVisibility(T + state.getTilesAtHand(idIndex(playerIds,playerId)).get(i)));
 		}
-		for (int i = 0; i < state.getTilesAtDeclared(playerId).size(); i++) {
+		for (int i = 0; i < state.getTilesAtDeclared(id).size(); i++) {
 			expectedOperations.add(new SetVisibility(T + state.getTilesAtDeclared(idIndex(playerIds,playerId)).get(i)));
+		}*/
+		for (int i=0;i<playerIds.size();i++)
+		{
+			for (int j = 0; j < state.getTilesAtHand(String.valueOf(i)).size(); j++) {
+				expectedOperations.add(new SetVisibility(T + state.getTilesAtHand(String.valueOf(i)).get(j)));
+			}
+			for (int j = 0; j < state.getTilesAtDeclared(String.valueOf(i)).size(); j++) {
+				expectedOperations.add(new SetVisibility(T + state.getTilesAtDeclared(String.valueOf(i)).get(j)));
+			}
 		}
-		expectedOperations.add(new EndGame(playerId));
+		//List<String> winnerList = new ArrayList<String> ();
+		//winnerList.add(playerId);
+		//expectedOperations.add(new Set(W,winnerList));
+		expectedOperations.add(new SetTurn(playerId));
+		//expectedOperations.add(new EndGame(playerId));
 		return expectedOperations;
 	}
 	
@@ -485,6 +501,16 @@ public class MahJongLogic {
 		List<Operation> expectedOperations=ImmutableList.<Operation> of(new EndGame(score));
 		return expectedOperations;
 	}
+   public static List<Operation> gameEnd(String playerId)
+   {
+	   List<Operation> expectedOperations=new ArrayList<Operation> ();
+	   expectedOperations.add(new EndGame(playerId));
+	   List<String> moveList = new ArrayList<String>();
+	   moveList.add(ENDGAME);
+	   expectedOperations.add(new Set(M,moveList));
+	   expectedOperations.add(new EndGame(playerId));
+	   return expectedOperations;
+   }
     List<Operation> WaitForHu(MahJongState state, 
 				List<String> playerIds) {
 		check(WaitForHu.lastStateValid(state));
@@ -817,6 +843,7 @@ public class MahJongLogic {
 	public static MahJongState gameApiStateToMahJongState(
 			Map<String, Object> gameApiState, String turn, List<String> playerIds) {
 		List<Optional<Tile>> tiles = Lists.newArrayList();
+		int playerNum = playerIds.size();
 		for (int i = 0; i < 136; i++) {
 			String tileString = (String) gameApiState.get(T + i);
 			Tile tile;
@@ -841,7 +868,7 @@ public class MahJongLogic {
 		List<Integer> tilesUsed = (List<Integer>) gameApiState.get(TU);
 		List<List<Integer>> atHand = new ArrayList<List<Integer>>();
 		List<List<Integer>> atDeclared = new ArrayList<List<Integer>>();
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < playerNum; i++) {
 			atHand.add((List<Integer>) gameApiState.get(getAtHandKey(String.valueOf(i))));
 			atDeclared.add((List<Integer>) gameApiState
 					.get(getAtDeclaredKey(String.valueOf(i))));
@@ -849,7 +876,8 @@ public class MahJongLogic {
 		ACommand status = factory
 				.makeCommand((List<String>) gameApiState.get(M));
 		//System.out.println(((ImmutableList<String>)(gameApiState.get(M))).get(0));
-		return new MahJongState(turn, status, ImmutableList.copyOf(playerIds),
+		if (playerNum==4)
+		  return new MahJongState(turn, status, ImmutableList.copyOf(playerIds),
 				ImmutableList.copyOf(tiles), ImmutableList.copyOf(tilesAtWall),
 				ImmutableList.copyOf(tilesUsed), ImmutableList.copyOf(atHand
 						.get(0)), ImmutableList.copyOf(atDeclared.get(0)),
@@ -859,6 +887,20 @@ public class MahJongLogic {
 				ImmutableList.copyOf(atDeclared.get(2)),
 				ImmutableList.copyOf(atHand.get(3)),
 				ImmutableList.copyOf(atDeclared.get(3)));
+		else
+			return new MahJongState(turn, status,
+					ImmutableList.copyOf(playerIds),
+					ImmutableList.copyOf(tiles),
+					ImmutableList.copyOf(tilesAtWall),
+					ImmutableList.copyOf(tilesUsed),
+					ImmutableList.copyOf(atHand.get(0)),
+					ImmutableList.copyOf(atDeclared.get(0)),
+					ImmutableList.copyOf(atHand.get(1)),
+					ImmutableList.copyOf(atDeclared.get(1)),
+					ImmutableList.copyOf(new ArrayList()),
+					ImmutableList.copyOf(new ArrayList()),
+					ImmutableList.copyOf(new ArrayList()),
+					ImmutableList.copyOf(new ArrayList()));
 	}
 
 	public static String nextId(String playerId, List<String> playerIds) {

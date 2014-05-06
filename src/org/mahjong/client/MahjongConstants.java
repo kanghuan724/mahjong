@@ -10,7 +10,7 @@ public interface MahjongConstants extends Constants{
 	  @DefaultStringValue("Are You Able To Hu? ")
 	  String huMsg();
 	  
-	  @DefaultStringValue("Let me Hu!")
+	  @DefaultStringValue("Yes,Let me try!")
 	  String huYes();
 	  
 	  @DefaultStringValue("No, not now.")
@@ -21,6 +21,12 @@ public interface MahjongConstants extends Constants{
 	  
 	  @DefaultStringValue("Please Wait For Other Players.....")
 	  String waitFor();
+	  
+	  @DefaultStringValue("Congrats!You win!")
+	  String youWin();
+	  
+	  @DefaultStringValue("Sorry,MahJong luck is not on you!")
+	  String youLose();
 	  
 	  @DefaultStringValue("Please Discard One Tile")
 	  String discardTile();
