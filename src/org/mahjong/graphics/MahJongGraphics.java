@@ -6,35 +6,19 @@ import java.util.ArrayList;
 
 import org.mahjong.client.*;
 import org.mahjong.client.MahJongPresenter.MahJongMessage;
-import org.mahjong.client.MahJongPresenter.View;
 
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
-import com.allen_sauer.gwt.voices.client.Sound;
+
 import com.allen_sauer.gwt.voices.client.SoundController;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.dom.client.AudioElement;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.DragEndHandler;
-import com.google.gwt.event.dom.client.DragEnterEvent;
-import com.google.gwt.event.dom.client.DragEnterHandler;
-import com.google.gwt.event.dom.client.DragEvent;
-import com.google.gwt.event.dom.client.DragHandler;
-import com.google.gwt.event.dom.client.DragLeaveEvent;
-import com.google.gwt.event.dom.client.DragLeaveHandler;
-import com.google.gwt.event.dom.client.DragOverEvent;
-import com.google.gwt.event.dom.client.DragOverHandler;
-import com.google.gwt.event.dom.client.DragStartHandler;
-import com.google.gwt.event.dom.client.DropEvent;
-import com.google.gwt.event.dom.client.DropHandler;
-
-import com.google.gwt.media.client.Audio;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -48,7 +32,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.media.client.Audio;
+
 import com.google.gwt.user.client.ui.RootPanel;
 import com.googlecode.mgwt.ui.client.dialog.Dialogs;
 /**
@@ -57,7 +41,7 @@ import com.googlecode.mgwt.ui.client.dialog.Dialogs;
 public class MahJongGraphics extends Composite implements MahJongPresenter.View {
   public interface MahJongGraphicsUiBinder extends UiBinder<Widget, MahJongGraphics> {
   }
-
+   
   @UiField
   AbsolutePanel animation;
   @UiField
@@ -87,33 +71,35 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   Button claimBtn;
   @UiField
   Button claimHu;
-  
+  @UiField
+  HorizontalPanel standard;
   
   private boolean enableClicks = false;
   
   private final TileImageSupplier tileImageSupplier;
   private MahJongPresenter presenter;
 
-  private Audio pieceDown;
-  private Audio pieceCaptured;
-  private GameSounds gameSounds;
   private PickupDragController dragController;
-  private String systemTime;
+  
   private SoundController soundController;
   private Dialogs dialogue;
-  
-  
+  MahjongConstants constants;
+  //Index is 0, switch
+  //Index is 1, discard
+  public int switchOrDiscard = 0;
+  public int switchCardIndex = -1;
+  public List<Integer> chiSelected = new ArrayList<Integer> ();
+  public List<Integer> chiSequence = new ArrayList<Integer> ();
 
   public MahJongGraphics() {
     TileImages tileImages = GWT.create(TileImages.class);
-    gameSounds = GWT.create(GameSounds.class);
     this.tileImageSupplier = new TileImageSupplier(tileImages);
     MahJongGraphicsUiBinder uiBinder = GWT.create(MahJongGraphicsUiBinder.class);
     initWidget(uiBinder.createAndBindUi(this));
 
-    systemTime = String.valueOf(System.currentTimeMillis());
     soundController = new SoundController();
     dialogue = new Dialogs();
+    constants = (MahjongConstants) GWT.create(MahjongConstants.class);
  
 
   }
@@ -144,6 +130,13 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     }
     return createImages(images, withClick);
   }
+  private List<Image> createHorizonTileImagesToChi(List<Tile> tiles, boolean withClick) {
+	    List<TileImage> images = Lists.newArrayList();
+	    for (Tile tile : tiles) {
+	      images.add(TileImage.Factory.getTileImage("HORIZONTAL", tile));
+	    }
+	    return createImagesToChi(images, withClick);
+	  }
   private List<Image> createHorizonTileImagesForHu(List<Tile> tiles, boolean withClick) {
 	    List<TileImage> images = Lists.newArrayList();
 	    for (Tile tile : tiles) {
@@ -172,95 +165,48 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   private List<Image> createImageForRight(List<TileImage> images)
   {
 	  List<Image> res = Lists.newArrayList();
-	    int count=0;
+	    
 	    for (TileImage img : images) {
-	    	final TileImage imgFinal = img;
-	    	final ImageResource temp = tileImageSupplier.getResource(img);
-	        final Image image = new DropImage(tileImageSupplier.getResource(img),count);
-	    	if (count==images.size()-1)
-	    	{
+	         Image image = new Image(tileImageSupplier.getResource(img));
+	    	
 	    		
-	    	    DropController dropController = new TileDropControllerForRight(image,presenter,this);
-	    	    dragController.registerDropController(dropController);
-	    	    
-	    	}
-	    		
-	        count++;
+	        
 	        res.add(image);
 	    }
 	    return res;
   }
+  
 
-  public void setTime(String time)
+  public static void console(String text)
   {
-	  this.systemTime = time;
+      System.out.println(text);
   }
   private List<Image> createImages(List<TileImage> images, boolean withClick) {
     List<Image> res = Lists.newArrayList();
-    int count=0;
-    dragController = new PickupDragController(RootPanel.get(), false);
-    dragController.setBehaviorDragStartSensitivity(1);
-
+    int count=0;  
     for (TileImage img : images) {
       final TileImage imgFinal = img;
       final ImageResource temp = tileImageSupplier.getResource(img);
       final Image image = new DropImage(tileImageSupplier.getResource(img),count);
+      final int cardIndex = count;
       if (withClick) {
-        image.addClickHandler(new ClickHandler() {
-          @Override
-          public void onClick(ClickEvent event) {
-
-            long currentTime = System.currentTimeMillis();
-            long lastDropTime = Long.parseLong(systemTime);
-            
-            if (enableClicks&&currentTime-lastDropTime>1000) {
-             // Sound sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_WAV_PCM,
-                  //       "http://3-dot-huan-kang.appspot.com/pieceCaptured.wav");
-             // sound.play();
-              int startX,startY,endX,endY;
-              boolean tilePosition = presenter.tilePosition(imgFinal.tile);
-              if (tilePosition == true)
-              {
-              startX = image.getAbsoluteLeft();
-              startY = image.getAbsoluteTop();
-              endX = selectedArea.getAbsoluteLeft();
-              endY = selectedArea.getAbsoluteTop();
-              }
-              else
-              {
-            	  startX = image.getAbsoluteLeft();
-            	  startY = image.getAbsoluteTop();
-            	  endX = myAtHandArea.getAbsoluteLeft();
-            	  endY = myAtHandArea.getAbsoluteTop();
-              }
-             
-              ImageResource context = temp;
-             
-              pieceMoveAnimation anime = new pieceMoveAnimation(image,presenter,imgFinal,startX,startY,endX,endY,context,animation);
-              anime.run(1500);
-              Sound sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_WAV_PCM,
-
-                  "http://huan-kang.appspot.com/pieceCaptured.wav");
-
-              sound.play();
-
-            //  if (Audio.isSupported()) {
-                 // pieceDown = Audio.createIfSupported();
-                 // pieceDown.addSource(gameSounds.pieceDownMp3().getSafeUri()
-                 //                 .asString(), AudioElement.TYPE_MP3);
-                 // pieceDown.play();
-         // }
-         
-
-              
-            }
-          }
-        });
-
-        
-        dragController.makeDraggable(image);
-        DropController dropController = new TileDropController(image,presenter,this);
-        dragController.registerDropController(dropController);
+				if (switchOrDiscard == 1) {
+					image.addClickHandler( new discardClick(animation,acrossDeclaredArea,
+							  acrossAtHandArea,	myAtHandArea, selectedArea,
+								 leftAtHandArea,leftDeclaredArea, enableClicks,
+								  presenter,imgFinal,image,
+								  temp ,soundController));
+				}
+				else
+				{
+					image.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+						   switchCard(cardIndex,image);
+						}
+						
+					});
+				}
 
       }
       count++;
@@ -268,21 +214,52 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     }
     return res;
   }
+  private List<Image> createImagesToChi(List<TileImage> images, boolean withClick) {
+	    List<Image> res = Lists.newArrayList();
+	    int count=0;
+	    for (TileImage img : images) {
+	       Image image = new DropImage(tileImageSupplier.getResource(img),count);
+	       int cardIndex = count;
+		  image.addClickHandler(new chiClick(this,image,cardIndex,this.presenter));	  
+	      count++;
+	      res.add(image);
+	    }
+	    return res;
+	  }
+  private void switchCard(int count,Image image)
+  {
+	  System.out.println("index"+switchCardIndex);
+	  if (switchCardIndex<0)
+	  {
+		  switchCardIndex = count;
+		  image.setStyleName("imgBigger");
+	  }
+	  else
+	  {
+		  int switchFrom = switchCardIndex;
+		  switchCardIndex = -1;
+		  presenter.tileSwitch(switchFrom,count);
+		  
+	  }
+  }
   private List<Image> createImagesForHu(List<TileImage> images, boolean withClick) {
 	    List<Image> res = Lists.newArrayList();
 	    int count=0;
-	    dragController = new PickupDragController(RootPanel.get(), false);
-	    dragController.setBehaviorDragStartSensitivity(1);
+
 
 	    for (TileImage img : images) {
-	      final TileImage imgFinal = img;
-	      final ImageResource temp = tileImageSupplier.getResource(img);
+	     
 	      final Image image = new DropImage(tileImageSupplier.getResource(img),count);
-	      dragController.makeDraggable(image);
-	      DropController dropController = new TileDropController(image,presenter,this);
-	      dragController.registerDropController(dropController);	      
-	      count++;
+			final int cardIndex = count;
+			image.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+				   switchCard(cardIndex,image);
+				}
+				
+			});
 	      res.add(image);
+	      count++;
 	    }
 	    return res;
 	  }
@@ -299,6 +276,22 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
       panel.add(imageContainer);
     }
   }
+  
+  private void placeHorizonImagesForChi(HorizontalPanel panel, List<Image> images) {
+	    panel.clear();
+	   // Image last = images.isEmpty() ? null : images.get(images.size() - 1);
+	    int count =0;
+	    for (Image image : images) {
+	      FlowPanel imageContainer = new FlowPanel();
+	      imageContainer.add(image);
+	      if (chiSelected.contains(count)==true)
+	    	  imageContainer.setStyleName("imgBigger");
+	      else
+	        imageContainer.setStyleName("imgContainer");
+	      panel.add(imageContainer);
+	      count++;
+	    }
+	  }
   
   private void placeVerticalImages(VerticalPanel panel, List<Image> images) {
 	// TODO: The void to placeVerticalImages for the vertical panels 
@@ -318,8 +311,10 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	  List<Dialogs.OptionsDialogEntry> result = new ArrayList<Dialogs.OptionsDialogEntry> ();
 	  for (int i=0;i<options.size();i++)
 	  {
-		  
-		  result.add(new Dialogs.OptionsDialogEntry(options.get(i),Dialogs.ButtonType.NORMAL));
+		  if (options.get(i).charAt(0)=='P')
+			  result.add(new Dialogs.OptionsDialogEntry(options.get(i),Dialogs.ButtonType.IMPORTANT));
+		  else
+		      result.add(new Dialogs.OptionsDialogEntry(options.get(i),Dialogs.ButtonType.NORMAL));
 	  }
 	  return result;
   }
@@ -329,94 +324,117 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	  String message="";
 	  List<String> options=Lists.newArrayList();
 	  List<Dialogs.OptionsDialogEntry> welcomeButton = new ArrayList<Dialogs.OptionsDialogEntry> ();
-	  switch (mahjongMessage)
-	  {
-	    case END:
-		  welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.youWin(), Dialogs.ButtonType.IMPORTANT));
-	      break;
-	    case LOSE:
-	    	welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.youLose(), Dialogs.ButtonType.IMPORTANT));
-	    	break;
-	    case Discard:
-	    	welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.discardTile(), Dialogs.ButtonType.IMPORTANT));
-	    	break;
-	    default:
-	    	welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.waitFor(), Dialogs.ButtonType.IMPORTANT));
-	    	//welcomeButton.add(new Dialogs.OptionsDialogEntry(mahjongMessage.toString(), Dialogs.ButtonType.IMPORTANT));
-	    	break;
-	  }
-	  /*if (mahjongMessage!=MahJongMessage.Discard)
-	    welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.waitFor(), Dialogs.ButtonType.IMPORTANT));
-	  else
-		welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.discardTile(), Dialogs.ButtonType.IMPORTANT));*/ 
-	  Dialogs.OptionCallback decoration = new callBackHelper();
-	  dialogue.options(welcomeButton,null,Dialogue);
-	  /*
-	   Discard is not included in mahjongMessage.
-	   mahjongmessage consists of pick, hu, gang, peng, chi and invisible
-	   */
-	  switch (mahjongMessage) {
-	  
-      case PICK:
-        //message += "Your Turn To Pick Up A Tile";
-    	message += constants.yourTurn();
-        break;
-      case HU:
-        //message += "Are You Able To Hu?";
-    	message += constants.huMsg();
-       // if (presenter.huHelper()==true)
-        options.add(constants.huYes());
-        options.add(message + constants.deny());
-        break;
-      case GANG:
-    	//message += "Wanna Gang That Tile?";
-    	message += constants.gangMsg();
-    	List<Integer> comboToGang=presenter.gangHelper();
-	      if (comboToGang.size()==4)
-    	options.add(constants.gangYes());
-    	options.add(message + constants.deny());
-    	break;
-      case PENG:
-    	message += constants.pengMsg();
-    	List<Integer> comboToPeng=presenter.pengHelper();
-	      if (comboToPeng.size()==3)
-    	options.add(constants.pengYes());
-    	options.add(message + constants.deny());  	
-    	break;
-      case CHI:
-    	message += constants.chiMsg();
-    	List<Integer> comboToChi=presenter.chiHelper();
-    	if (comboToChi.size()==3)
-    	  options.add(constants.chiYes());
-        options.add(message + constants.deny());
-    	break;
-      case INVISIBLE:
-        break;
-      
-      default:
-        break;
-    }
-	if (mahjongMessage==MahJongMessage.PICK) {
-	      options.add(message + ":" + constants.accept());
-	    }
+		switch (mahjongMessage) {
+		case END:
+			welcomeButton.add(new Dialogs.OptionsDialogEntry(
+					constants.youWin(), Dialogs.ButtonType.IMPORTANT));
+			break;
+		case LOSE:
+			welcomeButton.add(new Dialogs.OptionsDialogEntry(constants
+					.youLose(), Dialogs.ButtonType.IMPORTANT));
+			break;
+		case Discard:
+			if (switchOrDiscard == 0)
+				welcomeButton.add(new Dialogs.OptionsDialogEntry(constants
+						.arrange(), Dialogs.ButtonType.IMPORTANT));
+			else
+				welcomeButton.add(new Dialogs.OptionsDialogEntry(constants
+						.discardTile(), Dialogs.ButtonType.IMPORTANT));
+			break;
+		default:
+			welcomeButton.add(new Dialogs.OptionsDialogEntry(constants
+					.waitFor(), Dialogs.ButtonType.IMPORTANT));
+			break;
+		}
+		int skip = 0;
+		switch (mahjongMessage) {
+
+		case PICK:
+			message += constants.yourTurn();
+
+			break;
+		case HU:
+			message += constants.huMsg();
+			options.add(constants.huYes());
+			options.add(message + constants.deny());
+			break;
+		case GANG:
+			List<Integer> comboToGang = presenter.gangHelper();
+			if (comboToGang.size() == 4) {
+				message += constants.gangMsg();
+				options.add(constants.gangYes());
+				options.add(message + constants.deny());
+			} else {
+				//welcomeButton.add(new Dialogs.OptionsDialogEntry(constants
+				//		.waitFor(), Dialogs.ButtonType.IMPORTANT));
+				skip = 1;
+			}
+			break;
+		case PENG:
+
+			List<Integer> comboToPeng = presenter.pengHelper();
+			if (comboToPeng.size() == 3) {
+				message += constants.pengMsg();
+				options.add(constants.pengYes());
+				options.add(message + constants.deny());
+			} else {
+				//welcomeButton.add(new Dialogs.OptionsDialogEntry(constants
+					//	.waitFor(), Dialogs.ButtonType.IMPORTANT));
+				skip = 2;
+			}
+			break;
+		case CHI:
+			List<Integer> comboToChi = presenter.chiHelper();
+			if (comboToChi.size() == 3) {
+				message += constants.chiMsg();
+				//options.add(constants.chiYes());
+				options.add(message + constants.denyChi());
+			} else {
+			//	welcomeButton.add(new Dialogs.OptionsDialogEntry(constants
+			//			.waitFor(), Dialogs.ButtonType.IMPORTANT));
+				skip = 3;
+			}
+			break;
+		case INVISIBLE:
+			break;
+
+		default:
+			break;
+		}
+		//Dialogs.OptionCallback decoration = new callBackHelper();
+		dialogue.options(welcomeButton, null, Dialogue);
+		switch (skip) {
+		case (1):
+			presenter.refusegang();
+			break;
+		case (2):
+			presenter.refusepeng();
+			break;
+		case (3):
+			presenter.refusechi();
+			break;
+		default:
+			break;
+
+		}
+		if (mahjongMessage == MahJongMessage.PICK) {
+			options.add(message + ":" + constants.accept());
+		}
+
+		if (message.equals("") == false) {
+
+			PopupChoices.OptionChosen eventTriggered = eventFactory.build(
+					presenter, mahjongMessage);
+			List<Dialogs.OptionsDialogEntry> buttons = getButtons(options);
+			Dialogs.OptionCallback callback = new callBackHelper(
+					eventTriggered, mahjongMessage, buttons);
+			dialogue.options(buttons, callback, Dialogue);
+
+		}
 	
-	if (message.equals("")==false)
-	{
-	
-	  PopupChoices.OptionChosen eventTriggered=eventFactory.build(presenter, mahjongMessage);
-	//  PopupChoices box = new PopupChoices(message, options,eventTriggered);
-	  List<Dialogs.OptionsDialogEntry> buttons = getButtons(options);
-	  Dialogs.OptionCallback callback = new callBackHelper(eventTriggered,mahjongMessage,buttons);
-	  dialogue.options(buttons, callback,Dialogue);
-	   
-	  //box.hide();
-	 
-	 
-	}
-	   
   }
   
-  
+ 
   
   private void disableClicks() {
     claimBtn.setEnabled(false);
@@ -426,10 +444,19 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   }
 
   @UiHandler("claimBtn")
-  void onClickClaimBtn(ClickEvent e) {
-    disableClicks();
-    presenter.finishedSelectingTiles();
-  }
+	void onClickClaimBtn(ClickEvent e) {
+		disableClicks();
+		if (claimBtn.getText().equals(constants.chi()) == true) {
+              presenter.chi(chiSequence);
+		} else {
+			if (switchOrDiscard == 0) {
+				switchOrDiscard = 1;
+				presenter.chooseTile();
+			} else {
+				presenter.finishedSelectingTiles();
+			}
+		}
+	}
   
   @UiHandler("claimHu")
   void onClickClaimHu(ClickEvent e) {
@@ -478,6 +505,10 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
           List<Tile> myTilesAtHand, List<Tile> myTilesDeclared,
           MahJongMessage mahJongMessage) {
     //Collections.sort(myTilesAtHand);
+	  switchOrDiscard = 0;
+	  switchCardIndex = -1;
+	  chiSelected=new ArrayList<Integer> ();
+	  chiSequence = new ArrayList<Integer> ();
 	placeHorizonImages(myAtHandArea, createHorizonTileImages(myTilesAtHand, false));
 	if (numberOfTilesAtHandLeft>0)
       placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHandLeft,false));
@@ -492,8 +523,9 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
     placeHorizonImages(selectedArea, ImmutableList.<Image>of());
     placeHorizonImages(myDeclaredArea, createHorizonTileImages(myTilesDeclared, false));
-    alertMahJongMessage(mahJongMessage);
     disableClicks();
+    alertMahJongMessage(mahJongMessage);
+    
   }
   
   @Override
@@ -512,11 +544,10 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	placeHorizonImages(myAtHandArea, createHorizonTileImages(myTilesAtHand, false));
 	if (tilesAtLeft!=null)
 	  placeVerticalImages(leftAtHandArea, createLeftTileImages(tilesAtLeft,false));
-    //placeVerticalImages(leftAtHandArea, createVerticalBackTiles(numberOfTilesAtHandLeft,false));
-    //placeHorizonImages(acrossAtHandArea, createHorizonBackTiles(numberOfTilesAtHandAcross));
+    
 	placeHorizonImages(acrossAtHandArea, createHorizonTileImages(tilesAtAcross, false));
 	
-    //placeVerticalImages(rightAtHandArea, createVerticalBackTiles(numberOfTilesAtHandRight,true));
+   
 	if (tilesAtRight!=null)
 	  placeVerticalImages(rightAtHandArea, createRightTileImages(tilesAtRight,false));
 	if (tilesAtLeft!=null)
@@ -533,10 +564,23 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 
   @Override
   public void chooseTile(List<Tile> selectedTiles, List<Tile> remainingTiles) {
-    //Collections.sort(remainingTiles);
+    
     Collections.sort(selectedTiles);
     enableClicks = true;
-    claimBtn.setEnabled(!selectedTiles.isEmpty());
+    MahjongConstants constants = (MahjongConstants) GWT.create(MahjongConstants.class);
+		if (switchOrDiscard == 0) {
+			claimBtn.setText(constants.finish());
+			claimBtn.setEnabled(true);
+				
+		} else {
+			
+			List<Dialogs.OptionsDialogEntry> welcomeButton = new ArrayList<Dialogs.OptionsDialogEntry> ();
+			welcomeButton.add(new Dialogs.OptionsDialogEntry(constants.discardTile(), Dialogs.ButtonType.IMPORTANT));
+		   
+		    dialogue.options(welcomeButton,null,Dialogue);		
+			claimBtn.setText(constants.discard());
+			claimBtn.setEnabled(!selectedTiles.isEmpty());
+		}
     
     placeHorizonImages(selectedArea, createHorizonTileImages(ImmutableList.<Tile>copyOf(selectedTiles), true));
     placeHorizonImages(myAtHandArea, createHorizonTileImages(remainingTiles, true));
@@ -545,12 +589,11 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     
     if (presenter.huHelper()==true)
     	claimHu.setEnabled(true);
-    //TODO: design the way to discard the selected tile
+    
   }
   @Override
   public void chooseTileToHu(List<Tile> remainingTiles) {
-    //Collections.sort(remainingTiles);
-	//System.out.println("i got here");
+
     enableClicks = true;
     if (remainingTiles!=null)
     {
@@ -561,42 +604,20 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     alertMahJongMessage(MahJongMessage.HU);
     if (presenter.huHelper()==true)
     	claimHu.setEnabled(true);
-    //TODO: design the way to discard the selected tile
+    
   }
   @Override
-  public void chooseTileToChi(List<Tile> selectedTiles, List<Tile> remainingTiles) {
+  public void chooseTileToChi(List<Tile> remainingTiles) {
    // Collections.sort(remainingTiles);
-    Collections.sort(selectedTiles);
+	MahjongConstants constants = (MahjongConstants) GWT.create(MahjongConstants.class);
+   // Collections.sort(selectedTiles);
     enableClicks = true;
-    claimBtn.setEnabled(selectedTiles.size()==2);
-    placeHorizonImages(myAtHandArea, createHorizonTileImages(remainingTiles, true));
-    placeHorizonImages(selectedArea, createHorizonTileImages(ImmutableList.<Tile>copyOf(selectedTiles), false));
-    //TODO: design the way to discard the selected tile
+    claimBtn.setText(constants.chi());
+    chiSequence = presenter.chiLegal(chiSelected);
+    claimBtn.setEnabled( chiSequence.size()>=3);
+    placeHorizonImagesForChi(myAtHandArea, createHorizonTileImagesToChi(remainingTiles, true));
+ 
   }
-@Override
-public void huAvailable(Tile tileToHu, List<Tile> myTilesAtHand) {
-	// TODO Auto-generated method stub
-	
-}
-@Override
-public void gangAvailable(Tile tileToGang, List<Tile> tilesToGang) {
-	// TODO Auto-generated method stub
-	
-}
-@Override
-public void pengAvailable(Tile tileToPeng, List<Tile> tilesToPeng) {
-	// TODO Auto-generated method stub
-	
-}
-@Override
-public void chiAvailable(Tile tileToChi, List<Tile> tilesToChi) {
-	// TODO Auto-generated method stub
-	
-}
-@Override
-public void discard() {
-	// TODO Auto-generated method stub
-	
-}
+
   
 }

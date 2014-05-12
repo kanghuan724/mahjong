@@ -4,12 +4,16 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=1.0, minimum-scale=1.0, maximum-scale=1.0">
     <title>MahJong</title>
+    <script type="text/javascript" language="javascript" src="mahjong/mahjong.nocache.js"></script>
+   
     <style>
   .imgBigger {
-
+    
     overflow: hidden;
-    width:40px;
-    height:48px;
+    width:30px;
+    height:40px;
+    border-style:solid;
+    border-width:3px;  
   }
   .imgContainer {
     overflow:hidden; 
@@ -65,18 +69,12 @@
   button.gwt-Button[disabled] {
     display: none;
   }
-    </style>
+  </style>
   </head>
-  <body style="background:whitesmoke">
-    <div id="languageDiv">
-
-      <span class="languageOption"><a href="http://huan-kang.appspot.com/MahJong.html">English</a></span>
-      <span class="languageOption"><a href="http://huan-kang.appspot.com/MahJong.html?locale=zh">中文</a></span>
-
-    </div>
-    <div id="mainDiv" width="700" height="750"></div>
+  <body style="width: auto; height: auto; overflow-x: hidden;overflow-y: hidden;background:whitesmoke;" >
+    <div id="mainDiv"></div>
   </body>
-  <script type="text/javascript" language="javascript" src="mahjong/mahjong.nocache.js">
+  <script>
   function scaleBody() {
 	  var myGameWidth = 700;
 	  var myGameHeight = 750;
@@ -98,7 +96,7 @@
 	}
 	window.onresize = scaleBody;
 	window.onorientationchange = scaleBody;
+	window.onload = scaleBody;
 	document.addEventListener("orientationchange", scaleBody);
-	scaleBody();
   </script>
 </html>

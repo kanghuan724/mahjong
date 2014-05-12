@@ -15,6 +15,8 @@ public interface MahjongConstants extends Constants{
 	  
 	  @DefaultStringValue("No, not now.")
 	  String deny();
+	  @DefaultStringValue("Or Click this to Skip")
+	  String denyChi();
 	  
 	  @DefaultStringValue("OK")
 	  String accept();
@@ -37,18 +39,25 @@ public interface MahjongConstants extends Constants{
 	  @DefaultStringValue("Wanna Peng That Tile? ")
 	  String pengMsg();
 	  
-	  @DefaultStringValue("Wanna Chi That Tile? ")
+	  @DefaultStringValue("Arrange Tiles to Chi ")
 	  String chiMsg();
+	  
+	  @DefaultStringValue("Finish arranging tiles ")
+	  String finish();
 	  
 	  @DefaultStringValue("Let me Peng!")
 	  String pengYes();
 
 	  @DefaultStringValue("Let me Gang!")
 	  String gangYes();
-	  
-	  @DefaultStringValue("Let me Chi!")
+	  @DefaultStringValue("Please arrange your Tiles")
+	  String arrange();
+	  @DefaultStringValue("Please select to legit tiles to Chi")
 	  String chiYes();
-	  
+	  @DefaultStringValue("Discard")
+	  String discard();
 	  @DefaultStringValue("Viewer")
 	  String viewer();
+	  @DefaultStringValue("Chi")
+	  String chi();
 }

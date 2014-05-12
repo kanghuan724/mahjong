@@ -5,7 +5,7 @@
   ui:generateKeys="com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator"
   ui:generateLocales="default">
   <g:AbsolutePanel width="700px" height="750px" ui:field="animation">
-	  <g:HorizontalPanel>
+      <g:HorizontalPanel ui:field ="standard">
 	      <g:VerticalPanel width="44px" height="490px" styleName="flexibleVerticalPanel" ui:field="leftDeclaredArea"/>
 	  	  <g:VerticalPanel width="44px" height="490px" styleName="verticalPanel" ui:field="leftAtHandArea"/>
 	  	  <g:VerticalPanel>
@@ -24,6 +24,6 @@
 	  	  </g:VerticalPanel>
 	  	  <g:VerticalPanel width="44px" height="490px" styleName="verticalPanel" ui:field="rightAtHandArea"/>
 	  	  <g:VerticalPanel width="44px" height="490px" styleName="flexibleVerticalPanel" ui:field="rightDeclaredArea"/>
-	  </g:HorizontalPanel>
+	   </g:HorizontalPanel>
   </g:AbsolutePanel>
 </ui:UiBinder> 

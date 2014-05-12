@@ -82,20 +82,15 @@ public class eventFactory {
 	      case CHI:
 	    	  return new PopupChoices.OptionChosen() {
     	  	      @Override
-    		      public void optionChosen(String option) {
-    	  	    	System.out.println("Option"+option);
-    	  	    	if (option.charAt(0)=='Y') {
-    	  	          //presenter.Chi();
-    	  	    	  List<Integer> comboToChi=presenter.chiHelper();
-    	  	    	  if (comboToChi.size()==3)
-    	  	    		  presenter.chi(comboToChi);
-    	  	        }
-    	  	    	else
-    	  	    	{
-    	  	    		presenter.refusechi();
-    	  	    	}  
-    		        }
-    		      };
+				public void optionChosen(String option) {
+					System.out.println("Option" + option);
+					if (option.charAt(0) == 'Y') {
+
+					} else {
+						presenter.refusechi();
+					}
+				}
+			};
 	   }
 	     return null;
    }

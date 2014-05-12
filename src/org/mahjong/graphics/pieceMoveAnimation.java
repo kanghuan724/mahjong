@@ -3,16 +3,15 @@ package org.mahjong.graphics;
 
 import org.mahjong.client.MahJongPresenter;
 
-
 import com.allen_sauer.gwt.voices.client.Sound;
 import com.allen_sauer.gwt.voices.client.SoundController;
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.media.client.Audio;
-
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Widget;
 
 public class pieceMoveAnimation extends Animation{
 
@@ -24,6 +23,8 @@ public class pieceMoveAnimation extends Animation{
     ImageResource context;
     int startX, startY;
     int endX, endY;
+    double xScale;
+    double yScale;
     MahJongPresenter presenter;
     TileImage tileimage;
 
@@ -34,15 +35,23 @@ public class pieceMoveAnimation extends Animation{
     //Audio soundAtEnd;
     boolean cancelled;
     public pieceMoveAnimation(Image image,MahJongPresenter presenter,TileImage tileimage,int startX,int startY,int endX,int endY,
-            ImageResource context,AbsolutePanel canvas) {
+            ImageResource context,AbsolutePanel canvas,double xScale,double yScale) {
     this.context = context;
     panel = canvas;
     this.presenter = presenter;
     this.tileimage = tileimage;
-    this.startX = startX;
-    this.startY = startY;
-    this.endX = endX;
-    this.endY = endY;
+    this.xScale = xScale;
+    this.yScale = yScale;
+
+    double xOriginalStart = (double)startX*xScale;
+    double yOriginalStart = (double)startY*yScale;
+    double xOriginalEnd = (double)endX*xScale;
+    double yOriginalEnd = (double)endY*yScale;
+    this.startX = (int)xOriginalStart;
+    this.startY = (int)yOriginalStart;
+    this.endX = (int)xOriginalEnd;
+    this.endY = (int)yOriginalEnd;
+
     start = image;
 
 
@@ -72,7 +81,11 @@ public class pieceMoveAnimation extends Animation{
             moving = new Image(context);
             imageContainer.add(moving);
             imageContainer.setStyleName("imgContainer");
+            //panel.add(imageContainer,x,y);
+          //  double xOriginal = (double)x*xScale;
+           // double yOriginal = (double)y*yScale;
             panel.add(imageContainer,x,y);
+            
     }
     @Override
     protected void onComplete() {

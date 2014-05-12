@@ -97,7 +97,7 @@ public class MahJongLogic {
 			operations.add(new Set(T + i, tileIdToString(i)));
 		}
 		// shuffle(T0,...,T135)
-		operations.add(new Shuffle(getTilesInRange(0, 135)));
+		//operations.add(new Shuffle(getTilesInRange(0, 135)));
 		// sets visibility
 		for (int i = 0; i < playerNum; i++) {
 			for (int j = 0; j < 13; j++) {
@@ -207,7 +207,7 @@ public class MahJongLogic {
 	{
 		// chi a tile with two tiles at hand
 		String playerId = state.getTurn();
-		check(state.getTilesAtHand(idIndex(playerIds,playerId)).size() >= 4);
+		//check(state.getTilesAtHand(idIndex(playerIds,playerId)).size() >= 4);
 		check(state.getTilesUsed().size() >= 1);
 		check(Chi.lastStateValid(state));
 		List<Integer> lastUsed = state.getTilesUsed();
@@ -247,10 +247,10 @@ public class MahJongLogic {
 		newAtHand=new ArrayList<Integer> (newAtHand);
 		newAtDeclared=new ArrayList<Integer> (newAtDeclared);
 		chiCombo=new ArrayList<Integer> (chiCombo);
-		Collections.sort(newUsed);
-		Collections.sort(newAtHand);
-		Collections.sort(newAtDeclared);
-		Collections.sort(chiCombo);
+		//Collections.sort(newUsed);
+		//Collections.sort(newAtHand);
+		//Collections.sort(newAtDeclared);
+		//Collections.sort(chiCombo);
 		List<Operation> expectedOperations = ImmutableList.<Operation> of(
 				new SetTurn(playerId),
 				new Set(M, ImmutableList.<String> of(C, chiTile.get()
@@ -498,7 +498,9 @@ public class MahJongLogic {
 		Map<String,Integer> score=new HashMap<String,Integer> ();
 		for (int i=0;i<playerIds.size();i++)
 			score.put(playerIds.get(i), 0);
-		List<Operation> expectedOperations=ImmutableList.<Operation> of(new EndGame(score));
+		List<Operation> expectedOperations = new ArrayList<Operation> ();
+		expectedOperations.add(new EndGame(score));
+		//List<Operation> expectedOperations=ImmutableList.<Operation> of(new EndGame(score));
 		return expectedOperations;
 	}
    public static List<Operation> gameEnd(String playerId)
