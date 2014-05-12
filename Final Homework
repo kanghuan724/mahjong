@@ -2,4 +2,12 @@ URL for our final game:
 http://huan-kang.appspot.com/MahJong.html (Support AI)
 The current version should be run in emulator/container and it supports two-player mode.
 
+Little change we've added:
+Automatic skip: If there's only one move that the player can make, we will automatically do it for the player.
+For example: If it is the turn for the player to pick up a tile, since the player can't do anything else except picking up 
+the tile, we will do the pick up for the  player and the turn will come back to the player later.
+If it is the turn for the player to decide whether to Peng or not, if the player is not able to Peng(The tile sequence at the player's
+hand doesn't allow the player to Peng) and the only move the player can make is refusing Peng, we will also automatically 
+do it for the player.
+
 
