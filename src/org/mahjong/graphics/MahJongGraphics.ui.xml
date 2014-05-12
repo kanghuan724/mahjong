@@ -12,7 +12,10 @@
 	    	<g:HorizontalPanel width="490px" height="44px" styleName="flexiblePanel" ui:field="acrossDeclaredArea"/>
 	    	<g:HorizontalPanel width="490px" height="44px" ui:field="acrossAtHandArea"/>
 	
-	    	<g:HorizontalPanel width="490px" height="260px" styleName="flexiblePanel" ui:field="usedArea" />
+	    	<g:HorizontalPanel width="490px" height="120px" styleName="flexiblePanel" ui:field="usedArea" />
+	        <g:AbsolutePanel ui:field="AtWall">
+	    	  <g:HorizontalPanel width="490px" height="140px" styleName="flexiblePanel" ui:field="Use" />
+	    	</g:AbsolutePanel>
 	    	<g:AbsolutePanel ui:field="Dialogue">
 	    	  <g:HorizontalPanel width="490px" height="140px" styleName="flexiblePanel" ui:field="noUse" />
 	    	</g:AbsolutePanel>

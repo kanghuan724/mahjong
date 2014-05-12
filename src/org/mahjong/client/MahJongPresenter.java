@@ -114,6 +114,7 @@ public class MahJongPresenter {
     void chooseTile(List<Tile> selectedTile, List<Tile> remainingTiles);
     void chooseTileToHu( List<Tile> remainingTiles);
     void chooseTileToChi(List<Tile> remainingTiles);
+    void waitFor();
     
   }
   List<Integer> fakeTile = new ArrayList<Integer> ();
@@ -701,6 +702,7 @@ public class MahJongPresenter {
     	}
     }
     selectedTile=new ArrayList<Tile> ();
+    view.waitFor();
     container.sendMakeMove(mahJongLogic.discard(mahJongState, selectedTileIndex, mahJongState.getPlayerIds()));
   }
   void tileChi() {
@@ -742,16 +744,19 @@ public class MahJongPresenter {
 	    container.sendMakeMove(mahJongLogic.gameEnd(playerId));
 	  }
   void waitForHu() {
-	  
+	  view.waitFor();
 	    container.sendMakeMove(mahJongLogic.WaitForHu(mahJongState,  mahJongState.getPlayerIds()));
 	  }
   void waitForGang() {
+	  view.waitFor();
 	    container.sendMakeMove(mahJongLogic.WaitForGang(mahJongState,  mahJongState.getPlayerIds()));
 	  }
   void waitForPeng() {
+	    view.waitFor();
 	    container.sendMakeMove(mahJongLogic.WaitForPeng(mahJongState,  mahJongState.getPlayerIds()));
 	  }
   void waitForChi() {
+	    view.waitFor();
 	    if (mahJongState.getTilesAtWall().size()==0)
 	    	container.sendMakeMove(MahJongLogic.GameEnd(mahJongState.getPlayerIds()));
 	    else
@@ -1051,16 +1056,20 @@ public class MahJongPresenter {
 	  return selectedComboIndex;
   }
   public void gang(List<Integer> selectedComboIndex) {
-	  
+	    view.waitFor();
 	    container.sendMakeMove(mahJongLogic.gang(mahJongState, selectedComboIndex, mahJongState.getPlayerIds()));
+	   
   }
   public void refusegang() {
-	  
+	    view.waitFor();
 	    container.sendMakeMove(mahJongLogic.refusegang(mahJongState,  mahJongState.getPlayerIds()));
+	    
 }
   public void refusepeng() {
 	  
+	    view.waitFor();
 	    container.sendMakeMove(mahJongLogic.refusepeng(mahJongState,  mahJongState.getPlayerIds()));
+	    
 }
   public void refusehu() {
 	    if (fakeTile.size()>0)
@@ -1071,19 +1080,26 @@ public class MahJongPresenter {
 	        ImmutableList<Integer> targetImmute = ImmutableList.copyOf(current);
 	  	    mahJongState.changeTileSequence(id, targetImmute);
 	    }
+	    view.waitFor();
 	    container.sendMakeMove(mahJongLogic.refusehu(mahJongState,  mahJongState.getPlayerIds()));
+	    
 }
   public void refusechi() {
-	  
+	    view.waitFor();
 	    container.sendMakeMove(mahJongLogic.refusechi(mahJongState,  mahJongState.getPlayerIds()));
+	    
 }
   public void peng(List<Integer> selectedComboIndex) {
 	 
+	  view.waitFor();
 	  container.sendMakeMove(mahJongLogic.peng(mahJongState, selectedComboIndex, mahJongState.getPlayerIds()));
+	 
   }
   public void chi(List<Integer> selectedComboIndex) {
-		 
+	
+	  view.waitFor();
 	  container.sendMakeMove(mahJongLogic.chi(mahJongState, selectedComboIndex, mahJongState.getPlayerIds()));
+	 
   }
   public boolean ableToChi()
   {

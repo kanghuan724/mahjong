@@ -41,13 +41,13 @@ public class MahJongEntryPoint implements EntryPoint {
         mahJongPresenter.updateUI(updateUI);
       }
     };
-   container =  new ContainerConnector(game); 
+    container =  new ContainerConnector(game); 
     MahjongConstants constants = (MahjongConstants) GWT.create(MahjongConstants.class);
-   // container = new IteratingPlayerContainer(game, 2);
+    //container = new IteratingPlayerContainer(game, 2);
     MahJongGraphics mahJongGraphics = new MahJongGraphics();
     mahJongPresenter =
         new MahJongPresenter(mahJongGraphics, container);
-   /* final ListBox playerSelect = new ListBox();
+   /*final ListBox playerSelect = new ListBox();
     playerSelect.addItem("1");
     playerSelect.addItem("2");
     playerSelect.addItem("3");
@@ -75,7 +75,7 @@ public class MahJongEntryPoint implements EntryPoint {
     RootPanel.get("mainDiv").add(flowPanel);*/
     RootPanel.get("mainDiv").add(mahJongGraphics);
     container.sendGameReady();
-    //container.updateUi(container.getPlayerIds().get(0));
+   // container.updateUi(container.getPlayerIds().get(0));
 
   }
 }

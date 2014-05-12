@@ -46,7 +46,8 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
   AbsolutePanel animation;
   @UiField
   AbsolutePanel Dialogue;
-
+  @UiField
+  AbsolutePanel AtWall;
   @UiField
   HorizontalPanel acrossDeclaredArea;
   @UiField
@@ -318,10 +319,24 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 	  }
 	  return result;
   }
-  private void alertMahJongMessage(MahJongMessage mahjongMessage)
+  public void waitFor()
   {
 	  MahjongConstants constants = (MahjongConstants) GWT.create(MahjongConstants.class);
+	  List<Dialogs.OptionsDialogEntry> welcomeButton = new ArrayList<Dialogs.OptionsDialogEntry> ();
+	  welcomeButton.add(new Dialogs.OptionsDialogEntry(constants
+				.waitFor(), Dialogs.ButtonType.IMPORTANT));
+	  dialogue.options(welcomeButton, null, Dialogue);
+  }
+  private void alertMahJongMessage(MahJongMessage mahjongMessage,int tilesNum)
+  {
+	  MahjongConstants constants = (MahjongConstants) GWT.create(MahjongConstants.class);
+	  
 	  String message="";
+	  List<Dialogs.OptionsDialogEntry> wallInfo = new ArrayList<Dialogs.OptionsDialogEntry> ();
+	  wallInfo.add(new Dialogs.OptionsDialogEntry(
+				constants.atWall()+tilesNum, Dialogs.ButtonType.NORMAL));
+	  if (tilesNum>=0)
+	    dialogue.options(wallInfo, null, AtWall);	  
 	  List<String> options=Lists.newArrayList();
 	  List<Dialogs.OptionsDialogEntry> welcomeButton = new ArrayList<Dialogs.OptionsDialogEntry> ();
 		switch (mahjongMessage) {
@@ -403,20 +418,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 		}
 		//Dialogs.OptionCallback decoration = new callBackHelper();
 		dialogue.options(welcomeButton, null, Dialogue);
-		switch (skip) {
-		case (1):
-			presenter.refusegang();
-			break;
-		case (2):
-			presenter.refusepeng();
-			break;
-		case (3):
-			presenter.refusechi();
-			break;
-		default:
-			break;
-
-		}
+		
 		if (mahjongMessage == MahJongMessage.PICK) {
 			options.add(message + ":" + constants.accept());
 		}
@@ -429,6 +431,20 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
 			Dialogs.OptionCallback callback = new callBackHelper(
 					eventTriggered, mahjongMessage, buttons);
 			dialogue.options(buttons, callback, Dialogue);
+
+		}
+		switch (skip) {
+		case (1):
+			presenter.refusegang();
+			break;
+		case (2):
+			presenter.refusepeng();
+			break;
+		case (3):
+			presenter.refusechi();
+			break;
+		default:
+			break;
 
 		}
 	
@@ -490,9 +506,17 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     placeHorizonImages(acrossDeclaredArea, createHorizonTileImages(tilesAtDeclared3, false));
     if (numberOfTilesAtHand4<0)
       placeVerticalImages(leftDeclaredArea, createRightTileImages(tilesAtDeclared4, false));
-    placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
+    if (tilesUsed.size()>14)
+    {
+    	List<Tile> tempTiles = new ArrayList<Tile> ();
+    	for (int i=tilesUsed.size()-14;i<tilesUsed.size();i++)
+    		tempTiles.add(tilesUsed.get(i));
+    	placeHorizonImages(usedArea,createHorizonTileImages(tempTiles, false));
+    }
+    else
+      placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
     placeHorizonImages(selectedArea, ImmutableList.<Image>of());
-    alertMahJongMessage(mahJongMessage);
+    alertMahJongMessage(mahJongMessage,numberOfTilesAtWall);
     //disableClicks();
   }
   
@@ -520,11 +544,19 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
     placeHorizonImages(acrossDeclaredArea, createHorizonTileImages(tilesAtDeclaredAcross, false));
     if (numberOfTilesAtHandRight>0)
       placeVerticalImages(rightDeclaredArea, createRightTileImages(tilesAtDeclaredRight, false));
-    placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
+    if (tilesUsed.size()>14)
+    {
+    	List<Tile> tempTiles = new ArrayList<Tile> ();
+    	for (int i=tilesUsed.size()-14;i<tilesUsed.size();i++)
+    		tempTiles.add(tilesUsed.get(i));
+    	placeHorizonImages(usedArea,createHorizonTileImages(tempTiles, false));
+    }
+    else
+      placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
     placeHorizonImages(selectedArea, ImmutableList.<Image>of());
     placeHorizonImages(myDeclaredArea, createHorizonTileImages(myTilesDeclared, false));
     disableClicks();
-    alertMahJongMessage(mahJongMessage);
+    alertMahJongMessage(mahJongMessage,numberOfTilesAtWall);
     
   }
   
@@ -554,11 +586,10 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
       placeVerticalImages(leftDeclaredArea, createLeftTileImages(tilesAtDeclaredLeft, false));
     placeHorizonImages(acrossDeclaredArea, createHorizonTileImages(tilesAtDeclaredAcross, false));
     if (tilesAtRight!=null)
-      placeVerticalImages(rightDeclaredArea, createRightTileImages(tilesAtDeclaredRight, false));
-    placeHorizonImages(usedArea, createHorizonTileImages(tilesUsed, false));    
+      placeVerticalImages(rightDeclaredArea, createRightTileImages(tilesAtDeclaredRight, false));   
     placeHorizonImages(selectedArea, ImmutableList.<Image>of());
     placeHorizonImages(myDeclaredArea, createHorizonTileImages(myTilesDeclared, false));
-    alertMahJongMessage(mahJongMessage);
+    alertMahJongMessage(mahJongMessage,numberOfTilesAtWall);
     disableClicks();
   }
 
@@ -601,7 +632,7 @@ public class MahJongGraphics extends Composite implements MahJongPresenter.View 
       int widgetCount = rightAtHandArea.getWidgetCount();
       placeVerticalImages(rightAtHandArea, createVerticalBackTiles(widgetCount,true));
     }
-    alertMahJongMessage(MahJongMessage.HU);
+    alertMahJongMessage(MahJongMessage.HU,-1);
     if (presenter.huHelper()==true)
     	claimHu.setEnabled(true);
     

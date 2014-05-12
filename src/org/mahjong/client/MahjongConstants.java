@@ -60,4 +60,6 @@ public interface MahjongConstants extends Constants{
 	  String viewer();
 	  @DefaultStringValue("Chi")
 	  String chi();
+	  @DefaultStringValue("Left tiles at wall:")
+	  String atWall();
 }

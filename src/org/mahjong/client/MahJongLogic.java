@@ -78,11 +78,8 @@ public class MahJongLogic {
 
 	List<Operation> getInitialMove(List<String> playerIds) {
 		List<Operation> operations = Lists.newArrayList();
-		// operations.add(new SetTurn(0));
-		//operations.add(new Set(M, null));
 		operations.add(new Set(M, ImmutableList.of()));
 		operations.add(new Set(TAW, getIndicesInRange(0, 135)));
-		//operations.add(new Set(TU, null));
 		operations.add(new Set(TU, ImmutableList.of()));
 		// set hands
 		int playerNum = playerIds.size();
@@ -93,11 +90,11 @@ public class MahJongLogic {
 		}
 		operations.add(new Set(TAW, getIndicesInRange(13*playerNum, 135)));
 		// sets all 136 tiles
-		for (int i = 0; i < 136; i++) {
+	   	for (int i = 0; i < 136; i++) {
 			operations.add(new Set(T + i, tileIdToString(i)));
 		}
 		// shuffle(T0,...,T135)
-		//operations.add(new Shuffle(getTilesInRange(0, 135)));
+		operations.add(new Shuffle(getTilesInRange(0, 135)));
 		// sets visibility
 		for (int i = 0; i < playerNum; i++) {
 			for (int j = 0; j < 13; j++) {
@@ -107,15 +104,6 @@ public class MahJongLogic {
 			}
 		}
 		operations.add(new SetTurn(playerIds.get(0)));
-		// set the visibility of middle tile to null
-		//for (int i = 52; i < 136; i++)
-		//	operations.add(new SetVisibility(T + i, ImmutableList.of()));
-		/*operations.add(new Set(M, ImmutableList.<String> of(PU)));
-		operations.add(new SetTurn(playerIds.get(0)));
-		operations.add(new Set(TAW, getIndicesInRange(53, 135)));
-		operations.add(new Set(getAtHandKey(0), concat(getIndicesInRange(0, 12), getIndicesInRange(53, 53))));*/
-		// new SetVisibility(T + tileIndex,ImmutableList.of(playerId)
-		//operations.add(new SetVisibility(T + 52, ImmutableList.of(playerIds.get(0))));
 		return operations;
 	}
     public String idIndex(List<String> playerIds,String id)
